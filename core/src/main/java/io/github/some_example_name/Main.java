@@ -15,7 +15,7 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        image = new Texture("libgdx.png");
+        image = new Texture("tiles/Moon Background/Surface_Layer4.png");
     }
 
     @Override
