@@ -1,12 +1,14 @@
-package io.github.some_example_name;
+/*
+* Shared code.
+*
+* */
+
+package io.github.SpaceJomber;
 
 import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -23,6 +25,12 @@ public class Main extends ApplicationAdapter {
     private OrthographicCamera camera;
 
     private TiledMapTileLayer layer;
+
+    /*
+    * Main class should handle high-level game lifecycle
+    * + Initialization of Systems
+    * + ?
+    *  */
 
     /*
         Server will send "update map" |
@@ -53,12 +61,10 @@ public class Main extends ApplicationAdapter {
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
 
         this.camera.update();
-        renderer.setView(this.camera);
+        renderer.setView(this.camera); // this is only a map renderer!!!
 //        this.batch.begin();
 //        this.batch.draw(image, 140, 210);
 //        this.batch.end();
-
-
 
         this.renderer.render();
     }

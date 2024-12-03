@@ -1,0 +1,11 @@
+plugins {
+  id 'application'
+}
+
+dependencies {
+  implementation project(':core')
+}
+
+application {
+  mainClass = "io.github.SpaceJomber.server.Main"
+}
