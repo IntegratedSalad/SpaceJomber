@@ -3,6 +3,7 @@ package io.github.SpaceJomber.lwjgl3;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import io.github.SpaceJomber.Main;
+import io.github.SpaceJomber.networking.MultiplayerClient;
 
 /** Launches the desktop (LWJGL3) application. */
 public class Lwjgl3Launcher {
@@ -14,7 +15,8 @@ public class Lwjgl3Launcher {
     private static Lwjgl3Application createApplication() {
         // Note the instantiation of Main!
         // This is the entry point for the Game Logic.
-        return new Lwjgl3Application(new Main(), getDefaultConfiguration());
+        MultiplayerClient client = new MultiplayerClient();
+        return new Lwjgl3Application(new Main(client), getDefaultConfiguration());
     }
 
     private static Lwjgl3ApplicationConfiguration getDefaultConfiguration() {

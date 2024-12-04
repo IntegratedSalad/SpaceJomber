@@ -1,12 +1,8 @@
 package io.github.SpaceJomber.screens;
+
 import com.badlogic.gdx.Screen;
 
-public class GameScreen implements Screen {
-
-    // Pass renderer or create renderer?
-
-    //
-
+public class ScoreScreen implements Screen {
     @Override
     public void show() {
 
@@ -41,5 +37,4 @@ public class GameScreen implements Screen {
     public void dispose() {
 
     }
-
 }
