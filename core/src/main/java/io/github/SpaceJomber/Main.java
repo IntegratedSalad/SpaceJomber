@@ -9,13 +9,6 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.utils.ScreenUtils;
 import io.github.SpaceJomber.networking.MultiplayerClient;
 import io.github.SpaceJomber.screens.GameScreen;
 import io.github.SpaceJomber.screens.MenuScreen;
@@ -77,7 +70,8 @@ public class Main extends Game {
 
         OrthographicCamera camera = new OrthographicCamera();
         RenderingSystem menuRenderingSystem = new RenderingSystem(camera);
-        menuRenderingSystem.RegisterFont("roboticsfont.ttf");
+        menuRenderingSystem.RegisterMainFont("roboticsfont.ttf");
+        menuRenderingSystem.RegisterMainTitleFont("roboticsfont.ttf"); // TODO: get rid of extra function
 
         this.menuScreen = new MenuScreen(menuRenderingSystem);
         this.setScreen(this.menuScreen);

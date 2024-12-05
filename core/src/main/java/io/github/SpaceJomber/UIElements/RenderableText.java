@@ -5,19 +5,26 @@ import io.github.SpaceJomber.systems.Renderable;
 
 public class RenderableText implements Renderable {
 
-    RenderableText(String text, float x, float y, BitmapFont font) {
+    private String text;
+    private BitmapFont font;
+    private float x;
+    private float y;
 
+    public RenderableText(String text, float x, float y, BitmapFont font) {
+        this.text = text;
+        this.x = x;
+        this.y = y;
+        this.font = font;
     }
 
     @Override
     public void render(SpriteBatch sbatch) {
-        // render:
-        // this.font.draw(sbatch, text, x, y)
+         this.font.draw(sbatch, text, x, y);
     }
 
     @Override
     public void dispose() {
-
+        // Don't dispose this.font, this.font is a reference to the RenderingSystem font.
     }
 
 }

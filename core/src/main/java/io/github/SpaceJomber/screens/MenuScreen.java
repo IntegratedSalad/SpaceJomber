@@ -4,14 +4,12 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import io.github.SpaceJomber.UIElements.RenderableText;
 import io.github.SpaceJomber.UIElements.ShapeTextButton;
-import io.github.SpaceJomber.systems.InputSystem;
 import io.github.SpaceJomber.systems.RenderingSystem;
 
 public class MenuScreen implements Screen {
@@ -23,20 +21,15 @@ public class MenuScreen implements Screen {
 
     private RenderingSystem renderingSystem; // handles entities
 
-    /*
-    * TODO:
-    *  Can we get rid of this rendering system and make everything an Actor on the Stage?
-    *  Or - RenderingSystem extends/instantiates stage
-    *  */
     private Stage stage; // handles UI elements - an input processor
 
     private ShapeTextButton localGameButton;
     private ShapeTextButton multiplayerGameButton;
     private ShapeTextButton scoreButton;
     private ShapeTextButton exitButton;
+    private RenderableText titleText;
 
     private final Texture backgroundTexture = new Texture("background.png");
-
 
     public MenuScreen(RenderingSystem renderingSystem) {
         this.renderingSystem = renderingSystem;
@@ -51,7 +44,7 @@ public class MenuScreen implements Screen {
         Gdx.input.setInputProcessor(this.stage);
 
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.font = this.renderingSystem.GetFont();
+        textButtonStyle.font = this.renderingSystem.GetMainFont();
 
         // Button dimensions
         float buttonWidth = 210;
@@ -64,7 +57,7 @@ public class MenuScreen implements Screen {
 
         // Create and position buttons
         this.localGameButton = new ShapeTextButton(
-            this.renderingSystem.getShapeRenderer(),
+            this.renderingSystem.getShapeRenderer(), // TODO: Don't expose internals of the rendering system...
             "New Local Game",
             textButtonStyle,
             Color.BLACK,
@@ -114,6 +107,17 @@ public class MenuScreen implements Screen {
         this.exitButton.setSize(buttonWidth, buttonHeight);
         this.exitButton.setPosition(xPosition, startY - (buttonHeight + spacing) * 3);
         this.stage.addActor(this.exitButton);
+
+        GlyphLayout layout = new GlyphLayout();
+        layout.setText(this.renderingSystem.GetMainTitleFont(),"SpaceJomber");
+        final float textWidth = layout.width;
+        final float titleXPosition = Gdx.graphics.getWidth() / 2f - textWidth / 2;
+        final float titleYPosition = Gdx.graphics.getHeight() - 120;
+        this.titleText = new RenderableText("SpaceJomber",
+            titleXPosition,
+            titleYPosition,
+            this.renderingSystem.GetMainTitleFont());
+        this.renderingSystem.AddRenderable(this.titleText);
     }
 
     @Override

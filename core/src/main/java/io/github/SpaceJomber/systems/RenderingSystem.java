@@ -26,7 +26,8 @@ public class RenderingSystem {
     private TiledMapTileLayer tiledMap = null;
     private ShapeRenderer shapeRenderer;
     private SpriteBatch spriteBatch;
-    private BitmapFont font = null;
+    private BitmapFont mainFont = null;
+    private BitmapFont mainTitleFont = null;
     private Texture backgroundImage = null;
 
     public RenderingSystem(OrthographicCamera camera) {
@@ -56,6 +57,7 @@ public class RenderingSystem {
     }
 
     public void renderAll() {
+        // this.spriteBatch.begin();
 
         if (this.backgroundImage != null) {
             // TODO:
@@ -70,9 +72,12 @@ public class RenderingSystem {
             this.spriteBatch.end();
         }
 
+        this.spriteBatch.begin();
         for (Renderable renderable : renderableList) {
             renderable.render(this.spriteBatch);
         }
+        this.spriteBatch.end();
+        // this.spriteBatch.end();
     }
 
     public ShapeRenderer getShapeRenderer() {
@@ -80,7 +85,27 @@ public class RenderingSystem {
         return this.shapeRenderer;
     }
 
-    public void RegisterFont(String fontPath) {
+    private BitmapFont CreateFont(String fontPath,
+                                  Color fontColor,
+                                  float borderWidth,
+                                  Color borderColor,
+                                  int shadowOffsetX,
+                                  int shadowOffsetY) {
+        /* TODO: use this method */
+        FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
+        FreeTypeFontGenerator.FreeTypeFontParameter fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        fontParameter.size = 32;
+        fontParameter.color = fontColor;
+        fontParameter.borderWidth = borderWidth;
+        fontParameter.borderColor = borderColor;
+        fontParameter.shadowOffsetX = shadowOffsetX;
+        fontParameter.shadowOffsetY = shadowOffsetY;
+        final BitmapFont font = fontGenerator.generateFont(fontParameter);
+        fontGenerator.dispose();
+        return font;
+    }
+
+    public void RegisterMainFont(String fontPath) {
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
         FreeTypeFontGenerator.FreeTypeFontParameter fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         fontParameter.size = 14;
@@ -89,20 +114,38 @@ public class RenderingSystem {
         fontParameter.borderColor = Color.BLACK;
         fontParameter.shadowOffsetX = 3;
         fontParameter.shadowOffsetY = 3;
-        this.font = fontGenerator.generateFont(fontParameter);
+        this.mainFont = fontGenerator.generateFont(fontParameter);
         fontGenerator.dispose();
     }
 
-    public BitmapFont GetFont() {
-        return this.font;
+    public void RegisterMainTitleFont(String fontPath) {
+        FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
+        FreeTypeFontGenerator.FreeTypeFontParameter fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        fontParameter.size = 80;
+        fontParameter.color = Color.WHITE;
+        fontParameter.borderWidth = 3;
+        fontParameter.borderColor = Color.BLUE;
+        fontParameter.shadowOffsetX = 3;
+        fontParameter.shadowOffsetY = 3;
+        this.mainTitleFont = fontGenerator.generateFont(fontParameter);
+        fontGenerator.dispose();
+    }
+
+    public BitmapFont GetMainFont() {
+        return this.mainFont;
+    }
+
+    public BitmapFont GetMainTitleFont() {
+        return this.mainTitleFont;
     }
 
     public void dispose() {
         for (Renderable renderable : renderableList) {
             renderable.dispose();
         }
-
         this.shapeRenderer.dispose();
         this.spriteBatch.dispose();
+        this.mainFont.dispose();
+        this.mainTitleFont.dispose();
     }
 }
