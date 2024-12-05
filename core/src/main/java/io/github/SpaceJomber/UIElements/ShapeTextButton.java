@@ -39,7 +39,7 @@ public class ShapeTextButton extends TextButton {
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(outerColor);
-        shapeRenderer.rect(getX(), getY(), getWidth(), getHeight()); // this draws
+        shapeRenderer.rect(getX(), getY(), getWidth(), getHeight()); // this draws to the screen
 
         if (this.isPressed()) {
             shapeRenderer.setColor(this.pressedInnerColor);

@@ -58,6 +58,13 @@ public class RenderingSystem {
     public void renderAll() {
 
         if (this.backgroundImage != null) {
+            // TODO:
+            // maybe make RenderableImage class that implements Renderable interface and does .draw
+            // on provided spriteBatch
+            // because what we're doing here, is sending multiple batches to the gpu
+            // if each renderable would begin and end
+            // and if any renderable doesn't begin and end the batch,
+            // nothing will be rendered to the screen
             this.spriteBatch.begin();
             this.spriteBatch.draw(this.backgroundImage, 0, 0);
             this.spriteBatch.end();

@@ -22,8 +22,13 @@ public class MenuScreen implements Screen {
      */
 
     private RenderingSystem renderingSystem; // handles entities
-//    private InputSystem inputSystem; // probably handled all by Stage
-    private Stage stage; // handles UI elements
+
+    /*
+    * TODO:
+    *  Can we get rid of this rendering system and make everything an Actor on the Stage?
+    *  Or - RenderingSystem extends/instantiates stage
+    *  */
+    private Stage stage; // handles UI elements - an input processor
 
     private ShapeTextButton localGameButton;
     private ShapeTextButton multiplayerGameButton;
@@ -31,6 +36,7 @@ public class MenuScreen implements Screen {
     private ShapeTextButton exitButton;
 
     private final Texture backgroundTexture = new Texture("background.png");
+
 
     public MenuScreen(RenderingSystem renderingSystem) {
         this.renderingSystem = renderingSystem;
@@ -40,13 +46,23 @@ public class MenuScreen implements Screen {
 
     @Override
     public void show() {
-//        Gdx.app.log("MenuScreen", "show() called");
+        Gdx.app.log("MenuScreen", "show() called");
         this.stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(this.stage);
 
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
         textButtonStyle.font = this.renderingSystem.GetFont();
 
+        // Button dimensions
+        float buttonWidth = 210;
+        float buttonHeight = 40;
+
+        // Starting position for the first button
+        float xPosition = Gdx.graphics.getWidth() / 2f - buttonWidth / 2; // Centered horizontally
+        float startY = Gdx.graphics.getHeight() * 0.3f; // Start at 30% of screen height
+        float spacing = 15;
+
+        // Create and position buttons
         this.localGameButton = new ShapeTextButton(
             this.renderingSystem.getShapeRenderer(),
             "New Local Game",
@@ -55,10 +71,9 @@ public class MenuScreen implements Screen {
             Color.BLUE,
             Color.CYAN,
             Color.WHITE
-            );
-        this.localGameButton.setSize(140, 40);
-        this.localGameButton.setPosition((float) Gdx.graphics.getWidth() / 2,
-            (float) Gdx.graphics.getHeight() / 2);
+        );
+        this.localGameButton.setSize(buttonWidth, buttonHeight);
+        this.localGameButton.setPosition(xPosition, startY);
         this.stage.addActor(this.localGameButton);
 
         this.multiplayerGameButton = new ShapeTextButton(
@@ -70,7 +85,9 @@ public class MenuScreen implements Screen {
             Color.CYAN,
             Color.WHITE
         );
-        this.multiplayerGameButton.setSize(140, 40);
+        this.multiplayerGameButton.setSize(buttonWidth, buttonHeight);
+        this.multiplayerGameButton.setPosition(xPosition, startY - (buttonHeight + spacing) * 1);
+        this.stage.addActor(this.multiplayerGameButton);
 
         this.scoreButton = new ShapeTextButton(
             this.renderingSystem.getShapeRenderer(),
@@ -81,7 +98,9 @@ public class MenuScreen implements Screen {
             Color.CYAN,
             Color.WHITE
         );
-        this.scoreButton.setSize(140, 40);
+        this.scoreButton.setSize(buttonWidth, buttonHeight);
+        this.scoreButton.setPosition(xPosition, startY - (buttonHeight + spacing) * 2);
+        this.stage.addActor(this.scoreButton);
 
         this.exitButton = new ShapeTextButton(
             this.renderingSystem.getShapeRenderer(),
@@ -92,12 +111,14 @@ public class MenuScreen implements Screen {
             Color.CYAN,
             Color.WHITE
         );
-        this.exitButton.setSize(140, 40);
+        this.exitButton.setSize(buttonWidth, buttonHeight);
+        this.exitButton.setPosition(xPosition, startY - (buttonHeight + spacing) * 3);
+        this.stage.addActor(this.exitButton);
     }
 
     @Override
     public void render(float delta) {
-        Gdx.app.log("MenuScreen", "render() called");
+//        Gdx.app.log("MenuScreen", "render() called");
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         this.renderingSystem.renderAll();
