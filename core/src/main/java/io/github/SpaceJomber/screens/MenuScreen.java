@@ -1,13 +1,17 @@
 package io.github.SpaceJomber.screens;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import io.github.SpaceJomber.Main;
 import io.github.SpaceJomber.UIElements.RenderableText;
 import io.github.SpaceJomber.UIElements.ShapeTextButton;
 import io.github.SpaceJomber.systems.RenderingSystem;
@@ -31,10 +35,13 @@ public class MenuScreen implements Screen {
 
     private final Texture backgroundTexture = new Texture("background.png");
 
-    public MenuScreen(RenderingSystem renderingSystem) {
+    private Main game;
+
+    public MenuScreen(RenderingSystem renderingSystem,
+                      Main game) {
         this.renderingSystem = renderingSystem;
         this.renderingSystem.SetBackgroundImage(this.backgroundTexture);
-//        this.renderingSystem.AddRenderable();
+        this.game = game;
     }
 
     @Override
@@ -68,6 +75,13 @@ public class MenuScreen implements Screen {
         this.localGameButton.setSize(buttonWidth, buttonHeight);
         this.localGameButton.setPosition(xPosition, startY);
         this.stage.addActor(this.localGameButton);
+        final Main mainGame = this.game;
+        this.localGameButton.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                mainGame.SetupGameScreen();
+                return true;
+            }
+        });
 
         this.multiplayerGameButton = new ShapeTextButton(
             this.renderingSystem.getShapeRenderer(),
@@ -107,6 +121,12 @@ public class MenuScreen implements Screen {
         this.exitButton.setSize(buttonWidth, buttonHeight);
         this.exitButton.setPosition(xPosition, startY - (buttonHeight + spacing) * 3);
         this.stage.addActor(this.exitButton);
+        this.exitButton.addListener(new InputListener() {
+           public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+               Gdx.app.exit();
+               return true;
+           }
+        });
 
         GlyphLayout layout = new GlyphLayout();
         layout.setText(this.renderingSystem.GetMainTitleFont(),"SpaceJomber");

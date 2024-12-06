@@ -73,8 +73,26 @@ public class Main extends Game {
         menuRenderingSystem.RegisterMainFont("roboticsfont.ttf");
         menuRenderingSystem.RegisterMainTitleFont("roboticsfont.ttf"); // TODO: get rid of extra function
 
-        this.menuScreen = new MenuScreen(menuRenderingSystem);
+        this.menuScreen = new MenuScreen(menuRenderingSystem, this);
         this.setScreen(this.menuScreen);
+    }
+
+    public void SetupMainMenu() {
+        OrthographicCamera camera = new OrthographicCamera();
+        RenderingSystem menuRenderingSystem = new RenderingSystem(camera);
+        menuRenderingSystem.RegisterMainFont("roboticsfont.ttf");
+        menuRenderingSystem.RegisterMainTitleFont("roboticsfont.ttf"); // TODO: get rid of extra function
+
+        this.menuScreen = new MenuScreen(menuRenderingSystem, this);
+        this.setScreen(this.menuScreen);
+    }
+
+    public void SetupGameScreen() {
+        OrthographicCamera camera = new OrthographicCamera();
+        RenderingSystem gameRenderingSystem = new RenderingSystem(camera);
+        gameRenderingSystem.RegisterMainFont("roboticsfont.ttf");
+        this.gameScreen = new GameScreen(gameRenderingSystem, this);
+        this.setScreen(this.gameScreen);
     }
 
     @Override

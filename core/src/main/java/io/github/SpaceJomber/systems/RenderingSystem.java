@@ -7,7 +7,10 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,12 +21,14 @@ public class RenderingSystem {
      * rendering different menu screens.
      * It has a list of Renderables.
      * It is Screen agnostic.
-     * Maintain rendering order - first background (tile map), then anything else.
+     * TODO: Maintain rendering order - first background (tile map), then anything else.
      */
 
     private List<Renderable> renderableList;
     private OrthographicCamera camera;
-    private TiledMapTileLayer tiledMap = null;
+    private OrthogonalTiledMapRenderer tiledMapRenderer;
+    private TiledMapTileLayer layer = null;
+    private TiledMap map;
     private ShapeRenderer shapeRenderer;
     private SpriteBatch spriteBatch;
     private BitmapFont mainFont = null;
@@ -35,29 +40,55 @@ public class RenderingSystem {
         this.shapeRenderer = new ShapeRenderer();
         this.spriteBatch = new SpriteBatch();
         this.camera = camera;
+
+//        this.map = new TmxMapLoader().load("gamemap.tmx"); // should be passed, in case they're different maps
+//        this.layer = (TiledMapTileLayer) this.map.getLayers().get(0);
+//        this.renderer = new OrthogonalTiledMapRenderer(this.map, 1/16f);
         // TODO: maybe pass fontPath into constructor
     }
 
-    public RenderingSystem(List<Renderable> renderableList, OrthographicCamera camera, TiledMapTileLayer tiledMap) {
-        this.renderableList = renderableList;
-        this.camera = camera;
-        this.tiledMap = tiledMap;
-    }
+//    public RenderingSystem(List<Renderable> renderableList, OrthographicCamera camera, TiledMapTileLayer tiledMap) {
+//        this.renderableList = renderableList;
+//        this.camera = camera;
+//    }
 
     public void AddRenderable(Renderable renderable) {
         this.renderableList.add(renderable);
     }
 
-    public void SetMap(TiledMapTileLayer map) {
-        this.tiledMap = map;
-    }
+//    public void SetMap(TiledMapTileLayer map) {
+//        this.tiledMap = map;
+//    }
 
     public void SetBackgroundImage(Texture backgroundImage) {
         this.backgroundImage = backgroundImage;
     }
 
+    private void SetLayer() {
+        this.layer = (TiledMapTileLayer) this.map.getLayers().get(0);
+    }
+
+    public void LoadMap(final String tmxFilePath) {
+        this.map = new TmxMapLoader().load("gamemap.tmx");
+        this.SetLayer();
+    }
+
+    public void SetTiledMapRenderer() {
+        this.tiledMapRenderer = new OrthogonalTiledMapRenderer(this.map, 1/16f);
+    }
+
+    public void SetupCamera() {
+        this.camera = new OrthographicCamera();
+        this.camera.setToOrtho(false, 15, 13);
+    }
+
     public void renderAll() {
         // this.spriteBatch.begin();
+        this.camera.update();
+        if (this.tiledMapRenderer != null) {
+            this.tiledMapRenderer.setView(this.camera); // this is only a map renderer!!!
+            this.tiledMapRenderer.render();
+        }
 
         if (this.backgroundImage != null) {
             // TODO:
