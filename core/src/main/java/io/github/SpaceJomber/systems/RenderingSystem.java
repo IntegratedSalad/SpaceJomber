@@ -1,19 +1,22 @@
 package io.github.SpaceJomber.systems;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class RenderingSystem {
     /*
@@ -29,16 +32,21 @@ public class RenderingSystem {
     private OrthogonalTiledMapRenderer tiledMapRenderer;
     private TiledMapTileLayer layer = null;
     private TiledMap map;
+    private TiledMapTileSet tileset;
     private ShapeRenderer shapeRenderer;
     private SpriteBatch spriteBatch;
     private BitmapFont mainFont = null;
     private BitmapFont mainTitleFont = null;
     private Texture backgroundImage = null;
+    private HashMap<String, Texture> textureMap = null;
+    private HashMap<String, Sprite> spriteMap = null;
 
     public RenderingSystem(OrthographicCamera camera) {
         this.renderableList = new ArrayList<Renderable>();
         this.shapeRenderer = new ShapeRenderer();
         this.spriteBatch = new SpriteBatch();
+        this.textureMap = new HashMap<>();
+        this.spriteMap = new HashMap<String, Sprite>();
         this.camera = camera;
 
 //        this.map = new TmxMapLoader().load("gamemap.tmx"); // should be passed, in case they're different maps
@@ -47,21 +55,16 @@ public class RenderingSystem {
         // TODO: maybe pass fontPath into constructor
     }
 
-//    public RenderingSystem(List<Renderable> renderableList, OrthographicCamera camera, TiledMapTileLayer tiledMap) {
-//        this.renderableList = renderableList;
-//        this.camera = camera;
-//    }
-
     public void AddRenderable(Renderable renderable) {
         this.renderableList.add(renderable);
     }
 
-//    public void SetMap(TiledMapTileLayer map) {
-//        this.tiledMap = map;
-//    }
-
     public void SetBackgroundImage(Texture backgroundImage) {
         this.backgroundImage = backgroundImage;
+    }
+
+    public Texture SetBackgroundImage() {
+        return this.backgroundImage;
     }
 
     private void SetLayer() {
@@ -71,6 +74,12 @@ public class RenderingSystem {
     public void LoadMap(final String tmxFilePath) {
         this.map = new TmxMapLoader().load("gamemap.tmx");
         this.SetLayer();
+    }
+
+    public void SetTileSet() {
+        if (this.map != null) {
+            this.tileset = this.map.getTileSets().getTileSet(0);
+        }
     }
 
     public void SetTiledMapRenderer() {
@@ -83,32 +92,24 @@ public class RenderingSystem {
     }
 
     public void renderAll() {
-        // this.spriteBatch.begin();
+        Gdx.app.log("Camera", "Viewport X: " + camera.position.x + ", Y: " + camera.position.y);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         this.camera.update();
         if (this.tiledMapRenderer != null) {
             this.tiledMapRenderer.setView(this.camera); // this is only a map renderer!!!
             this.tiledMapRenderer.render();
         }
-
-        if (this.backgroundImage != null) {
-            // TODO:
-            // maybe make RenderableImage class that implements Renderable interface and does .draw
-            // on provided spriteBatch
-            // because what we're doing here, is sending multiple batches to the gpu
-            // if each renderable would begin and end
-            // and if any renderable doesn't begin and end the batch,
-            // nothing will be rendered to the screen
-            this.spriteBatch.begin();
-            this.spriteBatch.draw(this.backgroundImage, 0, 0);
-            this.spriteBatch.end();
-        }
-
+        spriteBatch.setProjectionMatrix(camera.combined);
         this.spriteBatch.begin();
         for (Renderable renderable : renderableList) {
             renderable.render(this.spriteBatch);
         }
         this.spriteBatch.end();
-        // this.spriteBatch.end();
+        Gdx.app.log("Camera Debug",
+            "Viewport MinX: " + (camera.position.x - camera.viewportWidth / 2) +
+                ", MaxX: " + (camera.position.x + camera.viewportWidth / 2) +
+                ", MinY: " + (camera.position.y - camera.viewportHeight / 2) +
+                ", MaxY: " + (camera.position.y + camera.viewportHeight / 2));
     }
 
     public ShapeRenderer getShapeRenderer() {
@@ -149,6 +150,10 @@ public class RenderingSystem {
         fontGenerator.dispose();
     }
 
+    public BitmapFont GetMainFont() {
+        return this.mainFont;
+    }
+
     public void RegisterMainTitleFont(String fontPath) {
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
         FreeTypeFontGenerator.FreeTypeFontParameter fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -162,12 +167,53 @@ public class RenderingSystem {
         fontGenerator.dispose();
     }
 
-    public BitmapFont GetMainFont() {
-        return this.mainFont;
-    }
-
     public BitmapFont GetMainTitleFont() {
         return this.mainTitleFont;
+    }
+
+    private void AddSpriteToDict(String spriteString, Sprite sprite) {
+        this.spriteMap.put(spriteString, sprite);
+    }
+
+    private Sprite CreateSpriteFromTileset(final String tilesetPath,
+                                          final int x,
+                                          final int y,
+                                          final int w,
+                                          final int h) {
+
+        // load only once
+        Texture tilesetTexture = this.textureMap.computeIfAbsent(tilesetPath, path -> new Texture(Gdx.files.internal(path)));
+        if (this.textureMap.get(tilesetPath) == null) {
+            Gdx.app.log("Debug", "Texture not found or not loaded!");
+        } else {
+            Gdx.app.log("Debug", "Texture loaded: Width=" + tilesetTexture.getWidth() +
+                ", Height=" + tilesetTexture.getHeight());
+        }
+        Gdx.app.log("Sprite Region Debug",
+            "RegionX: " + x + ", RegionY: " + y +
+                ", Width: " + w + ", Height: " + h +
+                ", Texture Width: " + tilesetTexture.getWidth() +
+                ", Texture Height: " + tilesetTexture.getHeight());
+        TextureRegion region = new TextureRegion(tilesetTexture, x, y, w, h);
+        return new Sprite(region);
+    }
+
+    public void RegisterSprite(final String spriteString,
+                               final String tilesetPath,
+                               final int x,
+                               final int y,
+                               final int w,
+                               final int h) {
+        final int regionX = x * 16;
+        final int regionY = y * 16;
+
+        Sprite sprite = this.CreateSpriteFromTileset(tilesetPath, regionX, regionY, w, h);
+        sprite.setSize(1, 1);
+        this.AddSpriteToDict(spriteString, sprite);
+    }
+
+    public Sprite GetSprite(final String spriteString) {
+        return this.spriteMap.get(spriteString);
     }
 
     public void dispose() {

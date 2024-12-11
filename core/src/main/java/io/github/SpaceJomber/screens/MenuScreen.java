@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -33,15 +34,15 @@ public class MenuScreen implements Screen {
     private ShapeTextButton exitButton;
     private RenderableText titleText;
 
-    private final Texture backgroundTexture = new Texture("background.png");
-
+    private SpriteBatch menuSpriteBatch;
     private Main game;
 
     public MenuScreen(RenderingSystem renderingSystem,
                       Main game) {
         this.renderingSystem = renderingSystem;
-        this.renderingSystem.SetBackgroundImage(this.backgroundTexture);
+        this.renderingSystem.SetBackgroundImage(new Texture("background.png"));
         this.game = game;
+        this.menuSpriteBatch = new SpriteBatch();
     }
 
     @Override
@@ -137,15 +138,19 @@ public class MenuScreen implements Screen {
             titleXPosition,
             titleYPosition,
             this.renderingSystem.GetMainTitleFont());
-        this.renderingSystem.AddRenderable(this.titleText);
+//        this.renderingSystem.AddRenderable(this.titleText);
     }
 
     @Override
     public void render(float delta) {
 //        Gdx.app.log("MenuScreen", "render() called");
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        this.menuSpriteBatch.begin();
+        this.menuSpriteBatch.draw(this.renderingSystem.SetBackgroundImage(), 0, 0);
+        this.titleText.render(menuSpriteBatch);
+        this.menuSpriteBatch.end();
 
-        this.renderingSystem.renderAll();
+//        this.renderingSystem.renderAll();
         this.stage.act(delta); // this updates actors
         this.stage.draw(); // this renders actors
     }
@@ -172,6 +177,5 @@ public class MenuScreen implements Screen {
     @Override
     public void dispose() {
         this.renderingSystem.dispose();
-        this.backgroundTexture.dispose();
     }
 }
