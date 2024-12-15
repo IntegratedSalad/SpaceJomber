@@ -8,8 +8,9 @@ public class Player implements Renderable {
 
     // TODO: Instantiate the multiplayerComponent as needed
     private Sprite sprite;
-    private int x; // is this needed?
+    private int x;
     private int y;
+    private String name;
 
     public Player(Sprite sprite, int x, int y) {
         this.sprite = sprite;
@@ -27,7 +28,7 @@ public class Player implements Renderable {
     @Override
     public void render(SpriteBatch sbatch) {
         Gdx.app.log("Player Position", "Sprite X: " + this.sprite.getX() + ", Y: " + this.sprite.getY());
-        this.sprite.setPosition(this.x, this.y);
+//        this.sprite.setPosition(this.x, this.y);
         this.sprite.draw(sbatch);
     }
 

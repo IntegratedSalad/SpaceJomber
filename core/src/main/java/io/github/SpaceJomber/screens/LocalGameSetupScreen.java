@@ -16,6 +16,9 @@ public class LocalGameSetupScreen implements Screen {
         this.renderingSystem = renderingSystem;
         this.renderingSystem.SetBackgroundImage( new Texture("background.png"));
         this.game = game;
+
+        // Selecting player 1 and player 2 sprite
+        // Name of player 1 and player 2
     }
 
     @Override

@@ -24,7 +24,6 @@ public class RenderingSystem {
      * rendering different menu screens.
      * It has a list of Renderables.
      * It is Screen agnostic.
-     * TODO: Maintain rendering order - first background (tile map), then anything else.
      */
 
     private List<Renderable> renderableList;
@@ -92,7 +91,7 @@ public class RenderingSystem {
     }
 
     public void renderAll() {
-        Gdx.app.log("Camera", "Viewport X: " + camera.position.x + ", Y: " + camera.position.y);
+//        Gdx.app.log("Camera", "Viewport X: " + camera.position.x + ", Y: " + camera.position.y);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         this.camera.update();
         if (this.tiledMapRenderer != null) {
@@ -105,11 +104,11 @@ public class RenderingSystem {
             renderable.render(this.spriteBatch);
         }
         this.spriteBatch.end();
-        Gdx.app.log("Camera Debug",
-            "Viewport MinX: " + (camera.position.x - camera.viewportWidth / 2) +
-                ", MaxX: " + (camera.position.x + camera.viewportWidth / 2) +
-                ", MinY: " + (camera.position.y - camera.viewportHeight / 2) +
-                ", MaxY: " + (camera.position.y + camera.viewportHeight / 2));
+//        Gdx.app.log("Camera Debug",
+//            "Viewport MinX: " + (camera.position.x - camera.viewportWidth / 2) +
+//                ", MaxX: " + (camera.position.x + camera.viewportWidth / 2) +
+//                ", MinY: " + (camera.position.y - camera.viewportHeight / 2) +
+//                ", MaxY: " + (camera.position.y + camera.viewportHeight / 2));
     }
 
     public ShapeRenderer getShapeRenderer() {

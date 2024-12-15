@@ -4,17 +4,25 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import io.github.SpaceJomber.Main;
 import io.github.SpaceJomber.entities.Player;
+import io.github.SpaceJomber.systems.InputSystem;
 import io.github.SpaceJomber.systems.RenderingSystem;
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class GameScreen implements Screen {
 
     private Main game;
     private RenderingSystem renderingSystem;
 
+    private Player instanceControlledPlayer = null;
+
     public GameScreen(RenderingSystem renderingSystem,
                       Main game) {
         this.renderingSystem = renderingSystem;
         this.game = game;
+
+        // TODO: Pass information about type of game - multiplayer or local
 
         // Set up the Sprites
         renderingSystem.RegisterSprite("greenShip",
@@ -25,8 +33,12 @@ public class GameScreen implements Screen {
             16);
 
         // Set up players
-        Player p1 = new Player(renderingSystem.GetSprite("greenShip"), 1, 1);
-        this.renderingSystem.AddRenderable(p1);
+        this.instanceControlledPlayer = new Player(renderingSystem.GetSprite("greenShip"), 1, 1);
+        this.renderingSystem.AddRenderable(this.instanceControlledPlayer);
+
+        // Setup input processor
+        InputSystem ins = new InputSystem(this.instanceControlledPlayer);
+        Gdx.input.setInputProcessor(ins);
     }
 
     @Override
@@ -42,6 +54,9 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+//        this.renderingSystem
+        // maybe clear rendering list
+        // update
         this.renderingSystem.renderAll();
 
     }
@@ -70,5 +85,4 @@ public class GameScreen implements Screen {
     public void dispose() {
 
     }
-
 }
