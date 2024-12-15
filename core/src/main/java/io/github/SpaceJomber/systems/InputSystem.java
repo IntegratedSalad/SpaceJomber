@@ -42,7 +42,6 @@ public class InputSystem implements InputProcessor {
             }
             bombSprite = new Sprite(bombSprite);
             this.controlledPlayer.PlantBomb(bombSprite, Bomb.GetBombNameFromID(beid), beid);
-            // TODO: Somehow add renderable...
         } else if (keycode == Input.Keys.A) {
             this.controlledPlayer.Move(-1, 0);
             Gdx.app.log("InputSystem, keyDown", "A...");

@@ -50,12 +50,14 @@ public class Player implements Renderable {
     }
 
     public void PlantBomb(Sprite sprite, final String name, ENTITYID beid) {
+        Gdx.app.log("Player, PlantBomb", "Bomb has been planted.");
         Bomb bomb = new Bomb(sprite,
             name,
             this.x,
             this.y,
-            beid);
-        bomb.PlantBomb(2000);
+            beid,
+            this.bombPlacementListener);
+        bomb.PlantBomb(2);
         this.bombPlacementListener.onBombPlaced(this.x, this.y, bomb);
     }
 
@@ -88,7 +90,7 @@ public class Player implements Renderable {
 
     @Override
     public void render(SpriteBatch sbatch) {
-        Gdx.app.log("Player render", "Sprite X: " + this.sprite.getX() + ", Y: " + this.sprite.getY());
+//        Gdx.app.log("Player render", "Sprite X: " + this.sprite.getX() + ", Y: " + this.sprite.getY());
         this.sprite.draw(sbatch);
     }
 

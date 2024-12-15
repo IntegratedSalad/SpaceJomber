@@ -239,4 +239,9 @@ public class RenderingSystem implements BombPlacementListener {
     public void onBombPlaced(final int x, final int y, Bomb bomb) {
         this.AddRenderable(bomb);
     }
+
+    @Override
+    public void onBombDetonate(int x, int y, Bomb bomb) {
+        this.RemoveRenderable(bomb.GetEntityID());
+    }
 }

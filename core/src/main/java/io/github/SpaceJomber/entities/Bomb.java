@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.utils.Timer;
+import io.github.SpaceJomber.systems.BombPlacementListener;
 import io.github.SpaceJomber.systems.Renderable;
 
 import java.util.List;
@@ -20,13 +21,14 @@ public class Bomb implements Renderable {
     private ENTITYID eid;
 
     private TiledMap tmRef;
+    private BombPlacementListener bombPlacementListener;
 
     public static Sprite blueBombSprite;
     public static Sprite greenBombSprite;
     public static Sprite redBombSprite;
     public static Sprite blackBombSprite;
 
-    public Bomb(Sprite sprite, String name, int x, int y, ENTITYID eid) {
+    public Bomb(Sprite sprite, String name, int x, int y, ENTITYID eid, BombPlacementListener bombPlacementListener) {
         this.sprite = sprite;
         this.name = name; // to identify and remove from list
         this.x = x;
@@ -34,16 +36,18 @@ public class Bomb implements Renderable {
         this.sprite.setX(this.x);
         this.sprite.setY(this.y);
         this.eid = eid;
+        this.bombPlacementListener = bombPlacementListener;
     }
 
     public void SetMapRf(TiledMap tmRef) {
         this.tmRef = tmRef;
     }
 
-    public void PlantBomb(final int delayMs) {
+    public void PlantBomb(final int delayS) {
         // TODO: Place bomb -> method in MapUtils? (New renderable)
         // TODO: Maybe MapSystem, where access to the map can be multithreaded and guarded by locks!
         // Start timer
+        this.scheduleTask(delayS);
 
 //        if (tmRef != null) {
 //            Cell cell = new Cell();
@@ -52,16 +56,21 @@ public class Bomb implements Renderable {
     }
 
     private void Explode() {
-
     }
 
-    private Timer.Task scheduleTask(int delay) {
+    private Timer.Task scheduleTask(int delayS) {
+        BombPlacementListener bl = this.bombPlacementListener;
+        final int x = this.x;
+        final int y = this.y;
+        final Bomb b = this;
         Timer.Task task = new Timer.Task() {
             @Override
             public void run() {
+                Gdx.app.log("Bomb schedule Task", "Bomb detonating at " + x + "," + y);
+                bl.onBombDetonate(x, y, b);
             }
         };
-        Timer.instance().scheduleTask(task, delay);
+        Timer.instance().scheduleTask(task, delayS);
         return task;
     }
 
@@ -96,13 +105,12 @@ public class Bomb implements Renderable {
 
     @Override
     public void render(SpriteBatch sbatch) {
-        Gdx.app.log("Bomb render", "Sprite X: " + this.sprite.getX() + ", Y: " + this.sprite.getY());
+//        Gdx.app.log("Bomb render", "Sprite X: " + this.sprite.getX() + ", Y: " + this.sprite.getY());
         this.sprite.draw(sbatch);
     }
 
     @Override
     public void dispose() {
-
     }
 
     @Override
