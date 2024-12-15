@@ -1,6 +1,7 @@
 package io.github.SpaceJomber.UIElements;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import io.github.SpaceJomber.entities.ENTITYID;
 import io.github.SpaceJomber.systems.Renderable;
 
 public class RenderableText implements Renderable {
@@ -25,6 +26,11 @@ public class RenderableText implements Renderable {
     @Override
     public void dispose() {
         // Don't dispose this.font, this.font is a reference to the RenderingSystem font.
+    }
+
+    @Override
+    public ENTITYID GetEntityID() {
+        return null;
     }
 
 }

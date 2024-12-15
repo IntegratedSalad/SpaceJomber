@@ -3,6 +3,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import io.github.SpaceJomber.Main;
+import io.github.SpaceJomber.entities.Bomb;
+import io.github.SpaceJomber.entities.ENTITYID;
 import io.github.SpaceJomber.entities.Player;
 import io.github.SpaceJomber.systems.InputSystem;
 import io.github.SpaceJomber.systems.RenderingSystem;
@@ -23,6 +25,8 @@ public class GameScreen implements Screen {
         this.game = game;
 
         // TODO: Pass information about type of game - multiplayer or local
+        // After that, the players will be either controlled manually or they will be given
+        // The MultiplayerController or something
 
         // Set up the Sprites
         renderingSystem.RegisterSprite("greenShip",
@@ -32,11 +36,43 @@ public class GameScreen implements Screen {
             16,
             16);
 
+        renderingSystem.RegisterSprite("greenBomb",
+            "tiles/bomb_green.png",
+            0,
+            0,
+            16,
+            16);
+        renderingSystem.RegisterSprite("blueBomb",
+            "tiles/bomb_blue.png",
+            0,
+            0,
+            16,
+            16);
+        renderingSystem.RegisterSprite("redBomb",
+            "tiles/bomb_red.png",
+            0,
+            0,
+            16,
+            16);
+        renderingSystem.RegisterSprite("blackBomb",
+            "tiles/bomb_black.png",
+            0,
+            0,
+            16,
+            16);
+
+        Bomb.intializeBombSpriteList(renderingSystem.GetSprite("redBomb"),
+            renderingSystem.GetSprite("greenBomb"),
+            renderingSystem.GetSprite("blueBomb"),
+            renderingSystem.GetSprite("blackBomb"));
+
         // Set up players
         this.instanceControlledPlayer = new Player(renderingSystem.GetSprite("greenShip"),
             1,
             1,
-            "Dodo");
+            "Dodo",
+            ENTITYID.PLAYER_GREEN,
+            this.renderingSystem);
         this.renderingSystem.AddRenderable(this.instanceControlledPlayer);
 
         // Setup input processor
@@ -62,7 +98,6 @@ public class GameScreen implements Screen {
         // maybe clear rendering list
         // update
         this.renderingSystem.renderAll();
-
     }
 
     @Override

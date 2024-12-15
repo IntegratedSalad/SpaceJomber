@@ -2,6 +2,9 @@ package io.github.SpaceJomber.systems;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import io.github.SpaceJomber.entities.Bomb;
+import io.github.SpaceJomber.entities.ENTITYID;
 import io.github.SpaceJomber.entities.Player;
 
 import java.awt.event.KeyEvent;
@@ -18,6 +21,28 @@ public class InputSystem implements InputProcessor {
         if (keycode == Input.Keys.ESCAPE) {
             Gdx.app.exit();
         } else if (keycode == Input.Keys.SPACE) {
+            Sprite bombSprite = null;
+            final ENTITYID beid = this.controlledPlayer.GetBombID();
+            if (beid != null) {
+                switch (beid) {
+                    case BOMB_RED: {
+                        bombSprite = Bomb.redBombSprite;
+                    }
+                    case BOMB_BLACK: {
+                        bombSprite = Bomb.blackBombSprite;
+                    }
+                    case BOMB_BLUE: {
+                        bombSprite = Bomb.blueBombSprite;
+                    }
+                    case BOMB_GREEN: {
+                        bombSprite = Bomb.greenBombSprite;
+                    } default: {
+                    }
+                }
+            }
+            bombSprite = new Sprite(bombSprite);
+            this.controlledPlayer.PlantBomb(bombSprite, Bomb.GetBombNameFromID(beid), beid);
+            // TODO: Somehow add renderable...
         } else if (keycode == Input.Keys.A) {
             this.controlledPlayer.Move(-1, 0);
             Gdx.app.log("InputSystem, keyDown", "A...");

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import io.github.SpaceJomber.entities.ENTITYID;
 import io.github.SpaceJomber.systems.Renderable;
 
 /*
@@ -87,5 +88,10 @@ public class BoxElement implements Renderable {
         if (this.label != null && this.label.getStyle().font != null) {
             this.label.getStyle().font.dispose();
         }
+    }
+
+    @Override
+    public ENTITYID GetEntityID() {
+        return null;
     }
 }

@@ -15,10 +15,12 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import io.github.SpaceJomber.entities.Bomb;
+import io.github.SpaceJomber.entities.ENTITYID;
 
 import java.util.*;
 
-public class RenderingSystem {
+public class RenderingSystem implements BombPlacementListener {
     /*
      * Rendering system should provide an interface for
      * rendering different menu screens.
@@ -56,6 +58,10 @@ public class RenderingSystem {
 
     public void AddRenderable(Renderable renderable) {
         this.renderableList.add(renderable);
+    }
+
+    public void RemoveRenderable(ENTITYID eid) {
+        this.renderableList.removeIf(r -> r.GetEntityID() == eid);
     }
 
     public void SetBackgroundImage(Texture backgroundImage) {
@@ -102,9 +108,9 @@ public class RenderingSystem {
             this.tiledMapRenderer.setView(this.camera); // this is only a map renderer!!!
             this.tiledMapRenderer.render();
         }
-        spriteBatch.setProjectionMatrix(camera.combined);
+        this.spriteBatch.setProjectionMatrix(this.camera.combined);
         this.spriteBatch.begin();
-        for (Renderable renderable : renderableList) {
+        for (Renderable renderable : this.renderableList) {
             renderable.render(this.spriteBatch);
         }
         this.spriteBatch.end();
@@ -227,5 +233,10 @@ public class RenderingSystem {
         this.spriteBatch.dispose();
         this.mainFont.dispose();
         this.mainTitleFont.dispose();
+    }
+
+    @Override
+    public void onBombPlaced(final int x, final int y, Bomb bomb) {
+        this.AddRenderable(bomb);
     }
 }
