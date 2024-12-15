@@ -20,6 +20,8 @@ public class Player implements Renderable {
     private TiledMap tmRef;
     private BombPlacementListener bombPlacementListener;
 
+    private int bombDelayInS = 4;
+
     public Player(Sprite sprite, int x, int y, String name, ENTITYID eid, BombPlacementListener bombPlacementListener) {
         this.sprite = sprite;
         this.x = x;
@@ -38,6 +40,7 @@ public class Player implements Renderable {
             this.y + y);
 
         Gdx.app.log("Move", "CellId at moveto: " + cellId);
+        // TODO: If there's bomb in the way.
         if (this.tmRef != null) {
             if (cellId != 42) {
                 return;
@@ -57,7 +60,7 @@ public class Player implements Renderable {
             this.y,
             beid,
             this.bombPlacementListener);
-        bomb.PlantBomb(2);
+        bomb.PlantBomb(this.bombDelayInS);
         this.bombPlacementListener.onBombPlaced(this.x, this.y, bomb);
     }
 

@@ -9,7 +9,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.utils.Timer;
 import io.github.SpaceJomber.systems.BombPlacementListener;
 import io.github.SpaceJomber.systems.Renderable;
-
 import java.util.List;
 
 public class Bomb implements Renderable {
@@ -19,6 +18,11 @@ public class Bomb implements Renderable {
     private int x;
     private int y;
     private ENTITYID eid;
+
+    // Queue of bombs.
+    // In RenderSystem, RenderingQueue is based on LinkedList, which is FIFO.
+    // Because you cannot manipulate bomb explosion delay, each bomb is
+    // removed in FIFO order.
 
     private TiledMap tmRef;
     private BombPlacementListener bombPlacementListener;
@@ -46,7 +50,6 @@ public class Bomb implements Renderable {
     public void PlantBomb(final int delayS) {
         // TODO: Place bomb -> method in MapUtils? (New renderable)
         // TODO: Maybe MapSystem, where access to the map can be multithreaded and guarded by locks!
-        // Start timer
         this.scheduleTask(delayS);
 
 //        if (tmRef != null) {

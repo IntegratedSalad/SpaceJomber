@@ -29,6 +29,7 @@ public class RenderingSystem implements BombPlacementListener {
      */
 
     private List<Renderable> renderableList;
+    private Queue<Renderable> renderableQueue;
     private OrthographicCamera camera;
     private OrthogonalTiledMapRenderer tiledMapRenderer;
     private TiledMapTileLayer layer = null;
@@ -44,6 +45,7 @@ public class RenderingSystem implements BombPlacementListener {
 
     public RenderingSystem(OrthographicCamera camera) {
         this.renderableList = new ArrayList<Renderable>();
+        this.renderableQueue = new LinkedList<Renderable>();
         this.shapeRenderer = new ShapeRenderer();
         this.spriteBatch = new SpriteBatch();
         this.textureMap = new HashMap<>();
@@ -60,9 +62,21 @@ public class RenderingSystem implements BombPlacementListener {
         this.renderableList.add(renderable);
     }
 
+    public void AddRenderableToQueue(Renderable renderable) {
+        this.renderableQueue.add(renderable);
+    }
+
+    public void PopRenderableQueue() {
+        this.renderableQueue.poll();
+    }
+
     public void RemoveRenderable(ENTITYID eid) {
         this.renderableList.removeIf(r -> r.GetEntityID() == eid);
     }
+//
+//    public void RemoveRenderable(ENTITYID eid, final int num) {
+//        this.renderableList.removeIf(r -> r.GetEntityID() == eid && r.GetNum() == num);
+//    }
 
     public void SetBackgroundImage(Texture backgroundImage) {
         this.backgroundImage = backgroundImage;
@@ -111,6 +125,9 @@ public class RenderingSystem implements BombPlacementListener {
         this.spriteBatch.setProjectionMatrix(this.camera.combined);
         this.spriteBatch.begin();
         for (Renderable renderable : this.renderableList) {
+            renderable.render(this.spriteBatch);
+        }
+        for (Renderable renderable : this.renderableQueue) {
             renderable.render(this.spriteBatch);
         }
         this.spriteBatch.end();
@@ -189,7 +206,6 @@ public class RenderingSystem implements BombPlacementListener {
                                           final int y,
                                           final int w,
                                           final int h) {
-
         // load only once
         Texture tilesetTexture = this.textureMap.computeIfAbsent(tilesetPath, path -> new Texture(Gdx.files.internal(path)));
         if (this.textureMap.get(tilesetPath) == null) {
@@ -237,11 +253,12 @@ public class RenderingSystem implements BombPlacementListener {
 
     @Override
     public void onBombPlaced(final int x, final int y, Bomb bomb) {
-        this.AddRenderable(bomb);
+        this.AddRenderableToQueue(bomb);
     }
 
     @Override
     public void onBombDetonate(int x, int y, Bomb bomb) {
-        this.RemoveRenderable(bomb.GetEntityID());
+        this.PopRenderableQueue();
     }
+
 }
