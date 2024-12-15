@@ -33,7 +33,10 @@ public class GameScreen implements Screen {
             16);
 
         // Set up players
-        this.instanceControlledPlayer = new Player(renderingSystem.GetSprite("greenShip"), 1, 1);
+        this.instanceControlledPlayer = new Player(renderingSystem.GetSprite("greenShip"),
+            1,
+            1,
+            "Dodo");
         this.renderingSystem.AddRenderable(this.instanceControlledPlayer);
 
         // Setup input processor
@@ -49,6 +52,7 @@ public class GameScreen implements Screen {
         this.renderingSystem.SetTiledMapRenderer();
         this.renderingSystem.SetupCamera();
 
+        this.instanceControlledPlayer.SetMapRf(this.renderingSystem.GetMap());
     }
 
     @Override

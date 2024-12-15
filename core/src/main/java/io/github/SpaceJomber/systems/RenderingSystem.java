@@ -75,6 +75,10 @@ public class RenderingSystem {
         this.SetLayer();
     }
 
+    public TiledMap GetMap() {
+        return this.map;
+    }
+
     public void SetTileSet() {
         if (this.map != null) {
             this.tileset = this.map.getTileSets().getTileSet(0);
