@@ -7,10 +7,9 @@ public class MapUtils {
     // TODO: add tile ids here
 //    static int TILEID_EMPTY_SPACE =
 
-    public static int GetCellIdAtXY(final TiledMapTileLayer layer, final int x, final int y) {
-
-
-        return layer.getCell(x, y).getTile().getId();
+    public static int GetCellIdAtXY(TiledMap tm, final int x, final int y) {
+        TiledMapTileLayer tl = GetLayer(tm);
+        return tl.getCell(x, y).getTile().getId();
 
     }
 

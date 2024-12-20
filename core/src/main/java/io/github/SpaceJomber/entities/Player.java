@@ -35,7 +35,7 @@ public class Player implements Renderable {
 
     public void Move(final int x, final int y) {
         // TODO: MapUtils.GetCellIdAtXY accepts TiledMap not layer
-        final int cellId = MapUtils.GetCellIdAtXY((TiledMapTileLayer)this.tmRef.getLayers().get(0),
+        final int cellId = MapUtils.GetCellIdAtXY(this.tmRef,
             this.x + x,
             this.y + y);
 
