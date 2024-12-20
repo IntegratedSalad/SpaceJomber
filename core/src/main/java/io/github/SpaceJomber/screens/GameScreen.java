@@ -9,9 +9,6 @@ import io.github.SpaceJomber.entities.Player;
 import io.github.SpaceJomber.systems.InputSystem;
 import io.github.SpaceJomber.systems.RenderingSystem;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
 public class GameScreen implements Screen {
 
     private Main game;
@@ -61,10 +58,42 @@ public class GameScreen implements Screen {
             16,
             16);
 
-        Bomb.intializeBombSpriteList(renderingSystem.GetSprite("redBomb"),
+        Bomb.intializeBombSprites(renderingSystem.GetSprite("redBomb"),
             renderingSystem.GetSprite("greenBomb"),
             renderingSystem.GetSprite("blueBomb"),
             renderingSystem.GetSprite("blackBomb"));
+
+        // Bomb fire
+        renderingSystem.RegisterSprite("leftFire",
+            "tiles/Asset-Sheet-with-transparency.png",
+            8,
+            5,
+            16,
+            16);
+        renderingSystem.RegisterSprite("rightFire",
+            "tiles/Asset-Sheet-with-transparency.png",
+            8,
+            5,
+            16,
+            16);
+        renderingSystem.RegisterSprite("upFire",
+            "tiles/Asset-Sheet-with-transparency.png",
+            8,
+            5,
+            16,
+            16);
+        renderingSystem.RegisterSprite("downFire",
+            "tiles/Asset-Sheet-with-transparency.png",
+            8,
+            5,
+            16,
+            16);
+        renderingSystem.RegisterSprite("centerFire",
+            "tiles/Asset-Sheet-with-transparency.png",
+            1,
+            25,
+            16,
+            16);
 
         // Set up players
         this.instanceControlledPlayer = new Player(renderingSystem.GetSprite("greenShip"),

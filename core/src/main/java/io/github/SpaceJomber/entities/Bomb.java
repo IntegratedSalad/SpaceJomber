@@ -4,12 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.utils.Timer;
 import io.github.SpaceJomber.systems.BombPlacementListener;
 import io.github.SpaceJomber.systems.Renderable;
-import java.util.List;
 
 public class Bomb implements Renderable {
 
@@ -77,10 +74,10 @@ public class Bomb implements Renderable {
         return task;
     }
 
-    public static void intializeBombSpriteList(final Sprite r,
-                                        final Sprite g,
-                                        final Sprite blue,
-                                        final Sprite black) {
+    public static void intializeBombSprites(final Sprite r,
+                                            final Sprite g,
+                                            final Sprite blue,
+                                            final Sprite black) {
         redBombSprite = r;
         greenBombSprite = g;
         blueBombSprite = blue;

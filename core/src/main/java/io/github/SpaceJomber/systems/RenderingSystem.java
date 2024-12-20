@@ -29,7 +29,10 @@ public class RenderingSystem implements BombPlacementListener {
      */
 
     private List<Renderable> renderableList;
-    private Queue<Renderable> renderableQueue;
+    private Queue<Renderable> renderableQueue; // bomb queue
+    // There should be one queue with Renderables with ID, and popping queue
+    // is dependent on that ID (so we don't pop something not intended
+    private Queue<Renderable> renderableFlameQueue;
     private OrthographicCamera camera;
     private OrthogonalTiledMapRenderer tiledMapRenderer;
     private TiledMapTileLayer layer = null;
@@ -46,6 +49,7 @@ public class RenderingSystem implements BombPlacementListener {
     public RenderingSystem(OrthographicCamera camera) {
         this.renderableList = new ArrayList<Renderable>();
         this.renderableQueue = new LinkedList<Renderable>();
+        this.renderableFlameQueue = new LinkedList<Renderable>();
         this.shapeRenderer = new ShapeRenderer();
         this.spriteBatch = new SpriteBatch();
         this.textureMap = new HashMap<>();
@@ -254,6 +258,7 @@ public class RenderingSystem implements BombPlacementListener {
     @Override
     public void onBombPlaced(final int x, final int y, Bomb bomb) {
         this.AddRenderableToQueue(bomb);
+        // TODO: Add flames onto separate Queue
     }
 
     @Override
