@@ -21,6 +21,8 @@ public class FireElement implements Renderable {
     private boolean destroysTile = false;
     private FirePlacementListener firePlacementListener;
 
+    private final int timeToExtinguish = 5;
+
     public FireElement(String name, Sprite sprite, int x, int y, ENTITYID eid, TiledMap tmRef, FirePlacementListener firePlacementListener) {
         this.name = name;
         this.sprite = new Sprite(sprite);
@@ -31,6 +33,7 @@ public class FireElement implements Renderable {
         this.eid = eid;
         this.tmRef = tmRef;
         this.firePlacementListener = firePlacementListener;
+        this.scheduleTask(1);
     }
 
     public void SetDestroysTile(final boolean b) {
@@ -49,7 +52,7 @@ public class FireElement implements Renderable {
                 fl.onFireExtinguish(x, y, fe);
             }
         };
-        Timer.instance().scheduleTask(task, delayS);
+        Timer.instance().scheduleTask(task, delayS); // TODO: Maybe convert this to float
         return task;
     }
 
@@ -60,7 +63,7 @@ public class FireElement implements Renderable {
 
     @Override
     public void dispose() {
-
+        this.sprite.getTexture().dispose(); // ?
     }
 
     @Override
