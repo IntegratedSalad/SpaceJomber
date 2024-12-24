@@ -16,11 +16,13 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import io.github.SpaceJomber.entities.Bomb;
+import io.github.SpaceJomber.entities.BombFire;
 import io.github.SpaceJomber.entities.ENTITYID;
+import io.github.SpaceJomber.entities.FireElement;
 
 import java.util.*;
 
-public class RenderingSystem implements BombPlacementListener {
+public class RenderingSystem implements BombPlacementListener, FirePlacementListener {
     /*
      * Rendering system should provide an interface for
      * rendering different menu screens.
@@ -46,6 +48,8 @@ public class RenderingSystem implements BombPlacementListener {
     private HashMap<String, Texture> textureMap = null;
     private HashMap<String, Sprite> spriteMap = null;
 
+    FirePlacementListener firePlacementListener;
+
     public RenderingSystem(OrthographicCamera camera) {
         this.renderableList = new ArrayList<Renderable>();
         this.renderableQueue = new LinkedList<Renderable>();
@@ -70,8 +74,12 @@ public class RenderingSystem implements BombPlacementListener {
         this.renderableQueue.add(renderable);
     }
 
-    public void PopRenderableQueue() {
+    private void PopRenderableQueue() {
         this.renderableQueue.poll();
+    }
+
+    private void PopRenderableFlameQueue() {
+        this.renderableFlameQueue.poll();
     }
 
     public void RemoveRenderable(ENTITYID eid) {
@@ -132,6 +140,9 @@ public class RenderingSystem implements BombPlacementListener {
             renderable.render(this.spriteBatch);
         }
         for (Renderable renderable : this.renderableQueue) {
+            renderable.render(this.spriteBatch);
+        }
+        for (Renderable renderable : this.renderableFlameQueue) {
             renderable.render(this.spriteBatch);
         }
         this.spriteBatch.end();
@@ -258,12 +269,20 @@ public class RenderingSystem implements BombPlacementListener {
     @Override
     public void onBombPlaced(final int x, final int y, Bomb bomb) {
         this.AddRenderableToQueue(bomb);
-        // TODO: Add flames onto separate Queue
     }
 
     @Override
     public void onBombDetonate(int x, int y, Bomb bomb) {
         this.PopRenderableQueue();
+        BombFire bf = new BombFire(x, y, ENTITYID.BOMB_FIRE_MNG, this.map, this); // maybe move that to bomb
+        List<FireElement> fel = bf.SpreadFire();
+        // TODO: maybe create Queue in BombFire and copy this queue.
+        this.renderableFlameQueue.addAll(fel);
+        Gdx.app.log("onBombDetonate", "renderableFlameQueue length" + renderableFlameQueue.size());
     }
 
+    @Override
+    public void onFireExtinguish(int x, int y, FireElement fe) {
+        this.PopRenderableFlameQueue();
+    }
 }

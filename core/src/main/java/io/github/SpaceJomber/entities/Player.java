@@ -42,7 +42,7 @@ public class Player implements Renderable {
         Gdx.app.log("Move", "CellId at moveto: " + cellId);
         // TODO: If there's bomb in the way.
         if (this.tmRef != null) {
-            if (cellId != 42) {
+            if (cellId != MapUtils.TILEID_EMPTY_SPACE) {
                 return;
             }
         }

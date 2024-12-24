@@ -4,6 +4,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import io.github.SpaceJomber.Main;
 import io.github.SpaceJomber.entities.Bomb;
+import io.github.SpaceJomber.entities.BombFire;
 import io.github.SpaceJomber.entities.ENTITYID;
 import io.github.SpaceJomber.entities.Player;
 import io.github.SpaceJomber.systems.InputSystem;
@@ -67,33 +68,38 @@ public class GameScreen implements Screen {
         renderingSystem.RegisterSprite("leftFire",
             "tiles/Asset-Sheet-with-transparency.png",
             8,
-            5,
+            6,
             16,
             16);
         renderingSystem.RegisterSprite("rightFire",
             "tiles/Asset-Sheet-with-transparency.png",
             8,
-            5,
+            6,
             16,
             16);
         renderingSystem.RegisterSprite("upFire",
             "tiles/Asset-Sheet-with-transparency.png",
             8,
-            5,
+            6,
             16,
             16);
         renderingSystem.RegisterSprite("downFire",
             "tiles/Asset-Sheet-with-transparency.png",
             8,
-            5,
+            6,
             16,
             16);
         renderingSystem.RegisterSprite("centerFire",
             "tiles/Asset-Sheet-with-transparency.png",
             1,
-            25,
+            24,
             16,
             16);
+        BombFire.initializeFireSprites(renderingSystem.GetSprite("centerFire"),
+            renderingSystem.GetSprite("upFire"),
+            renderingSystem.GetSprite("downFire"),
+            renderingSystem.GetSprite("leftFire"),
+            renderingSystem.GetSprite("rightFire"));
 
         // Set up players
         this.instanceControlledPlayer = new Player(renderingSystem.GetSprite("greenShip"),
