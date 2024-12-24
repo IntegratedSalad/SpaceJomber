@@ -70,7 +70,15 @@ public class BombFire {
         fireElements.add(new FireElement("fireElementCenter", centerFireSprite,
             this.x, this.y, ENTITYID.BOMB_FIRE_CENTER, this.tmRef, this.firePlacementListener));
 
-        // TODO: Iterate over every four directions
+        /*
+        * TODO:
+        *  BUG: Because the last fire, marked as that which destroys terrain isn't placed at the destructible
+        *       It doesn't destroy anything. To conquer this, another fire is created in that place.
+        *       Either pass the empty tile sprite to be placed there or fix it in other way.
+        *       It might be a problem, because even if tile will be empty tile (walkable), there is still fire object there.
+        *       If we will test collision for this, it will still pass and it will appear as someone was killed
+        *       by thin air.
+        * */
         // Iterate leftside
         int mx = this.x - 1;
         int my = this.y;
@@ -82,6 +90,8 @@ public class BombFire {
             mx--;
         }
         if (MapUtils.GetCellIdAtXY(this.tmRef, mx, this.y) == MapUtils.TILEID_DESTRUCTIBLE_TILE) {
+            FireElement nfe = new FireElement("null", leftFireSprite, mx, this.y, ENTITYID.BOMB_FIRE_UP, this.tmRef, this.firePlacementListener);
+            fireElements.add(nfe);
             fireElements.get(fireElements.size() - 1).SetDestroysTile(true);
         }
         // Iterate rightside
@@ -94,7 +104,10 @@ public class BombFire {
             mx++;
         }
         if (MapUtils.GetCellIdAtXY(this.tmRef, mx, this.y) == MapUtils.TILEID_DESTRUCTIBLE_TILE) {
+            FireElement nfe = new FireElement("null", leftFireSprite, mx, this.y, ENTITYID.BOMB_FIRE_UP, this.tmRef, this.firePlacementListener);
+            fireElements.add(nfe);
             fireElements.get(fireElements.size() - 1).SetDestroysTile(true);
+            // Or maybe just delete it?
         }
         // Iterate upside
         mx = this.x;
@@ -107,6 +120,9 @@ public class BombFire {
             my++;
         }
         if (MapUtils.GetCellIdAtXY(this.tmRef, this.x, my) == MapUtils.TILEID_DESTRUCTIBLE_TILE) {
+            // TODO: Bug -> this one is one position behind
+            FireElement nfe = new FireElement("null", leftFireSprite, this.x, my, ENTITYID.BOMB_FIRE_UP, this.tmRef, this.firePlacementListener);
+            fireElements.add(nfe);
             fireElements.get(fireElements.size() - 1).SetDestroysTile(true);
         }
         // Iterate downside
@@ -120,6 +136,8 @@ public class BombFire {
             my--;
         }
         if (MapUtils.GetCellIdAtXY(this.tmRef, this.x, my) == MapUtils.TILEID_DESTRUCTIBLE_TILE) {
+            FireElement nfe = new FireElement("null", leftFireSprite, this.x, my, ENTITYID.BOMB_FIRE_UP, this.tmRef, this.firePlacementListener);
+            fireElements.add(nfe);
             fireElements.get(fireElements.size() - 1).SetDestroysTile(true);
         }
 

@@ -19,6 +19,7 @@ import io.github.SpaceJomber.entities.Bomb;
 import io.github.SpaceJomber.entities.BombFire;
 import io.github.SpaceJomber.entities.ENTITYID;
 import io.github.SpaceJomber.entities.FireElement;
+import io.github.SpaceJomber.utils.MapUtils;
 
 import java.util.*;
 
@@ -109,6 +110,10 @@ public class RenderingSystem implements BombPlacementListener, FirePlacementList
 
     public TiledMap GetMap() {
         return this.map;
+    }
+
+    public TiledMapTileSet GetTileset() {
+        return this.tileset;
     }
 
     public void SetTileSet() {
@@ -276,6 +281,17 @@ public class RenderingSystem implements BombPlacementListener, FirePlacementList
         this.PopRenderableQueue();
         BombFire bf = new BombFire(x, y, ENTITYID.BOMB_FIRE_MNG, this.map, this); // maybe move that to bomb
         List<FireElement> fel = bf.SpreadFire();
+        for (FireElement fireElement : fel) {
+            if (fireElement.GetDestroysTile()) {
+                TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
+                cell.setTile(this.tileset.getTile(MapUtils.TILEID_EMPTY_SPACE));
+                MapUtils.SetCell(this.map, fireElement.GetX(), fireElement.GetY(), cell);
+                Gdx.app.log("onBombDetonate", "Fire at x: " +
+                    fireElement.GetX() + ", y: " +
+                    fireElement.GetY() + "destroysTile");
+//                fel.remove(fireElement);
+            }
+        }
         // TODO: maybe create Queue in BombFire and copy this queue.
         this.renderableFlameQueue.addAll(fel);
         Gdx.app.log("onBombDetonate", "renderableFlameQueue length" + renderableFlameQueue.size());

@@ -40,6 +40,18 @@ public class FireElement implements Renderable {
         this.destroysTile = b;
     }
 
+    public boolean GetDestroysTile() {
+        return this.destroysTile;
+    }
+
+    public int GetX() {
+        return this.x;
+    }
+
+    public int GetY() {
+        return this.y;
+    }
+
     private Timer.Task scheduleTask(int delayS) {
         FirePlacementListener fl = this.firePlacementListener;
         final int x = this.x;

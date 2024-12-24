@@ -1,5 +1,6 @@
 package io.github.SpaceJomber.utils;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 
 public class MapUtils {
@@ -11,6 +12,16 @@ public class MapUtils {
     public static int GetCellIdAtXY(TiledMap tm, final int x, final int y) {
         TiledMapTileLayer tl = GetLayer(tm);
         return tl.getCell(x, y).getTile().getId();
+    }
+
+    public static void SetCellToNull(TiledMap tm, final int x, final int y) {
+        TiledMapTileLayer tl = GetLayer(tm);
+        tl.getCell(x, y).setTile(null);
+    }
+
+    public static void SetCell(TiledMap tm, final int x, final int y, TiledMapTileLayer.Cell cell) {
+        TiledMapTileLayer tl = GetLayer(tm);
+        tl.setCell(x, y, cell);
     }
 
     public static TiledMapTileLayer GetLayer(TiledMap tm) {
