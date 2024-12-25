@@ -20,7 +20,7 @@ public class Player implements Renderable {
     private TiledMap tmRef;
     private BombPlacementListener bombPlacementListener;
 
-    private int bombDelayInS = 4;
+    private int bombDelayInS = 2;
 
     public Player(Sprite sprite, int x, int y, String name, ENTITYID eid, BombPlacementListener bombPlacementListener) {
         this.sprite = sprite;
