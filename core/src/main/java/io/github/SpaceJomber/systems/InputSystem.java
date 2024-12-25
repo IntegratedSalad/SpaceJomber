@@ -21,6 +21,8 @@ public class InputSystem implements InputProcessor {
         if (keycode == Input.Keys.ESCAPE) {
             Gdx.app.exit();
         } else if (keycode == Input.Keys.SPACE) {
+
+            // TODO: Only one bomb at a time
             Sprite bombSprite = null;
             final ENTITYID beid = this.controlledPlayer.GetBombID();
             if (beid != null) {

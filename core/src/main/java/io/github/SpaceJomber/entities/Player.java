@@ -22,6 +22,8 @@ public class Player implements Renderable {
 
     private int bombDelayInS = 2;
 
+    private boolean bombPlanted = false;
+
     public Player(Sprite sprite, int x, int y, String name, ENTITYID eid, BombPlacementListener bombPlacementListener) {
         this.sprite = sprite;
         this.x = x;
@@ -52,6 +54,14 @@ public class Player implements Renderable {
         this.y += y;
     }
 
+    public void SetBombPlanted(final boolean isPlanted) {
+        this.bombPlanted = isPlanted;
+    }
+
+    public boolean GetBombPlanted() {
+        return this.bombPlanted;
+    }
+
     public void PlantBomb(Sprite sprite, final String name, ENTITYID beid) {
         Gdx.app.log("Player, PlantBomb", "Bomb has been planted.");
         Bomb bomb = new Bomb(sprite,
@@ -62,6 +72,7 @@ public class Player implements Renderable {
             this.bombPlacementListener);
         bomb.PlantBomb(this.bombDelayInS);
         this.bombPlacementListener.onBombPlaced(this.x, this.y, bomb);
+        this.bombPlanted = true;
     }
 
     public void SetMapRf(TiledMap tmRef) {

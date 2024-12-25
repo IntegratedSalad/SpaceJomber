@@ -29,6 +29,8 @@ public class Bomb implements Renderable {
     public static Sprite redBombSprite;
     public static Sprite blackBombSprite;
 
+    // TODO: Information about player (final reference?)
+
     public Bomb(Sprite sprite, String name, int x, int y, ENTITYID eid, BombPlacementListener bombPlacementListener) {
         this.sprite = sprite;
         this.name = name; // to identify and remove from list
@@ -48,14 +50,6 @@ public class Bomb implements Renderable {
         // TODO: Place bomb -> method in MapUtils? (New renderable)
         // TODO: Maybe MapSystem, where access to the map can be multithreaded and guarded by locks!
         this.scheduleTask(delayS);
-
-//        if (tmRef != null) {
-//            Cell cell = new Cell();
-//            cell.setTile()
-//        }
-    }
-
-    private void Explode() {
     }
 
     private Timer.Task scheduleTask(int delayS) {

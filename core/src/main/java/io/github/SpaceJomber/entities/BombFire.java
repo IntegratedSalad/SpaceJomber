@@ -25,7 +25,6 @@ public class BombFire {
     private ENTITYID eid;
 
     private TiledMap tmRef;
-    private BombPlacementListener bombPlacementListener;
     private FirePlacementListener firePlacementListener;
 
     public static Sprite centerFireSprite;
@@ -58,18 +57,23 @@ public class BombFire {
         rightFireSprite = r;
         rightFireSprite.setRotation(180);
         rightFireSprite.setOriginCenter();
-//        leftFireSprite.setRotation(180);
-//        leftFireSprite.setOriginCenter();
+    }
+
+    private void SetFireDestroysTerrain(final int x, final int y, List<FireElement> l, final Sprite sprite) {
+        if (MapUtils.GetCellIdAtXY(this.tmRef, x, y) == MapUtils.TILEID_DESTRUCTIBLE_TILE) {
+            FireElement nfe = new FireElement("null", sprite, x, y, ENTITYID.BOMB_FIRE_UP, this.tmRef, this.firePlacementListener);
+            l.add(nfe);
+            l.get(l.size() - 1).SetDestroysTile(true);
+        }
     }
 
     public List<FireElement> SpreadFire() {
         List<FireElement> fireElements = new ArrayList<>();
-
         Gdx.app.log("SpreadFire", "Spreading fire at x: " + x + ", y: " + y);
 
         fireElements.add(new FireElement("fireElementCenter", centerFireSprite,
             this.x, this.y, ENTITYID.BOMB_FIRE_CENTER, this.tmRef, this.firePlacementListener));
-        
+
         // Iterate leftside
         int mx = this.x - 1;
         int my = this.y;
@@ -80,11 +84,7 @@ public class BombFire {
             Gdx.app.log("SpreadFire", "Left fire at x: " + mx + ", y: " + y);
             mx--;
         }
-        if (MapUtils.GetCellIdAtXY(this.tmRef, mx, this.y) == MapUtils.TILEID_DESTRUCTIBLE_TILE) {
-            FireElement nfe = new FireElement("null", leftFireSprite, mx, this.y, ENTITYID.BOMB_FIRE_UP, this.tmRef, this.firePlacementListener);
-            fireElements.add(nfe);
-            fireElements.get(fireElements.size() - 1).SetDestroysTile(true);
-        }
+        this.SetFireDestroysTerrain(mx, this.y, fireElements, leftFireSprite);
         // Iterate rightside
         mx = this.x + 1;
         while (MapUtils.GetCellIdAtXY(this.tmRef, mx, this.y) == MapUtils.TILEID_EMPTY_SPACE) {
@@ -94,12 +94,7 @@ public class BombFire {
             Gdx.app.log("SpreadFire", "Right fire at x: " + mx + ", y: " + y);
             mx++;
         }
-        if (MapUtils.GetCellIdAtXY(this.tmRef, mx, this.y) == MapUtils.TILEID_DESTRUCTIBLE_TILE) {
-            FireElement nfe = new FireElement("null", rightFireSprite, mx, this.y, ENTITYID.BOMB_FIRE_UP, this.tmRef, this.firePlacementListener);
-            fireElements.add(nfe);
-            fireElements.get(fireElements.size() - 1).SetDestroysTile(true);
-            // Or maybe just delete it?
-        }
+        this.SetFireDestroysTerrain(mx, this.y, fireElements, rightFireSprite);
         // Iterate upside
         mx = this.x;
         my = this.y + 1;
@@ -110,11 +105,7 @@ public class BombFire {
             Gdx.app.log("SpreadFire", "Up fire at x: " + x + ", y: " + my);
             my++;
         }
-        if (MapUtils.GetCellIdAtXY(this.tmRef, this.x, my) == MapUtils.TILEID_DESTRUCTIBLE_TILE) {
-            FireElement nfe = new FireElement("null", upFireSprite, this.x, my, ENTITYID.BOMB_FIRE_UP, this.tmRef, this.firePlacementListener);
-            fireElements.add(nfe);
-            fireElements.get(fireElements.size() - 1).SetDestroysTile(true);
-        }
+        SetFireDestroysTerrain(this.x, my, fireElements, upFireSprite);
         // Iterate downside
         mx = this.x;
         my = this.y - 1;
@@ -125,28 +116,8 @@ public class BombFire {
             Gdx.app.log("SpreadFire", "Down fire at x: " + x + ", y: " + my);
             my--;
         }
-        if (MapUtils.GetCellIdAtXY(this.tmRef, this.x, my) == MapUtils.TILEID_DESTRUCTIBLE_TILE) {
-            FireElement nfe = new FireElement("null", downFireSprite, this.x, my, ENTITYID.BOMB_FIRE_UP, this.tmRef, this.firePlacementListener);
-            fireElements.add(nfe);
-            fireElements.get(fireElements.size() - 1).SetDestroysTile(true);
-        }
-
+        SetFireDestroysTerrain(this.x, my, fireElements, downFireSprite);
         Gdx.app.log("SpreadFire", "fireElements length = " + fireElements.size());
         return fireElements;
     }
-
-//    @Override
-//    public void render(SpriteBatch sbatch) {
-//
-//    }
-//
-//    @Override
-//    public void dispose() {
-//
-//    }
-//
-//    @Override
-//    public ENTITYID GetEntityID() {
-//        return null;
-//    }
 }
