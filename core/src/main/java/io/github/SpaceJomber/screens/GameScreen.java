@@ -7,6 +7,7 @@ import io.github.SpaceJomber.entities.Bomb;
 import io.github.SpaceJomber.entities.BombFire;
 import io.github.SpaceJomber.entities.ENTITYID;
 import io.github.SpaceJomber.entities.Player;
+import io.github.SpaceJomber.systems.FireCollisionSystem;
 import io.github.SpaceJomber.systems.InputSystem;
 import io.github.SpaceJomber.systems.RenderingSystem;
 
@@ -14,6 +15,7 @@ public class GameScreen implements Screen {
 
     private Main game;
     private RenderingSystem renderingSystem;
+    private FireCollisionSystem fireCollisionSystem;
 
     private Player instanceControlledPlayer = null;
 
@@ -113,6 +115,8 @@ public class GameScreen implements Screen {
         // Setup input processor
         InputSystem ins = new InputSystem(this.instanceControlledPlayer);
         Gdx.input.setInputProcessor(ins);
+        this.fireCollisionSystem = new FireCollisionSystem(renderingSystem.GetRenderableFlameQueue());
+        this.fireCollisionSystem.addPlayer(this.instanceControlledPlayer);
     }
 
     @Override
@@ -132,6 +136,11 @@ public class GameScreen implements Screen {
 //        this.renderingSystem
         // maybe clear rendering list
         // update
+        if (!this.instanceControlledPlayer.GetIsAlive()) {
+            Gdx.app.log("render", "Player has died");
+            Gdx.app.exit();
+        }
+        this.fireCollisionSystem.checkCollisions();
         this.renderingSystem.renderAll();
     }
 

@@ -261,6 +261,10 @@ public class RenderingSystem implements BombPlacementListener, FirePlacementList
         return this.spriteMap.get(spriteString);
     }
 
+    public Queue<Renderable> GetRenderableFlameQueue() {
+        return this.renderableFlameQueue;
+    }
+
     public void dispose() {
         for (Renderable renderable : renderableList) {
             renderable.dispose();

@@ -21,8 +21,9 @@ public class Player implements Renderable {
     private BombPlacementListener bombPlacementListener;
 
     private int bombDelayInS = 2;
-
     private boolean bombPlanted = false;
+
+    private boolean isAlive = true;
 
     public Player(Sprite sprite, int x, int y, String name, ENTITYID eid, BombPlacementListener bombPlacementListener) {
         this.sprite = sprite;
@@ -60,6 +61,14 @@ public class Player implements Renderable {
 
     public boolean GetBombPlanted() {
         return this.bombPlanted;
+    }
+
+    public int GetX() {
+        return this.x;
+    }
+
+    public int GetY() {
+        return this.y;
     }
 
     public void PlantBomb(Sprite sprite, final String name, ENTITYID beid) {
@@ -100,6 +109,15 @@ public class Player implements Renderable {
             default:
                 return null;
         }
+    }
+
+    public boolean GetIsAlive() {
+        return this.isAlive;
+    }
+
+    public void Die() {
+        this.isAlive = false;
+        Gdx.app.log("Player", "Player " + this.name + " died!");
     }
 
     @Override
