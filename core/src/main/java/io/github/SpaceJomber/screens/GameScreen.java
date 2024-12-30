@@ -133,9 +133,6 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-//        this.renderingSystem
-        // maybe clear rendering list
-        // update
         if (!this.instanceControlledPlayer.GetIsAlive()) {
             Gdx.app.log("render", "Player has died");
             Gdx.app.exit();
