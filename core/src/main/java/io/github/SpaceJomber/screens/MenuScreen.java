@@ -62,6 +62,8 @@ public class MenuScreen implements Screen {
         float startY = Gdx.graphics.getHeight() * 0.3f; // Start at 30% of screen height
         float spacing = 15;
 
+        final Main mainGame = this.game;
+
         // Create and position buttons
         this.localGameButton = new ShapeTextButton(
             this.renderingSystem.getShapeRenderer(), // TODO: Don't expose internals of the rendering system...
@@ -75,7 +77,6 @@ public class MenuScreen implements Screen {
         this.localGameButton.setSize(buttonWidth, buttonHeight);
         this.localGameButton.setPosition(xPosition, startY);
         this.stage.addActor(this.localGameButton);
-        final Main mainGame = this.game;
         this.localGameButton.addListener(new InputListener() {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 mainGame.SetupGameScreen();
@@ -95,6 +96,12 @@ public class MenuScreen implements Screen {
         this.lobbyButton.setSize(buttonWidth, buttonHeight);
         this.lobbyButton.setPosition(xPosition, startY - (buttonHeight + spacing) * 1);
         this.stage.addActor(this.lobbyButton);
+        this.lobbyButton.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                mainGame.SetupMultiplayerDecisionScreen();
+                return true;
+            }
+        });
 
         this.scoreButton = new ShapeTextButton(
             this.renderingSystem.getShapeRenderer(),

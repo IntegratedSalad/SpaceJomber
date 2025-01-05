@@ -10,9 +10,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import io.github.SpaceJomber.networking.MultiplayerClient;
-import io.github.SpaceJomber.screens.GameScreen;
-import io.github.SpaceJomber.screens.MenuScreen;
-import io.github.SpaceJomber.screens.ScoreScreen;
+import io.github.SpaceJomber.screens.*;
 import io.github.SpaceJomber.systems.RenderingSystem;
 
 /*
@@ -48,6 +46,9 @@ public class Main extends Game {
     private GameScreen gameScreen;
     private MenuScreen menuScreen;
     private ScoreScreen scoreScreen;
+    private MultiplayerDecisionScreen multiplayerDecisionScreen;
+    private CreateLobbyScreen createLobbyScreen;
+    private JoinLobbyScreen joinLobbyScreen;
 
     public Main(MultiplayerClient multiplayerClient) {
         this.multiplayerClient = multiplayerClient;
@@ -95,10 +96,28 @@ public class Main extends Game {
         this.setScreen(this.gameScreen);
     }
 
-//    public void SetupMultiplayerGameScreen() {
-//        OrthographicCamera camera = new OrthographicCamera();
-//        RenderingSystem multiplayerGame = new RenderingSystem(camera);
-//    }
+    public void SetupMultiplayerDecisionScreen() {
+        OrthographicCamera camera = new OrthographicCamera();
+        RenderingSystem lobbyRenderingSystem = new RenderingSystem(camera);
+        lobbyRenderingSystem.RegisterMainFont("roboticsfont.ttf");
+        this.multiplayerDecisionScreen = new MultiplayerDecisionScreen(lobbyRenderingSystem, this);
+        this.setScreen(this.multiplayerDecisionScreen);
+    }
+
+    public void SetupCreateLobbyScreen() {
+        OrthographicCamera camera = new OrthographicCamera();
+        RenderingSystem lobbyRenderingSystem = new RenderingSystem(camera);
+        lobbyRenderingSystem.RegisterMainFont("roboticsfont.ttf");
+        this.createLobbyScreen = new CreateLobbyScreen(lobbyRenderingSystem, this);
+        this.setScreen(this.createLobbyScreen);
+    }
+
+    public void JoinLobbyScreen() {
+        OrthographicCamera camera = new OrthographicCamera();
+        RenderingSystem lobbyRenderingSystem = new RenderingSystem(camera);
+        lobbyRenderingSystem.RegisterMainFont("roboticsfont.ttf");
+        this.joinLobbyScreen = new JoinLobbyScreen(lobbyRenderingSystem, this);
+    }
 
     @Override
     public void render() {
