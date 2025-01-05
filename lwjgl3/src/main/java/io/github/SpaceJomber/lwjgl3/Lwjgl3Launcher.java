@@ -15,7 +15,7 @@ public class Lwjgl3Launcher {
     private static Lwjgl3Application createApplication() {
         // Note the instantiation of Main!
         // This is the entry point for the Game Logic.
-        MultiplayerClient client = new MultiplayerClient();
+        MultiplayerClient client = new MultiplayerClient("127.0.0.1", 2137);
         return new Lwjgl3Application(new Main(client), getDefaultConfiguration());
     }
 

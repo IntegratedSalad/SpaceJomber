@@ -108,7 +108,8 @@ public class Main extends Game {
         OrthographicCamera camera = new OrthographicCamera();
         RenderingSystem lobbyRenderingSystem = new RenderingSystem(camera);
         lobbyRenderingSystem.RegisterMainFont("roboticsfont.ttf");
-        this.createLobbyScreen = new CreateLobbyScreen(lobbyRenderingSystem, this);
+        this.createLobbyScreen = new CreateLobbyScreen(lobbyRenderingSystem, this, this.multiplayerClient);
+        Gdx.app.debug("Main", "SetupCreateLobbyScreen called");
         this.setScreen(this.createLobbyScreen);
     }
 

@@ -30,8 +30,8 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
-            out = new PrintWriter(this.socket.getOutputStream(), true);
+            this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+            this.out = new PrintWriter(this.socket.getOutputStream(), true);
 
             Message message;
             String rawInput;
@@ -47,6 +47,8 @@ public class ClientHandler implements Runnable {
                     case MSG_USER_CREATED_LOBBY: {
                         final String lobbyHash = this.server.getLobbyManager().CreateLobby();
                         System.out.println("Client " + this.socket.getInetAddress() + "created lobby " + lobbyHash);
+
+                        // TODO: Send Lobby UUID to client
                         break;
                     }
 

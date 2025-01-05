@@ -17,9 +17,6 @@ import io.github.SpaceJomber.UIElements.ShapeTextButton;
 import io.github.SpaceJomber.systems.RenderingSystem;
 import org.w3c.dom.Text;
 
-/*
-* Waiting for up to 4 players to join the game
-*  */
 public class MultiplayerDecisionScreen implements Screen {
 
     private RenderingSystem renderingSystem;
@@ -42,7 +39,7 @@ public class MultiplayerDecisionScreen implements Screen {
 
     @Override
     public void show() {
-        Gdx.app.log("MenuScreen", "show() called");
+        Gdx.app.log("MultiplayerDecisionScreen", "show() called");
         this.stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(this.stage);
 
@@ -59,7 +56,7 @@ public class MultiplayerDecisionScreen implements Screen {
         final Main mainGame = this.game;
 
         // TODO: Button: Create Lobby
-        this.joinLobbyButton = new ShapeTextButton(
+        this.createLobbyButton = new ShapeTextButton(
             this.renderingSystem.getShapeRenderer(),
             "Create Lobby",
             textButtonStyle,
@@ -68,12 +65,19 @@ public class MultiplayerDecisionScreen implements Screen {
             Color.CYAN,
             Color.WHITE
         );
-        this.joinLobbyButton.setSize(buttonWidth, buttonHeight);
-        this.joinLobbyButton.setPosition(xPosition, yPosition);
-        this.stage.addActor(this.joinLobbyButton);
+        this.createLobbyButton.setSize(buttonWidth, buttonHeight);
+        this.createLobbyButton.setPosition(xPosition, yPosition);
+        this.stage.addActor(this.createLobbyButton);
+        this.createLobbyButton.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                mainGame.SetupCreateLobbyScreen();
+                Gdx.app.debug("MultiplayerDecisionScreen", "Creating lobby screen...");
+                return true;
+            }
+        });
 
         // TODO: Button: Join Lobby
-        this.createLobbyButton = new ShapeTextButton(
+        this.joinLobbyButton = new ShapeTextButton(
             this.renderingSystem.getShapeRenderer(),
             "Join Lobby",
             textButtonStyle,
@@ -82,9 +86,9 @@ public class MultiplayerDecisionScreen implements Screen {
             Color.CYAN,
             Color.WHITE
         );
-        this.createLobbyButton.setSize(buttonWidth, buttonHeight);
-        this.createLobbyButton.setPosition(xPosition + (buttonWidth + spacing), yPosition);
-        this.stage.addActor(this.createLobbyButton);
+        this.joinLobbyButton.setSize(buttonWidth, buttonHeight);
+        this.joinLobbyButton.setPosition(xPosition + (buttonWidth + spacing), yPosition);
+        this.stage.addActor(this.joinLobbyButton);
 
         this.backButton = new ShapeTextButton(
             this.renderingSystem.getShapeRenderer(),
@@ -98,7 +102,7 @@ public class MultiplayerDecisionScreen implements Screen {
         this.backButton.setSize(buttonWidth, buttonHeight);
         this.backButton.setPosition(xPosition + (buttonWidth + spacing)*2, yPosition);
         this.stage.addActor(this.backButton);
-        this.stage.addListener(new InputListener() {
+        this.backButton.addListener(new InputListener() {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 mainGame.SetupMainMenu();
                 return true;
