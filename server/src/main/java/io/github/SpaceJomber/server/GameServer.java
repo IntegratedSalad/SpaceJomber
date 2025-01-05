@@ -12,14 +12,20 @@ import java.util.concurrent.Executors;
 *
 * Game Server can serve N concurrent sessions, where each
 * session contains up to four players.
+* So this class manages all things concurrent/multiplayer
 * */
 public class GameServer {
     private final int port;
-    private final ExecutorService threadPool = Executors.newFixedThreadPool(4);
-    private final int maxConnectedClients = 4;
+    private final ExecutorService clientThreadPool = Executors.newFixedThreadPool(64);
+    private final ExecutorService sessionThreadPool = Executors.newFixedThreadPool(16);
+    // Maximum of 16 sessions with four players
+
+    private final int maxNumberOfSessions = 16;
 
     private List<ClientHandler> currentLobby = new ArrayList<>();
     private int sessionCounter = 0;
+
+    private final LobbyManager lobbyManager = new LobbyManager();
 
     public GameServer(int port) {
         this.port = port;
@@ -31,29 +37,29 @@ public class GameServer {
             int connectedPlayers = 0;
 
             List<ClientHandler> currentSessionPlayers = new ArrayList<>();
-            while (true) {
-                if (connectedPlayers < this.maxConnectedClients) {
-                    Socket clientSocket = serverSocket.accept();
-                    System.out.println("New client connected " + clientSocket.getInetAddress());
 
-                    ClientHandler clientHandler = new ClientHandler(clientSocket, this);
-                    currentSessionPlayers.add(clientHandler);
-                }
+            while (true) {
+                // This happens in lobby
+                // Won't happen anywhere else, because when clicking
+                // "New Multiplayer Game"
+                // Client can create or join lobby.
+                // If he creates a lobby, he generates a hash, that he has to send everyone.
+                // If he wishes to join, he enters this hash.
+                // Each lobby can hold only four players that press space to signal
+                // that they are ready.
+                // If all are ready, the game starts.
+
+                Socket clientSocket = serverSocket.accept();
+                System.out.println("New connection from " + clientSocket.getInetAddress());
+
+                ClientHandler clientHandler = new ClientHandler(clientSocket, this);
+                this.clientThreadPool.execute(clientHandler);
+
             }
         }
     }
 
-    public synchronized void checkLobbyReadyState() {
-        boolean allReady = currentLobby.stream().allMatch(ClientHandler::isReady);
-        if (allReady) {
-            startGameSession();
-        }
-    }
-
-    private void startGameSession() {
-        System.out.println("Starting game session with " + currentLobby.size() + " players.");
-        GameSession gameSession = new GameSession(new ArrayList<>(currentLobby), ++sessionCounter);
-        threadPool.execute(gameSession);
-        currentLobby.clear(); // Reset lobby for new players
+    public LobbyManager getLobbyManager() {
+        return this.lobbyManager;
     }
 }

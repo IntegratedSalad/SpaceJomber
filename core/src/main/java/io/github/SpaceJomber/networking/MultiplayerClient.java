@@ -1,5 +1,9 @@
 package io.github.SpaceJomber.networking;
 
+/*
+* This entity communicates with server -> sends messages to the socket.
+* Server handles these via ClientHandler
+* */
 public class MultiplayerClient {
 
     private int port;

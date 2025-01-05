@@ -8,17 +8,17 @@ import java.util.List;
 * */
 public class GameSession implements Runnable {
     private final List<ClientHandler> players;
-    private final int sessionId;
+    private final String sessionHash;
 
-    public GameSession(List<ClientHandler> players, int sessionId) {
+    public GameSession(List<ClientHandler> players, String sessionHash) {
         this.players = players;
-        this.sessionId = sessionId;
+        this.sessionHash = sessionHash;
     }
 
     @Override
     public void run() {
-        System.out.println("Starting game session: " + sessionId);
-        broadcast("Game session " + sessionId + " is starting!");
+        System.out.println("Starting game session: " + sessionHash);
+        broadcast("Game session " + sessionHash + " is starting!");
 
         // Game logic here
         for (ClientHandler player : players) {
@@ -32,7 +32,7 @@ public class GameSession implements Runnable {
             e.printStackTrace();
         }
 
-        System.out.println("Game session " + sessionId + " ended.");
+        System.out.println("Game session " + sessionHash + " ended.");
     }
 
     private void broadcast(String message) {
