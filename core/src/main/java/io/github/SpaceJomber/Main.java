@@ -95,6 +95,11 @@ public class Main extends Game {
         this.setScreen(this.gameScreen);
     }
 
+//    public void SetupMultiplayerGameScreen() {
+//        OrthographicCamera camera = new OrthographicCamera();
+//        RenderingSystem multiplayerGame = new RenderingSystem(camera);
+//    }
+
     @Override
     public void render() {
         super.render();

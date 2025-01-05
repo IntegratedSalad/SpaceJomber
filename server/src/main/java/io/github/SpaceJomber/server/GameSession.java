@@ -22,7 +22,7 @@ public class GameSession implements Runnable {
 
         // Game logic here
         for (ClientHandler player : players) {
-            new Thread(player).start(); // Handle each player's communication in its own thread
+//            new Thread(player).start(); // <- Wrong!
         }
 
         // Wait for game to end (optional synchronization here)

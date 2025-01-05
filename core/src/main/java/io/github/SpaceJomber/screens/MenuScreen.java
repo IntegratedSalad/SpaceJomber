@@ -1,5 +1,4 @@
 package io.github.SpaceJomber.screens;
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -29,7 +28,7 @@ public class MenuScreen implements Screen {
     private Stage stage; // handles UI elements - an input processor
 
     private ShapeTextButton localGameButton;
-    private ShapeTextButton multiplayerGameButton;
+    private ShapeTextButton lobbyButton;
     private ShapeTextButton scoreButton;
     private ShapeTextButton exitButton;
     private RenderableText titleText;
@@ -84,18 +83,18 @@ public class MenuScreen implements Screen {
             }
         });
 
-        this.multiplayerGameButton = new ShapeTextButton(
+        this.lobbyButton = new ShapeTextButton(
             this.renderingSystem.getShapeRenderer(),
-            "New Multiplayer Game",
+            "Create or Join Lobby",
             textButtonStyle,
             Color.BLACK,
             Color.BLUE,
             Color.CYAN,
             Color.WHITE
         );
-        this.multiplayerGameButton.setSize(buttonWidth, buttonHeight);
-        this.multiplayerGameButton.setPosition(xPosition, startY - (buttonHeight + spacing) * 1);
-        this.stage.addActor(this.multiplayerGameButton);
+        this.lobbyButton.setSize(buttonWidth, buttonHeight);
+        this.lobbyButton.setPosition(xPosition, startY - (buttonHeight + spacing) * 1);
+        this.stage.addActor(this.lobbyButton);
 
         this.scoreButton = new ShapeTextButton(
             this.renderingSystem.getShapeRenderer(),

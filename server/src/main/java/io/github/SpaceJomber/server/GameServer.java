@@ -55,6 +55,12 @@ public class GameServer {
                 ClientHandler clientHandler = new ClientHandler(clientSocket, this);
                 this.clientThreadPool.execute(clientHandler);
 
+                // TODO: Listen for the "create lobby" and "join lobby" messages.
+
+
+                // TODO: When user clicks "New Multiplayer Game", he connects to the server
+
+
             }
         }
     }
