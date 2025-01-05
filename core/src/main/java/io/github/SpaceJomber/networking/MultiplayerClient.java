@@ -32,4 +32,8 @@ public class MultiplayerClient {
     public void setAddress(String address) {
         this.address = address;
     }
+
+    public void Connect() {
+
+    }
 }

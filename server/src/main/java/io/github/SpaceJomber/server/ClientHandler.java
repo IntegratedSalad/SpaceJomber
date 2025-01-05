@@ -1,4 +1,6 @@
 package io.github.SpaceJomber.server;
+import io.github.SpaceJomber.shared.Message;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,17 +30,29 @@ public class ClientHandler implements Runnable {
     @Override
     public void run() {
         try {
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out = new PrintWriter(socket.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+            out = new PrintWriter(this.socket.getOutputStream(), true);
 
-            String message;
-            while ((message = in.readLine()) != null) {
-                System.out.println("Received from client: " + message);
+            Message message;
+            String rawInput;
+            while ((rawInput = in.readLine()) != null) {
+                System.out.println("Received from client raw input: " + rawInput);
+                message = new Message(rawInput);
 
-                if (message.equals("ready")) {
-                    setReady(true);
-                    this.server.checkLobbyReadyState(); // Notify server to check readiness
-                    break;
+                switch (message.GetType()) {
+                    case MSG_USER_LOGGED_IN: {
+                        break;
+                    }
+
+                    case MSG_USER_CREATED_LOBBY: {
+                        final String lobbyHash = this.server.getLobbyManager().CreateLobby();
+                        System.out.println("Client " + this.socket.getInetAddress() + "created lobby " + lobbyHash);
+                        break;
+                    }
+
+                    case MSG_USER_JOINED_LOBBY: {
+                        break;
+                    }
                 }
             }
 
