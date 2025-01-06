@@ -22,7 +22,7 @@ public class MultiplayerClient implements Runnable {
     private Socket socket;
     private BufferedReader in;
     private PrintWriter out;
-    private BlockingQueue<Message> messageQueue;
+    private BlockingQueue<Message> messageQueue; // messageQueueOut
 
     public MultiplayerClient(String address, int port) {
         this.address = address;
@@ -73,9 +73,11 @@ public class MultiplayerClient implements Runnable {
                 final String payload = message.ConstructFullPayload();
                 this.out.println(payload);
 
+
+
                 if (in.ready()) { // listen for server response
                     String rawServerResponse = in.readLine();
-                    System.out.println("Server response received: " + rawServerResponse);
+                    System.out.println("Raw server response received: " + rawServerResponse);
                 }
 
             } catch (InterruptedException e) {

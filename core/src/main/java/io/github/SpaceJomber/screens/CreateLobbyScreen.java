@@ -2,18 +2,25 @@ package io.github.SpaceJomber.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.SpaceJomber.Main;
+import io.github.SpaceJomber.UIElements.DynamicShapeTextButton;
 import io.github.SpaceJomber.networking.MultiplayerClient;
 import io.github.SpaceJomber.shared.Message;
 import io.github.SpaceJomber.shared.MessageType;
 import io.github.SpaceJomber.systems.RenderingSystem;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,6 +36,18 @@ public class CreateLobbyScreen implements Screen {
     private Stage stage;
     private SpriteBatch lobbySpriteBatch;
 
+//    private ShapeTextButton startGameButton;
+//    private ShapeTextButton cancelLobbyCreationButton;
+//    private ShapeTextButton readyButton;
+//    private BorderedImageButton leftUpperImageButton;
+//    private BorderedImageButton rightUpperImageButton;
+//    private BorderedImageButton leftLowerImageButton;
+//    private BorderedImageButton rightLowerImageButton;
+    DynamicShapeTextButton leftPlayerButtonColor;
+//    DynamicShapeTextButton leftPlayerButtonColor;
+//    DynamicShapeTextButton leftPlayerButtonColor;
+//    DynamicShapeTextButton leftPlayerButtonColor;
+
     public CreateLobbyScreen(RenderingSystem renderingSystem,
                              Main game, MultiplayerClient multiplayerClient) {
         this.renderingSystem = renderingSystem;
@@ -38,6 +57,41 @@ public class CreateLobbyScreen implements Screen {
         this.lobbySpriteBatch = new SpriteBatch();
         this.renderingSystem.SetBackgroundImage(new Texture("background.png"));
         // TODO: create multiplayer client and connect to the server
+
+        this.renderingSystem.RegisterSprite("greenShip",
+            "tiles/Asset-Sheet-with-transparency.png",
+            1,
+            11,
+            16,
+            16);
+        this.renderingSystem.RegisterSprite("redShip",
+            "tiles/Asset-Sheet-with-transparency.png",
+            1,
+            14,
+            16,
+            16);
+        this.renderingSystem.RegisterSprite("blueShip",
+            "tiles/Asset-Sheet-with-transparency.png",
+            1,
+            17,
+            16,
+            16);
+        this.renderingSystem.RegisterSprite("blackShip",
+            "tiles/Asset-Sheet-with-transparency.png",
+            1,
+            20,
+            16,
+            16);
+
+        SpriteDrawable spriteDrawableGreenShip =
+            new SpriteDrawable(this.renderingSystem.GetSprite("greenShip"));
+        SpriteDrawable spriteDrawableRedShip =
+            new SpriteDrawable(this.renderingSystem.GetSprite("redShip"));
+        SpriteDrawable spriteDrawableBlueShip =
+            new SpriteDrawable(this.renderingSystem.GetSprite("blueShip"));
+        SpriteDrawable spriteDrawableBlackShip =
+            new SpriteDrawable(this.renderingSystem.GetSprite("blackShip"));
+
     }
 
     @Override
@@ -47,16 +101,49 @@ public class CreateLobbyScreen implements Screen {
         Gdx.input.setInputProcessor(this.stage);
         // TODO: Start game button
 
+        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
+        textButtonStyle.font = this.renderingSystem.GetMainFont();
+        float buttonWidth = 160;
+        float buttonHeight = 35;
+        float xBorderedImageButtonWidth = 70;
+        float yBorderedImageButtonHeight = 70;
+
+        float xTextButtonPosition = Gdx.graphics.getWidth() * 0.15f; // startingPosition
+        float yTextButtonPosition = Gdx.graphics.getHeight() * 0.7f; // startingPosition
+        float xBorderedImageButtonPosition = Gdx.graphics.getWidth() * 0.15f;
+        float yBorderedImageButtonPosition = Gdx.graphics.getHeight() * 0.2f;
+        int spacing = 30;
+
+        final List<String> stringList = new ArrayList<>();
+        stringList.add("Green");
+        stringList.add("Red");
+        stringList.add("Blue");
+        stringList.add("Black");
+
+//        ImageButton.ImageButtonStyle imageButtonStyle = new ImageButton.ImageButtonStyle();
+
+        this.leftPlayerButtonColor = new DynamicShapeTextButton(this.renderingSystem.getShapeRenderer(),
+            stringList, 0, textButtonStyle, Color.BLACK,
+            Color.BLUE,
+            Color.CYAN,
+            Color.WHITE);
+        this.leftPlayerButtonColor.setPosition(xTextButtonPosition, yTextButtonPosition);
+        this.leftPlayerButtonColor.setSize(buttonWidth, buttonHeight);
+        this.stage.addActor(this.leftPlayerButtonColor);
+
+        final Main mainGame = this.game;
+
         // TODO: Cancel lobby button
 
         /* TODO: 4 frames with player's spaceships.
             Each player has a dedicated frame
-            Every player's color is randomized.
+            Clicking changes color.
             Players can change their nickname.
             Host is always upper-left and has a red border around spaceship image
          */
 
         // TODO: Connect
+
         try {
             this.multiplayerClient.Connect();
             this.multiplayerClientExecutor.execute(this.multiplayerClient);
@@ -65,7 +152,6 @@ public class CreateLobbyScreen implements Screen {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     @Override
