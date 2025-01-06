@@ -15,6 +15,7 @@ public class DynamicShapeTextButton extends ShapeTextButton {
     private ShapeRenderer shapeRenderer;
     private Color borderColor = Color.RED; // Default border color
     private float borderWidth = 2f; // Default border width
+    private boolean isBorder = false;
 
     public DynamicShapeTextButton(ShapeRenderer shapeRenderer,
                                   List<String> stringList,
@@ -46,15 +47,21 @@ public class DynamicShapeTextButton extends ShapeTextButton {
         this.borderColor = color;
     }
 
+    public void SetBorder(final boolean isBorder) {
+        this.isBorder = isBorder;
+    }
+
     @Override
     public void draw(Batch batch, float parentAlpha) {
         batch.end();
 
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(borderColor);
-        shapeRenderer.rect(getX() - borderWidth, getY() - borderWidth,
-            getWidth() + 2 * borderWidth, getHeight() + 2 * borderWidth);
-        shapeRenderer.end();
+        if (isBorder) {
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(borderColor);
+            shapeRenderer.rect(getX() - borderWidth, getY() - borderWidth,
+                getWidth() + 2 * borderWidth, getHeight() + 2 * borderWidth);
+            shapeRenderer.end();
+        }
 
         batch.begin();
 

@@ -39,14 +39,11 @@ public class CreateLobbyScreen implements Screen {
 //    private ShapeTextButton startGameButton;
 //    private ShapeTextButton cancelLobbyCreationButton;
 //    private ShapeTextButton readyButton;
-//    private BorderedImageButton leftUpperImageButton;
-//    private BorderedImageButton rightUpperImageButton;
-//    private BorderedImageButton leftLowerImageButton;
-//    private BorderedImageButton rightLowerImageButton;
-    DynamicShapeTextButton leftPlayerButtonColor;
-//    DynamicShapeTextButton leftPlayerButtonColor;
-//    DynamicShapeTextButton leftPlayerButtonColor;
-//    DynamicShapeTextButton leftPlayerButtonColor;
+
+    DynamicShapeTextButton leftUpperPlayerButtonColor;
+    DynamicShapeTextButton rightUpperPlayerButtonColor;
+    DynamicShapeTextButton leftLowerPlayerButtonColor;
+    DynamicShapeTextButton rightLowerPlayerButtonColor;
 
     public CreateLobbyScreen(RenderingSystem renderingSystem,
                              Main game, MultiplayerClient multiplayerClient) {
@@ -108,11 +105,11 @@ public class CreateLobbyScreen implements Screen {
         float xBorderedImageButtonWidth = 70;
         float yBorderedImageButtonHeight = 70;
 
-        float xTextButtonPosition = Gdx.graphics.getWidth() * 0.15f; // startingPosition
-        float yTextButtonPosition = Gdx.graphics.getHeight() * 0.7f; // startingPosition
+        float xTextButtonPosition = Gdx.graphics.getWidth() * 0.25f; // startingPosition
+        float yTextButtonPosition = Gdx.graphics.getHeight() * 0.5f; // startingPosition
         float xBorderedImageButtonPosition = Gdx.graphics.getWidth() * 0.15f;
         float yBorderedImageButtonPosition = Gdx.graphics.getHeight() * 0.2f;
-        int spacing = 30;
+        int spacing = 100;
 
         final List<String> stringList = new ArrayList<>();
         stringList.add("Green");
@@ -122,14 +119,41 @@ public class CreateLobbyScreen implements Screen {
 
 //        ImageButton.ImageButtonStyle imageButtonStyle = new ImageButton.ImageButtonStyle();
 
-        this.leftPlayerButtonColor = new DynamicShapeTextButton(this.renderingSystem.getShapeRenderer(),
+        this.leftUpperPlayerButtonColor = new DynamicShapeTextButton(this.renderingSystem.getShapeRenderer(),
             stringList, 0, textButtonStyle, Color.BLACK,
             Color.BLUE,
             Color.CYAN,
             Color.WHITE);
-        this.leftPlayerButtonColor.setPosition(xTextButtonPosition, yTextButtonPosition);
-        this.leftPlayerButtonColor.setSize(buttonWidth, buttonHeight);
-        this.stage.addActor(this.leftPlayerButtonColor);
+        this.leftUpperPlayerButtonColor.setPosition(xTextButtonPosition, yTextButtonPosition);
+        this.leftUpperPlayerButtonColor.setSize(buttonWidth, buttonHeight);
+        this.stage.addActor(this.leftUpperPlayerButtonColor);
+
+        this.rightUpperPlayerButtonColor = new DynamicShapeTextButton(this.renderingSystem.getShapeRenderer(),
+            stringList, 0, textButtonStyle, Color.BLACK,
+            Color.BLUE,
+            Color.CYAN,
+            Color.WHITE);
+        this.rightUpperPlayerButtonColor.setPosition(xTextButtonPosition + buttonWidth + spacing, yTextButtonPosition);
+        this.rightUpperPlayerButtonColor.setSize(buttonWidth, buttonHeight);
+        this.stage.addActor(this.rightUpperPlayerButtonColor);
+
+        this.leftLowerPlayerButtonColor = new DynamicShapeTextButton(this.renderingSystem.getShapeRenderer(),
+            stringList, 0, textButtonStyle, Color.BLACK,
+            Color.BLUE,
+            Color.CYAN,
+            Color.WHITE);
+        this.leftLowerPlayerButtonColor.setPosition(xTextButtonPosition, yTextButtonPosition + buttonHeight + spacing);
+        this.leftLowerPlayerButtonColor.setSize(buttonWidth, buttonHeight);
+        this.stage.addActor(this.leftLowerPlayerButtonColor);
+
+        this.rightLowerPlayerButtonColor = new DynamicShapeTextButton(this.renderingSystem.getShapeRenderer(),
+            stringList, 0, textButtonStyle, Color.BLACK,
+            Color.BLUE,
+            Color.CYAN,
+            Color.WHITE);
+        this.rightLowerPlayerButtonColor.setPosition(xTextButtonPosition + buttonWidth + spacing, yTextButtonPosition + buttonHeight + spacing);
+        this.rightLowerPlayerButtonColor.setSize(buttonWidth, buttonHeight);
+        this.stage.addActor(this.rightLowerPlayerButtonColor);
 
         final Main mainGame = this.game;
 
