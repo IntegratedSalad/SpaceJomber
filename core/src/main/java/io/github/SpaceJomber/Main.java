@@ -50,6 +50,7 @@ public class Main extends Game {
     private LobbyScreen lobbyScreen;
     private JoinLobbyScreen joinLobbyScreen;
     private EnterNameScreen enterNameScreen;
+    private EnterLobbyUIDScreen enterLobbyUIDScreen;
 
     public Main(MultiplayerClient multiplayerClient) {
         this.multiplayerClient = multiplayerClient;
@@ -105,24 +106,35 @@ public class Main extends Game {
         this.setScreen(this.multiplayerDecisionScreen);
     }
 
-    public void SetupLobbyScreen(final boolean isCreator) {
+    public void SetupLobbyScreen(final boolean isCreator, final String playerName, final String lobbyID) {
         OrthographicCamera camera = new OrthographicCamera();
         RenderingSystem lobbyRenderingSystem = new RenderingSystem(camera);
         lobbyRenderingSystem.RegisterMainFont("roboticsfont.ttf");
         lobbyRenderingSystem.RegisterFontWithNumbers("fontwithnumbers.ttf");
-        this.lobbyScreen = new LobbyScreen(lobbyRenderingSystem, this, this.multiplayerClient, isCreator);
+        this.lobbyScreen = new LobbyScreen(lobbyRenderingSystem, this, this.multiplayerClient,
+            isCreator, playerName, lobbyID);
         Gdx.app.debug("Main", "SetupCreateLobbyScreen called");
         this.setScreen(this.lobbyScreen);
     }
 
-    public void SetupEnterNameScreen(final boolean isCreator) {
+    public void SetupEnterNameScreen(final boolean isCreator, final String lobbyID) {
         OrthographicCamera camera = new OrthographicCamera();
         RenderingSystem enterNameScreenRenderingSystem = new RenderingSystem(camera);
         enterNameScreenRenderingSystem.RegisterMainFont("roboticsfont.ttf");
         enterNameScreenRenderingSystem.RegisterFontWithNumbers("fontwithnumbers.ttf");
-        this.enterNameScreen = new EnterNameScreen(enterNameScreenRenderingSystem, this, isCreator);
+        this.enterNameScreen = new EnterNameScreen(enterNameScreenRenderingSystem, this, isCreator, lobbyID);
         Gdx.app.debug("Main", "SetupCreateLobbyScreen called");
         this.setScreen(this.enterNameScreen);
+    }
+
+    public void SetupEnterLobbyUIDScreen(final boolean isCreator) {
+        // no need to pass isCreator
+        OrthographicCamera camera = new OrthographicCamera();
+        RenderingSystem enterLobbyUIDRenderingSystem = new RenderingSystem(camera);
+        enterLobbyUIDRenderingSystem.RegisterMainFont("roboticsfont.ttf");
+        enterLobbyUIDRenderingSystem.RegisterFontWithNumbers("fontwithnumbers.ttf");
+        this.enterLobbyUIDScreen = new EnterLobbyUIDScreen(this, enterLobbyUIDRenderingSystem, isCreator);
+        this.setScreen(this.enterLobbyUIDScreen);
     }
 
     public void JoinLobbyScreen() {

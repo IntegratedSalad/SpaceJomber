@@ -37,6 +37,10 @@ public class MultiplayerDecisionScreen implements Screen {
 
     @Override
     public void show() {
+
+        // Maybe here connect with server?
+        // So that we pass the multiplayerClient
+
         Gdx.app.log("MultiplayerDecisionScreen", "show() called");
         this.stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(this.stage);
@@ -69,7 +73,7 @@ public class MultiplayerDecisionScreen implements Screen {
         this.createLobbyButton.addListener(new InputListener() {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
 //                mainGame.SetupLobbyScreen(true);
-                mainGame.SetupEnterNameScreen(true);
+                mainGame.SetupEnterNameScreen(true, null);
                 Gdx.app.debug("MultiplayerDecisionScreen", "Enter Name Screen, transition to Create Lobby");
                 return true;
             }
@@ -88,6 +92,14 @@ public class MultiplayerDecisionScreen implements Screen {
         this.joinLobbyButton.setSize(buttonWidth, buttonHeight);
         this.joinLobbyButton.setPosition(xPosition + (buttonWidth + spacing), yPosition);
         this.stage.addActor(this.joinLobbyButton);
+        this.joinLobbyButton.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                mainGame.SetupEnterLobbyUIDScreen(false);
+                Gdx.app.debug("MultiplayerDecisionScreen", "Enter Name Screen, transition to Join Lobby");
+                return true;
+            }
+        });
 
         this.backButton = new ShapeTextButton(
             this.renderingSystem.getShapeRenderer(),

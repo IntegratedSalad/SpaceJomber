@@ -5,11 +5,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.SpaceJomber.Main;
@@ -39,16 +37,18 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
     private SpriteBatch lobbySpriteBatch;
 
     private final boolean isCreator;
+    private final String instancePlayerName;
 
     private DynamicShapeTextButton colorChangeTextButton;
 
-    private String lobbyID;
+    private String lobbyID = "XXXXXXXX";
     private RenderableText lobbyIDText;
 
     private RenderableText changeColorText;
 
     public LobbyScreen(RenderingSystem renderingSystem,
-                             Main game, MultiplayerClient multiplayerClient, final boolean isCreator) {
+                             Main game, MultiplayerClient multiplayerClient, final boolean isCreator,
+                       final String instancePlayerName, final String incomingLobbyID) {
         this.renderingSystem = renderingSystem;
         this.game = game;
         this.multiplayerClient = multiplayerClient;
@@ -56,7 +56,17 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
         this.lobbySpriteBatch = new SpriteBatch();
         this.renderingSystem.SetBackgroundImage(new Texture("background.png"));
         this.isCreator = isCreator;
+        this.instancePlayerName = instancePlayerName;
         this.multiplayerClient.SetLobbyUIUpdateListener(this);
+        if (incomingLobbyID != null) {
+            this.lobbyID = lobbyID;
+        }
+
+        if (this.isCreator) {
+            Gdx.app.debug("Lobby Screen", "Lobby created by " + instancePlayerName);
+        } else {
+            Gdx.app.debug("Lobby Screen", "Lobby joined by " + instancePlayerName);
+        }
 
         this.renderingSystem.RegisterSprite("greenShip",
             "tiles/Asset-Sheet-with-transparency.png",
@@ -97,8 +107,15 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
             this.multiplayerClient.SetIsLobbyHost(this.isCreator);
             this.multiplayerClient.Connect();
             this.multiplayerClientExecutor.execute(this.multiplayerClient);
-            final Message createdLobbyMessage = new Message(MessageType.MSG_USER_CREATED_LOBBY, ":NULL");
-            this.multiplayerClient.SendMessage(createdLobbyMessage);
+            if (this.isCreator) {
+                final Message createdLobbyMessage = new Message(MessageType.MSG_USER_CREATED_LOBBY, ":NULL");
+                this.multiplayerClient.SendMessage(createdLobbyMessage);
+            } else {
+                // TODO: Send message that user joins the lobby
+                final Message joinedLobbyMessage = new Message(MessageType.MSG_USER_JOINED_LOBBY, ":NULL");
+                this.multiplayerClient.SendMessage(joinedLobbyMessage);
+                // TODO: If lobby id is wrong, go back to the menu and disconnect from the server
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -126,7 +143,7 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
 
         final float sessionIDTextXPosition =  Gdx.graphics.getWidth() / 2f - buttonWidth / 2;
         final float sessionIDTextYPosition = Gdx.graphics.getHeight() * 0.1f;
-        this.lobbyIDText = new RenderableText("XXXXXXXX", sessionIDTextXPosition + 40,
+        this.lobbyIDText = new RenderableText(this.lobbyID, sessionIDTextXPosition + 40,
             sessionIDTextYPosition, renderingSystem.GetFontWithNumbers());
 
         List<String> colorList = new ArrayList<>();
@@ -180,12 +197,12 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
             that this user is the creator. Also, in MultiplayerClient boolean
             "lobbyHost" is set to True.
             Server responds with Lobby UUID.
-            Players can still change colors.
+            Players can still change colors, but it doesn't update for all players.
+            Player creating lobby is not asked to provide a UID
 
          */
 
         Gdx.input.setInputProcessor(this.stage);
-
     }
 
     @Override

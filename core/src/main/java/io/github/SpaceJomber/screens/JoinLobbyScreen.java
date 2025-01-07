@@ -4,6 +4,12 @@ import com.badlogic.gdx.Screen;
 import io.github.SpaceJomber.Main;
 import io.github.SpaceJomber.systems.RenderingSystem;
 
+/*
+*
+* DEPRECATED!!!!
+* 
+*  */
+
 public class JoinLobbyScreen implements Screen {
 
     public JoinLobbyScreen(RenderingSystem renderingSystem,

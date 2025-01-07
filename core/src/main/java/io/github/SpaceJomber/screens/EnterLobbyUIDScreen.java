@@ -15,43 +15,37 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.SpaceJomber.Main;
 import io.github.SpaceJomber.UIElements.ShapeTextButton;
 import io.github.SpaceJomber.UIElements.ShapeTextField;
+import io.github.SpaceJomber.networking.MultiplayerClient;
 import io.github.SpaceJomber.systems.RenderingSystem;
 
-public class EnterNameScreen implements Screen {
+public class EnterLobbyUIDScreen implements Screen {
 
     private RenderingSystem renderingSystem;
     private Main game;
 
     private Stage stage;
-    private SpriteBatch nameScreenSpriteBatch;
+    private SpriteBatch uidScreenSpriteBatch;
+
+    private final boolean isCreator;
 
     private ShapeTextField textField;
     private ShapeTextButton enterButton;
     private ShapeTextButton cancelButton;
 
-    private String playerName;
+    private MultiplayerClient multiplayerClient;
 
-    private boolean isCreator;
-
-    private String lobbyID; // EnterNameScreen is after EnterLobbyUIDScreen
-
-    public EnterNameScreen(RenderingSystem renderingSystem,
-                           Main game, final boolean isCreator, String lobbyID) {
-        this.renderingSystem = renderingSystem;
+    public EnterLobbyUIDScreen(Main game, RenderingSystem renderingSystem, final boolean isCreator) {
         this.game = game;
-        this.isCreator = isCreator;
+        this.renderingSystem = renderingSystem;
         this.renderingSystem.SetBackgroundImage(new Texture("background.png"));
-        this.nameScreenSpriteBatch = new SpriteBatch();
-        this.lobbyID = lobbyID;
-    }
-
-    public String GetPlayerName() {
-        return this.playerName;
+        this.isCreator = isCreator;
+        this.uidScreenSpriteBatch = new SpriteBatch();
     }
 
     @Override
     public void show() {
-        Gdx.app.debug("EnterNameScreen", "show called");
+
+        Gdx.app.debug("EnterLobbyUIDScreen", "show called");
         this.stage = new Stage(new ScreenViewport());
 
         TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
@@ -68,7 +62,7 @@ public class EnterNameScreen implements Screen {
         textFieldStyle.messageFont = this.renderingSystem.GetFontWithNumbers();
         textFieldStyle.fontColor = Color.WHITE;
         this.textField = new ShapeTextField("", textFieldStyle, this.renderingSystem.getShapeRenderer());
-        this.textField.setMessageText("Enter your name");
+        this.textField.setMessageText("Enter Lobby UID");
         this.textField.setPosition(xTextField, yTextField);
         this.textField.setSize(168, textFieldStyle.font.getLineHeight());
         this.stage.addActor(this.textField);
@@ -88,7 +82,8 @@ public class EnterNameScreen implements Screen {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if (textField.getText().length() >= 4) {
-                    game.SetupLobbyScreen(isCreator, textField.getText(), lobbyID);
+                    // We have to pass UID
+                    game.SetupEnterNameScreen(false, textField.getText());
                 }
                 return true;
             }
@@ -113,9 +108,9 @@ public class EnterNameScreen implements Screen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        this.nameScreenSpriteBatch.begin();
-        this.nameScreenSpriteBatch.draw(this.renderingSystem.SetBackgroundImage(), 0, 0);
-        this.nameScreenSpriteBatch.end();
+        this.uidScreenSpriteBatch.begin();
+        this.uidScreenSpriteBatch.draw(this.renderingSystem.SetBackgroundImage(), 0, 0);
+        this.uidScreenSpriteBatch.end();
         this.stage.act(delta); // this updates actors
         this.stage.draw(); // this renders actors
     }
