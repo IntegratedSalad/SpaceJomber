@@ -10,12 +10,10 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.SpaceJomber.Main;
 import io.github.SpaceJomber.UIElements.ShapeTextButton;
 import io.github.SpaceJomber.systems.RenderingSystem;
-import org.w3c.dom.Text;
 
 public class MultiplayerDecisionScreen implements Screen {
 
@@ -70,8 +68,8 @@ public class MultiplayerDecisionScreen implements Screen {
         this.stage.addActor(this.createLobbyButton);
         this.createLobbyButton.addListener(new InputListener() {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                mainGame.SetupCreateLobbyScreen();
-                Gdx.app.debug("MultiplayerDecisionScreen", "Creating lobby screen...");
+                mainGame.SetupLobbyScreen(true);
+                Gdx.app.debug("MultiplayerDecisionScreen", "Creating Lobby screen...");
                 return true;
             }
         });

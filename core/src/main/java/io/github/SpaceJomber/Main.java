@@ -47,7 +47,7 @@ public class Main extends Game {
     private MenuScreen menuScreen;
     private ScoreScreen scoreScreen;
     private MultiplayerDecisionScreen multiplayerDecisionScreen;
-    private CreateLobbyScreen createLobbyScreen;
+    private LobbyScreen lobbyScreen;
     private JoinLobbyScreen joinLobbyScreen;
 
     public Main(MultiplayerClient multiplayerClient) {
@@ -104,13 +104,14 @@ public class Main extends Game {
         this.setScreen(this.multiplayerDecisionScreen);
     }
 
-    public void SetupCreateLobbyScreen() {
+    public void SetupLobbyScreen(final boolean isCreator) {
         OrthographicCamera camera = new OrthographicCamera();
         RenderingSystem lobbyRenderingSystem = new RenderingSystem(camera);
         lobbyRenderingSystem.RegisterMainFont("roboticsfont.ttf");
-        this.createLobbyScreen = new CreateLobbyScreen(lobbyRenderingSystem, this, this.multiplayerClient);
+        lobbyRenderingSystem.RegisterFontWithNumbers("fontwithnumbers.ttf");
+        this.lobbyScreen = new LobbyScreen(lobbyRenderingSystem, this, this.multiplayerClient, isCreator);
         Gdx.app.debug("Main", "SetupCreateLobbyScreen called");
-        this.setScreen(this.createLobbyScreen);
+        this.setScreen(this.lobbyScreen);
     }
 
     public void JoinLobbyScreen() {

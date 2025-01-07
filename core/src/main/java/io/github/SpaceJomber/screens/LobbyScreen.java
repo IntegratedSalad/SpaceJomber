@@ -7,34 +7,26 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.SpaceJomber.Main;
 import io.github.SpaceJomber.UIElements.DynamicShapeTextButton;
-import io.github.SpaceJomber.UIElements.ShapeTextButton;
-import io.github.SpaceJomber.UIElements.ShapeTextField;
+import io.github.SpaceJomber.UIElements.RenderableText;
 import io.github.SpaceJomber.networking.MultiplayerClient;
 import io.github.SpaceJomber.shared.Message;
 import io.github.SpaceJomber.shared.MessageType;
+import io.github.SpaceJomber.systems.LobbyUIUpdateListener;
 import io.github.SpaceJomber.systems.RenderingSystem;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/*
-*
-* DEPRECATED!!!!!!!!!
-*
-* */
-
-public class CreateLobbyScreen implements Screen {
+public class LobbyScreen implements Screen, LobbyUIUpdateListener {
 
     private RenderingSystem renderingSystem;
     private Main game;
@@ -45,29 +37,24 @@ public class CreateLobbyScreen implements Screen {
     private Stage stage;
     private SpriteBatch lobbySpriteBatch;
 
-    private ShapeTextButton startGameButton;
-    private ShapeTextButton cancelLobbyCreationButton;
-    private ShapeTextButton readyButton;
+    private TextField textField;
+    private final boolean isCreator;
 
-    private DynamicShapeTextButton leftUpperPlayerButtonColor;
-    private DynamicShapeTextButton rightUpperPlayerButtonColor;
-    private DynamicShapeTextButton leftLowerPlayerButtonColor;
-    private DynamicShapeTextButton rightLowerPlayerButtonColor;
+    private DynamicShapeTextButton colorChangeTextButton;
 
-    private TextField leftUpperPlayerTextField;
-    private TextField rightUpperPlayerTextField;
-    private TextField leftLowerPlayerTextField;
-    private TextField rightLowerPlayerTextField;
+    private String lobbyID;
+    private RenderableText lobbyIDText;
 
-    public CreateLobbyScreen(RenderingSystem renderingSystem,
-                             Main game, MultiplayerClient multiplayerClient) {
+    public LobbyScreen(RenderingSystem renderingSystem,
+                             Main game, MultiplayerClient multiplayerClient, final boolean isCreator) {
         this.renderingSystem = renderingSystem;
         this.game = game;
         this.multiplayerClient = multiplayerClient;
         this.multiplayerClientExecutor = Executors.newFixedThreadPool(1);
         this.lobbySpriteBatch = new SpriteBatch();
         this.renderingSystem.SetBackgroundImage(new Texture("background.png"));
-        // TODO: create multiplayer client and connect to the server
+        this.isCreator = isCreator;
+        this.multiplayerClient.SetLobbyUIUpdateListener(this);
 
         this.renderingSystem.RegisterSprite("greenShip",
             "tiles/Asset-Sheet-with-transparency.png",
@@ -103,11 +90,23 @@ public class CreateLobbyScreen implements Screen {
         SpriteDrawable spriteDrawableBlackShip =
             new SpriteDrawable(this.renderingSystem.GetSprite("blackShip"));
 
+
+        // Connect
+        try {
+            this.multiplayerClient.SetIsLobbyHost(this.isCreator);
+            this.multiplayerClient.Connect();
+            this.multiplayerClientExecutor.execute(this.multiplayerClient);
+            final Message createdLobbyMessage = new Message(MessageType.MSG_USER_CREATED_LOBBY, ":NULL");
+            this.multiplayerClient.SendMessage(createdLobbyMessage);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public void show() {
-        Gdx.app.debug("CreateLobbyScreen", "show called, connecting multiplayerClient..");
+
+        Gdx.app.debug("LobbyScreen", "show called");
         this.stage = new Stage(new ScreenViewport());
         // TODO: Start game button
 
@@ -118,69 +117,42 @@ public class CreateLobbyScreen implements Screen {
         float xBorderedImageButtonWidth = 70;
         float yBorderedImageButtonHeight = 70;
 
-        float xTextButtonPosition = Gdx.graphics.getWidth() * 0.25f; // startingPosition
-        float yTextButtonPosition = Gdx.graphics.getHeight() * 0.5f; // startingPosition
+        float xTextButtonPosition = Gdx.graphics.getWidth() / 2f - buttonWidth / 2; // startingPosition
+        float yTextButtonPosition = Gdx.graphics.getHeight() * 0.3f; // startingPosition
         float xBorderedImageButtonPosition = Gdx.graphics.getWidth() * 0.15f;
         float yBorderedImageButtonPosition = Gdx.graphics.getHeight() * 0.2f;
         int spacing = 100;
 
-        TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
-        textFieldStyle.font = this.renderingSystem.GetMainFont();
-        textFieldStyle.fontColor = Color.WHITE;
-        textFieldStyle.disabledFontColor = Color.GRAY;
+        final float sessionIDTextXPosition =  Gdx.graphics.getWidth() / 2f - buttonWidth / 2;
+        final float sessionIDTextYPosition = Gdx.graphics.getHeight() * 0.4f;
+        this.lobbyIDText = new RenderableText("XXXXXXXX", sessionIDTextXPosition,
+            sessionIDTextYPosition, renderingSystem.GetFontWithNumbers());
 
-        final List<String> stringList = new ArrayList<>();
-        stringList.add("Green");
-        stringList.add("Red");
-        stringList.add("Blue");
-        stringList.add("Black");
+        List<String> colorList = new ArrayList<>();
+        colorList.add("green");
+        colorList.add("red");
+        colorList.add("blue");
+        colorList.add("black");
 
-        this.leftUpperPlayerButtonColor = new DynamicShapeTextButton(this.renderingSystem.getShapeRenderer(),
-            stringList, 0, textButtonStyle, Color.BLACK,
+        this.colorChangeTextButton = new DynamicShapeTextButton(
+            this.renderingSystem.getShapeRenderer(),
+            colorList,
+            0,
+            textButtonStyle,
+            Color.BLACK,
             Color.BLUE,
             Color.CYAN,
-            Color.WHITE);
-        this.leftUpperPlayerButtonColor.setPosition(xTextButtonPosition, yTextButtonPosition);
-        this.leftUpperPlayerButtonColor.setSize(buttonWidth, buttonHeight);
-        this.stage.addActor(this.leftUpperPlayerButtonColor);
+            Color.WHITE
+        );
 
-        this.leftUpperPlayerTextField = new ShapeTextField("", textFieldStyle, this.renderingSystem.getShapeRenderer());
-        this.leftUpperPlayerTextField.setPosition(xTextButtonPosition,
-            yTextButtonPosition + this.leftUpperPlayerTextField.getHeight());
-        this.leftUpperPlayerTextField.setSize(100, this.renderingSystem.GetMainFont().getLineHeight() + 5);
-        this.leftUpperPlayerTextField.setMessageText("Enter name here");
-        this.stage.addActor(this.leftUpperPlayerTextField);
+        this.colorChangeTextButton.setPosition(xTextButtonPosition, yTextButtonPosition);
+        this.colorChangeTextButton.setSize(buttonWidth, buttonHeight);
+        this.stage.addActor(this.colorChangeTextButton);
 
-        this.rightUpperPlayerButtonColor = new DynamicShapeTextButton(this.renderingSystem.getShapeRenderer(),
-            stringList, 0, textButtonStyle, Color.BLACK,
-            Color.BLUE,
-            Color.CYAN,
-            Color.WHITE);
-        this.rightUpperPlayerButtonColor.setPosition(xTextButtonPosition + buttonWidth + spacing, yTextButtonPosition);
-        this.rightUpperPlayerButtonColor.setSize(buttonWidth, buttonHeight);
-        this.stage.addActor(this.rightUpperPlayerButtonColor);
-
-        this.leftLowerPlayerButtonColor = new DynamicShapeTextButton(this.renderingSystem.getShapeRenderer(),
-            stringList, 0, textButtonStyle, Color.BLACK,
-            Color.BLUE,
-            Color.CYAN,
-            Color.WHITE);
-        this.leftLowerPlayerButtonColor.setPosition(xTextButtonPosition, yTextButtonPosition + buttonHeight + spacing);
-        this.leftLowerPlayerButtonColor.setSize(buttonWidth, buttonHeight);
-        this.stage.addActor(this.leftLowerPlayerButtonColor);
-
-        this.rightLowerPlayerButtonColor = new DynamicShapeTextButton(this.renderingSystem.getShapeRenderer(),
-            stringList, 0, textButtonStyle, Color.BLACK,
-            Color.BLUE,
-            Color.CYAN,
-            Color.WHITE);
-        this.rightLowerPlayerButtonColor.setPosition(xTextButtonPosition + buttonWidth + spacing, yTextButtonPosition + buttonHeight + spacing);
-        this.rightLowerPlayerButtonColor.setSize(buttonWidth, buttonHeight);
-        this.stage.addActor(this.rightLowerPlayerButtonColor);
-
-        final Main mainGame = this.game;
-
-        // TODO: Cancel lobby button
+        if (this.isCreator) {
+            // TODO: Show button for Cancelling the lobby/starting
+            Gdx.app.debug("LobbyScreen", "This client is the host.");
+        }
 
         /* TODO: 4 frames with player's spaceships.
             Each player has a dedicated frame
@@ -192,7 +164,7 @@ public class CreateLobbyScreen implements Screen {
             Only one image with randomized space ship color.
             Each client at connection is assigned a random spaceship color.
 
-            At the bottom: names of other players.
+            At bottom: names of other players.
             Upon joining and creation user sets their name which cannot be changed.
 
             Maybe other way:
@@ -203,25 +175,22 @@ public class CreateLobbyScreen implements Screen {
             Clicking "Create Lobby" sends message to the server with message,
             that this user is the creator. Also, in MultiplayerClient boolean
             "lobbyHost" is set to True.
+            Server responds with Lobby UUID.
+            Players can still change colors.
+
          */
 
         Gdx.input.setInputProcessor(this.stage);
-        // Connect
-        try {
-            this.multiplayerClient.Connect();
-            this.multiplayerClientExecutor.execute(this.multiplayerClient);
-            final Message createdLobbyMessage = new Message(MessageType.MSG_USER_CREATED_LOBBY, ":NULL");
-            this.multiplayerClient.SendMessage(createdLobbyMessage);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         this.lobbySpriteBatch.begin();
         this.lobbySpriteBatch.draw(this.renderingSystem.SetBackgroundImage(), 0, 0);
+        this.lobbyIDText.render(this.lobbySpriteBatch);
         this.lobbySpriteBatch.end();
         this.stage.act(delta); // this updates actors
         this.stage.draw(); // this renders actors
@@ -250,5 +219,11 @@ public class CreateLobbyScreen implements Screen {
     @Override
     public void dispose() {
 
+    }
+
+    @Override
+    public void onLobbyIDReceived(String lobbyID) {
+        Gdx.app.postRunnable(() -> this.lobbyIDText.SetText(lobbyID));
+        Gdx.app.debug("LobbyScreen", "onLobbyIDReceived: " + lobbyID);
     }
 }

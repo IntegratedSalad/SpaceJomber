@@ -18,6 +18,10 @@ public class RenderableText implements Renderable {
         this.font = font;
     }
 
+    public synchronized void SetText(String text) {
+        this.text = text;
+    }
+
     @Override
     public void render(SpriteBatch sbatch) {
          this.font.draw(sbatch, text, x, y);

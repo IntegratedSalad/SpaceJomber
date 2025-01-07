@@ -1,7 +1,5 @@
 package io.github.SpaceJomber.shared;
 
-import java.io.PrintWriter;
-
 // Every message has a following structure:
 // ID:PAYLOAD
 public class Message {
@@ -9,6 +7,7 @@ public class Message {
     private MessageType type;
     private String payload;
 
+    // Constructor for sending a message
     public Message(MessageType type, String payload) {
         this.type = type;
         this.payload = payload;
@@ -34,6 +33,7 @@ public class Message {
                 break;
             }
             case "4": {
+                this.type = MessageType.MSG_SERVER_SENDS_SESSION_ID;
                 break;
             }
             default: {
@@ -47,25 +47,25 @@ public class Message {
         return this.type;
     }
 
-    // Create message method
-    public String ConstructFullPayload() {
+    public void SetPayload(String payload) {
+        this.payload = payload;
+    }
+
+    public String GetPayload() {
+        return this.payload;
+    }
+
+    // Return String from Message
+    public String ConstructStringFromMessage() {
         String fullPayload = "";
+
         if (this.payload == null) {
             fullPayload += this.type.getTypeId();
         } else {
             fullPayload += this.type.getTypeId();
+            fullPayload += ":";
             fullPayload += this.payload;
         }
         return fullPayload;
-    }
-
-//    public void Send(PrintWriter out) {
-//        String msgPayload = this.ConstructFullPayload();
-//        out.println(msgPayload); // send
-//        out.flush();
-//    }
-
-    public void SetPayload(String payload) {
-        this.payload = payload;
     }
 }

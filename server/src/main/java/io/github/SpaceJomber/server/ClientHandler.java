@@ -1,5 +1,6 @@
 package io.github.SpaceJomber.server;
 import io.github.SpaceJomber.shared.Message;
+import io.github.SpaceJomber.shared.MessageType;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -33,13 +34,15 @@ public class ClientHandler implements Runnable {
             this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
             this.out = new PrintWriter(this.socket.getOutputStream(), true);
 
-            Message message;
+            Message messageIn;
+            Message messageOut;
             String rawInput;
+            String rawOutput;
             while ((rawInput = in.readLine()) != null) {
                 System.out.println("Received from client raw input: " + rawInput);
-                message = new Message(rawInput);
+                messageIn = new Message(rawInput);
 
-                switch (message.GetType()) {
+                switch (messageIn.GetType()) {
                     case MSG_USER_LOGGED_IN: {
                         break;
                     }
@@ -48,7 +51,12 @@ public class ClientHandler implements Runnable {
                         final String lobbyHash = this.server.getLobbyManager().CreateLobby();
                         System.out.println("Client " + this.socket.getInetAddress() + "created lobby " + lobbyHash);
 
-                        // TODO: Send Lobby UUID to client
+                        messageOut = new Message(MessageType.MSG_SERVER_SENDS_SESSION_ID, lobbyHash);
+                        rawOutput = messageOut.ConstructStringFromMessage();
+
+                        // Send Lobby UUID to client
+                        System.out.println("Sending " + rawOutput + " to client " + this.socket.getInetAddress());
+                        this.out.println(rawOutput);
                         break;
                     }
 

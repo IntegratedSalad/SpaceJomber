@@ -45,6 +45,7 @@ public class RenderingSystem implements BombPlacementListener, FirePlacementList
     private SpriteBatch spriteBatch;
     private BitmapFont mainFont = null;
     private BitmapFont mainTitleFont = null;
+    private BitmapFont fontWithNumbersFont = null;
     private Texture backgroundImage = null;
     private HashMap<String, Texture> textureMap = null;
     private HashMap<String, Sprite> spriteMap = null;
@@ -200,6 +201,10 @@ public class RenderingSystem implements BombPlacementListener, FirePlacementList
         return this.mainFont;
     }
 
+    public BitmapFont GetFontWithNumbers() {
+        return this.fontWithNumbersFont;
+    }
+
     public void RegisterMainTitleFont(String fontPath) {
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
         FreeTypeFontGenerator.FreeTypeFontParameter fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -210,6 +215,19 @@ public class RenderingSystem implements BombPlacementListener, FirePlacementList
         fontParameter.shadowOffsetX = 3;
         fontParameter.shadowOffsetY = 3;
         this.mainTitleFont = fontGenerator.generateFont(fontParameter);
+        fontGenerator.dispose();
+    }
+
+    public void RegisterFontWithNumbers(String fontPath) {
+        FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
+        FreeTypeFontGenerator.FreeTypeFontParameter fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        fontParameter.size = 14;
+        fontParameter.color = Color.WHITE;
+        fontParameter.borderWidth = 1;
+        fontParameter.borderColor = Color.BLACK;
+        fontParameter.shadowOffsetX = 3;
+        fontParameter.shadowOffsetY = 3;
+        this.fontWithNumbersFont = fontGenerator.generateFont(fontParameter);
         fontGenerator.dispose();
     }
 
