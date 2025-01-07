@@ -96,7 +96,7 @@ public class MultiplayerDecisionScreen implements Screen {
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 mainGame.SetupEnterLobbyUIDScreen(false);
-                Gdx.app.debug("MultiplayerDecisionScreen", "Enter Name Screen, transition to Join Lobby");
+                Gdx.app.debug("MultiplayerDecisionScreen", "Enter UID Screen, transition to Join Lobby");
                 return true;
             }
         });

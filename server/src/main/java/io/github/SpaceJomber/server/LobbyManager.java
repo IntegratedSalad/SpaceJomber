@@ -6,15 +6,19 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class LobbyManager {
 
-    private final Map<String, Lobby> lobbies = new ConcurrentHashMap<>();
+    private final Map<String, Lobby> lobbyConcurrentHashMap = new ConcurrentHashMap<>();
 
     // Pass Executor
 
     public String CreateLobby() {
         String lobbyHash = this.GenerateLobbyHash();
         Lobby lobby = new Lobby(lobbyHash);
-        this.lobbies.put(lobbyHash, lobby);
+        this.lobbyConcurrentHashMap.put(lobbyHash, lobby);
         return lobbyHash;
+    }
+
+    public Lobby GetLobby(String lobbyHash) {
+        return this.lobbyConcurrentHashMap.get(lobbyHash);
     }
 
     private String GenerateLobbyHash() {

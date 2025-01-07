@@ -58,8 +58,11 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
         this.isCreator = isCreator;
         this.instancePlayerName = instancePlayerName;
         this.multiplayerClient.SetLobbyUIUpdateListener(this);
+
+        Gdx.app.debug("LobbyScreen constructor", "Incoming lobby ID " + incomingLobbyID);
+
         if (incomingLobbyID != null) {
-            this.lobbyID = lobbyID;
+            this.lobbyID = incomingLobbyID;
         }
 
         if (this.isCreator) {
@@ -108,11 +111,11 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
             this.multiplayerClient.Connect();
             this.multiplayerClientExecutor.execute(this.multiplayerClient);
             if (this.isCreator) {
-                final Message createdLobbyMessage = new Message(MessageType.MSG_USER_CREATED_LOBBY, ":NULL");
+                final Message createdLobbyMessage = new Message(MessageType.MSG_USER_CREATED_LOBBY, "NULL");
                 this.multiplayerClient.SendMessage(createdLobbyMessage);
             } else {
                 // TODO: Send message that user joins the lobby
-                final Message joinedLobbyMessage = new Message(MessageType.MSG_USER_JOINED_LOBBY, ":NULL");
+                final Message joinedLobbyMessage = new Message(MessageType.MSG_USER_JOINED_LOBBY, this.lobbyID);
                 this.multiplayerClient.SendMessage(joinedLobbyMessage);
                 // TODO: If lobby id is wrong, go back to the menu and disconnect from the server
             }

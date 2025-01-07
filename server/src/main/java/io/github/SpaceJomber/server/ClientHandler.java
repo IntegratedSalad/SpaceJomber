@@ -61,6 +61,16 @@ public class ClientHandler implements Runnable {
                     }
 
                     case MSG_USER_JOINED_LOBBY: {
+                        final String lobbyHash = messageIn.GetPayload();
+                        System.out.println("Client " + this.socket.getInetAddress() + "tries to join lobby: " + lobbyHash);
+
+                        Lobby lobby = this.server.getLobbyManager().GetLobby(lobbyHash);
+                        if (lobby != null) {
+                            System.out.println("Client " + this.socket.getInetAddress() + "joined lobby: " + lobbyHash);
+                        } else {
+                            System.out.println("No such lobby as: " + lobbyHash);
+                        }
+
                         break;
                     }
                 }
