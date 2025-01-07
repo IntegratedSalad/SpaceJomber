@@ -221,7 +221,7 @@ public class RenderingSystem implements BombPlacementListener, FirePlacementList
     public void RegisterFontWithNumbers(String fontPath) {
         FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
         FreeTypeFontGenerator.FreeTypeFontParameter fontParameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        fontParameter.size = 14;
+        fontParameter.size = 17;
         fontParameter.color = Color.WHITE;
         fontParameter.borderWidth = 1;
         fontParameter.borderColor = Color.BLACK;

@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -37,13 +38,14 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
     private Stage stage;
     private SpriteBatch lobbySpriteBatch;
 
-    private TextField textField;
     private final boolean isCreator;
 
     private DynamicShapeTextButton colorChangeTextButton;
 
     private String lobbyID;
     private RenderableText lobbyIDText;
+
+    private RenderableText changeColorText;
 
     public LobbyScreen(RenderingSystem renderingSystem,
                              Main game, MultiplayerClient multiplayerClient, final boolean isCreator) {
@@ -90,7 +92,6 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
         SpriteDrawable spriteDrawableBlackShip =
             new SpriteDrawable(this.renderingSystem.GetSprite("blackShip"));
 
-
         // Connect
         try {
             this.multiplayerClient.SetIsLobbyHost(this.isCreator);
@@ -124,8 +125,8 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
         int spacing = 100;
 
         final float sessionIDTextXPosition =  Gdx.graphics.getWidth() / 2f - buttonWidth / 2;
-        final float sessionIDTextYPosition = Gdx.graphics.getHeight() * 0.4f;
-        this.lobbyIDText = new RenderableText("XXXXXXXX", sessionIDTextXPosition,
+        final float sessionIDTextYPosition = Gdx.graphics.getHeight() * 0.1f;
+        this.lobbyIDText = new RenderableText("XXXXXXXX", sessionIDTextXPosition + 40,
             sessionIDTextYPosition, renderingSystem.GetFontWithNumbers());
 
         List<String> colorList = new ArrayList<>();
@@ -148,6 +149,9 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
         this.colorChangeTextButton.setPosition(xTextButtonPosition, yTextButtonPosition);
         this.colorChangeTextButton.setSize(buttonWidth, buttonHeight);
         this.stage.addActor(this.colorChangeTextButton);
+
+        this.changeColorText = new RenderableText("Change color", this.colorChangeTextButton.getX() + 20,
+            this.colorChangeTextButton.getY() + this.colorChangeTextButton.getWidth()/2 - 21, this.renderingSystem.GetFontWithNumbers());
 
         if (this.isCreator) {
             // TODO: Show button for Cancelling the lobby/starting
@@ -191,6 +195,7 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
         this.lobbySpriteBatch.begin();
         this.lobbySpriteBatch.draw(this.renderingSystem.SetBackgroundImage(), 0, 0);
         this.lobbyIDText.render(this.lobbySpriteBatch);
+        this.changeColorText.render(this.lobbySpriteBatch);
         this.lobbySpriteBatch.end();
         this.stage.act(delta); // this updates actors
         this.stage.draw(); // this renders actors
@@ -218,7 +223,7 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
 
     @Override
     public void dispose() {
-
+        this.renderingSystem.dispose();
     }
 
     @Override

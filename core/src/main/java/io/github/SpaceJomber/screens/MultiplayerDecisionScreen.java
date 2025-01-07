@@ -68,8 +68,9 @@ public class MultiplayerDecisionScreen implements Screen {
         this.stage.addActor(this.createLobbyButton);
         this.createLobbyButton.addListener(new InputListener() {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                mainGame.SetupLobbyScreen(true);
-                Gdx.app.debug("MultiplayerDecisionScreen", "Creating Lobby screen...");
+//                mainGame.SetupLobbyScreen(true);
+                mainGame.SetupEnterNameScreen(true);
+                Gdx.app.debug("MultiplayerDecisionScreen", "Enter Name Screen, transition to Create Lobby");
                 return true;
             }
         });
