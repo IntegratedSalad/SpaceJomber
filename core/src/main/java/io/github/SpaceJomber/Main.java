@@ -147,6 +147,9 @@ public class Main extends Game {
     @Override
     public void render() {
         super.render();
+
+        // TODO: ADJUST SCREEN INPUT CALCULATION WHEN RESIZING
+
 //        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
 
 //        this.camera.update();

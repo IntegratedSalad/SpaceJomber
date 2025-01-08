@@ -3,8 +3,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import io.github.SpaceJomber.systems.BombPlacementListener;
+import io.github.SpaceJomber.listeners.BombPlacementListener;
 import io.github.SpaceJomber.systems.Renderable;
 import io.github.SpaceJomber.utils.MapUtils;
 

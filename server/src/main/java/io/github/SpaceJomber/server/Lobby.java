@@ -39,6 +39,10 @@ public class Lobby {
         return !this.players.isEmpty() && players.stream().allMatch(ClientHandler::isReady);
     }
 
+    public synchronized int GetPlayerCount() {
+        return this.players.size();
+    }
+
     public synchronized void StartGame(ExecutorService sessionThreadPool) {
         this.gameStarted = true;
 

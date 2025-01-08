@@ -1,4 +1,4 @@
-package io.github.SpaceJomber.systems;
+package io.github.SpaceJomber.listeners;
 
 import io.github.SpaceJomber.entities.Bomb;
 

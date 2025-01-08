@@ -2,7 +2,7 @@ package io.github.SpaceJomber.networking;
 
 import com.badlogic.gdx.Gdx;
 import io.github.SpaceJomber.shared.Message;
-import io.github.SpaceJomber.systems.LobbyUIUpdateListener;
+import io.github.SpaceJomber.listeners.LobbyUIUpdateListener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -67,6 +67,7 @@ public class MultiplayerClient implements Runnable {
         Gdx.app.debug("MultiplayerClient", "Sending message: " + message.GetType().toString());
         try {
             this.messageQueue.put(message);
+            Gdx.app.debug("MultiplayerClient", "Message queue size: " + this.messageQueue.size());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             System.err.println("Failed to put message in queue!" + e.getMessage());
@@ -81,6 +82,12 @@ public class MultiplayerClient implements Runnable {
         this.out = new PrintWriter(this.socket.getOutputStream(), true);
     }
 
+    public void Disconnect() throws IOException {
+        this.out.close();
+        this.in.close();
+        this.socket.close();
+    }
+
     @Override
     public void run() {
         while (true) {
@@ -89,24 +96,49 @@ public class MultiplayerClient implements Runnable {
             Message messageIn;
 
             try {
+                Gdx.app.debug("MultiplayerClient", "Message queue size: " + this.messageQueue.size());
                 messageOut = this.messageQueue.take();
                 final String payload = messageOut.ConstructStringFromMessage();
-                this.out.println(payload);
+                this.out.println(payload); // Send message to server
 
-//                if (in.ready()) { // listen for server response
-                    String rawServerResponse = in.readLine();
-                    messageIn = new Message(rawServerResponse);
-                    System.out.println("Raw server response received: " + rawServerResponse);
+//                if (in.ready()) {
+                    String rawServerResponse = in.readLine(); // Listen for server response
+                    if (rawServerResponse != null) {
+                        messageIn = new Message(rawServerResponse);
+                        System.out.println("Raw server response received: " + rawServerResponse);
 
-                    switch (messageIn.GetType()) {
-                        case MSG_SERVER_SENDS_SESSION_ID: {
-                            Gdx.app.debug("MultiplayerClient",
-                                "received MSG_SERVER_SENDS_SESSION_ID with payload: " + messageIn.GetPayload());
-                            this.lobbyListener.onLobbyIDReceived(messageIn.GetPayload());
-                            break;
-                        } default: {
-                            Gdx.app.debug("MultiplayerClient", "Received unknown server response: " +
-                                rawServerResponse);
+                        switch (messageIn.GetType()) {
+                            case MSG_SERVER_SENDS_SESSION_ID: {
+                                Gdx.app.debug("MultiplayerClient",
+                                    "received MSG_SERVER_SENDS_SESSION_ID with payload: " + messageIn.GetPayload());
+                                this.lobbyListener.onLobbyIDReceived(messageIn.GetPayload());
+                                break;
+                            }
+                            case MSG_SERVER_TERMINATE_CONNECTION: {
+                                Gdx.app.debug("MultiplayerClient",
+                                    "Received connection termination from the server");
+                                Disconnect();
+                                return;
+                            }
+
+                            case MSG_SERVER_LOBBY_DOESNT_EXIST: {
+                                Disconnect();
+                                Gdx.app.debug("MultiplayerClient", "Received lobby does not exist");
+                                return;
+                            }
+
+                            case MSG_TWOWAY_SEND_PLAYER_NAME: {
+                                Gdx.app.debug("MultiplayerClient",
+                                    "Received player name " + messageIn.GetPayload());
+                                this.lobbyListener.onLobbyPlayerJoined(messageIn.GetPayload());
+                                break;
+                            }
+
+                            default: {
+                                Gdx.app.debug("MultiplayerClient", "Received unknown server response: " +
+                                    rawServerResponse);
+                                break;
+                            }
                         }
                     }
 //                }

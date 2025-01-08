@@ -16,7 +16,7 @@ import io.github.SpaceJomber.UIElements.RenderableText;
 import io.github.SpaceJomber.networking.MultiplayerClient;
 import io.github.SpaceJomber.shared.Message;
 import io.github.SpaceJomber.shared.MessageType;
-import io.github.SpaceJomber.systems.LobbyUIUpdateListener;
+import io.github.SpaceJomber.listeners.LobbyUIUpdateListener;
 import io.github.SpaceJomber.systems.RenderingSystem;
 
 import java.io.IOException;
@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class LobbyScreen implements Screen, LobbyUIUpdateListener {
+public class LobbyScreen implements Screen,
+    LobbyUIUpdateListener {
 
     private RenderingSystem renderingSystem;
     private Main game;
@@ -38,6 +39,10 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
 
     private final boolean isCreator;
     private final String instancePlayerName;
+
+    private List<String> playerNames;
+
+    private List<RenderableText> playerNamesToRender;
 
     private DynamicShapeTextButton colorChangeTextButton;
 
@@ -58,6 +63,8 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
         this.isCreator = isCreator;
         this.instancePlayerName = instancePlayerName;
         this.multiplayerClient.SetLobbyUIUpdateListener(this);
+        this.playerNames = new ArrayList<>();
+        this.playerNamesToRender = new ArrayList<>();
 
         Gdx.app.debug("LobbyScreen constructor", "Incoming lobby ID " + incomingLobbyID);
 
@@ -114,11 +121,13 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
                 final Message createdLobbyMessage = new Message(MessageType.MSG_USER_CREATED_LOBBY, "NULL");
                 this.multiplayerClient.SendMessage(createdLobbyMessage);
             } else {
-                // TODO: Send message that user joins the lobby
                 final Message joinedLobbyMessage = new Message(MessageType.MSG_USER_JOINED_LOBBY, this.lobbyID);
                 this.multiplayerClient.SendMessage(joinedLobbyMessage);
                 // TODO: If lobby id is wrong, go back to the menu and disconnect from the server
             }
+            // TODO: Method for creating a message
+            final Message nameMessage = new Message(MessageType.MSG_TWOWAY_SEND_PLAYER_NAME, this.instancePlayerName);
+            this.multiplayerClient.SendMessage(nameMessage);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -216,6 +225,11 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
         this.lobbySpriteBatch.draw(this.renderingSystem.SetBackgroundImage(), 0, 0);
         this.lobbyIDText.render(this.lobbySpriteBatch);
         this.changeColorText.render(this.lobbySpriteBatch);
+
+        for (RenderableText playerNameText : this.playerNamesToRender) {
+            playerNameText.render(this.lobbySpriteBatch);
+        }
+
         this.lobbySpriteBatch.end();
         this.stage.act(delta); // this updates actors
         this.stage.draw(); // this renders actors
@@ -250,5 +264,33 @@ public class LobbyScreen implements Screen, LobbyUIUpdateListener {
     public void onLobbyIDReceived(String lobbyID) {
         Gdx.app.postRunnable(() -> this.lobbyIDText.SetText(lobbyID));
         Gdx.app.debug("LobbyScreen", "onLobbyIDReceived: " + lobbyID);
+    }
+
+    @Override
+    public synchronized void onLobbyPlayerJoined(String playerName) {
+        Gdx.app.postRunnable(() -> {
+            final float namePosStartY = Gdx.graphics.getHeight() * 0.4f;
+            final float namePosStartX = Gdx.graphics.getWidth() / 2f;
+            final int offsetY = 30;
+
+            this.playerNames.add(playerName);
+
+            float positionY = namePosStartY - (this.playerNamesToRender.size() * offsetY);
+
+            RenderableText renderablePlayerName = new RenderableText(
+                playerName,
+                namePosStartX - this.renderingSystem.GetMainFont().getCapHeight() / 2f,
+                positionY,
+                this.renderingSystem.GetMainFont()
+            );
+
+            this.playerNamesToRender.add(renderablePlayerName);
+            Gdx.app.debug("LobbyScreen", "Added player: " + playerName + " at position Y: " + positionY);
+        });
+    }
+
+    @Override
+    public void onLobbyPlayerLeft(String playerName) {
+
     }
 }

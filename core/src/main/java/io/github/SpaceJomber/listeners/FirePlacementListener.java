@@ -1,5 +1,4 @@
-package io.github.SpaceJomber.systems;
-import io.github.SpaceJomber.entities.BombFire;
+package io.github.SpaceJomber.listeners;
 import io.github.SpaceJomber.entities.FireElement;
 
 public interface FirePlacementListener {

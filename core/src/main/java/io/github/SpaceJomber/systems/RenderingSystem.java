@@ -19,6 +19,8 @@ import io.github.SpaceJomber.entities.Bomb;
 import io.github.SpaceJomber.entities.BombFire;
 import io.github.SpaceJomber.entities.ENTITYID;
 import io.github.SpaceJomber.entities.FireElement;
+import io.github.SpaceJomber.listeners.BombPlacementListener;
+import io.github.SpaceJomber.listeners.FirePlacementListener;
 import io.github.SpaceJomber.utils.MapUtils;
 
 import java.util.*;

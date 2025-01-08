@@ -36,8 +36,29 @@ public class Message {
                 this.type = MessageType.MSG_SERVER_SENDS_SESSION_ID;
                 break;
             }
+
+            case "5": {
+                this.type = MessageType.MSG_SERVER_DENIES_ENTRY;
+                break;
+            }
+
+            case "6": {
+                this.type = MessageType.MSG_SERVER_LOBBY_DOESNT_EXIST;
+                break;
+            }
+
+            case "7": {
+                this.type = MessageType.MSG_SERVER_TERMINATE_CONNECTION;
+                break;
+            }
+
+            case "20": {
+                this.type = MessageType.MSG_TWOWAY_SEND_PLAYER_NAME;
+                break;
+            }
+
             default: {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Unknown message type: " + strID);
             }
         }
         this.payload = strPayload;

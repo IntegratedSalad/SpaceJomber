@@ -4,8 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.utils.Timer;
-import io.github.SpaceJomber.systems.BombPlacementListener;
-import io.github.SpaceJomber.systems.FirePlacementListener;
+import io.github.SpaceJomber.listeners.FirePlacementListener;
 import io.github.SpaceJomber.systems.Renderable;
 
 public class FireElement implements Renderable {

@@ -15,6 +15,10 @@ public class ClientHandler implements Runnable {
     private PrintWriter out;
     private boolean isReady = false;
 
+    private String playerName;
+
+    private Lobby playerLobby;
+
     public ClientHandler(Socket socket, GameServer server) {
         this.socket = socket;
         this.server = server;
@@ -26,6 +30,10 @@ public class ClientHandler implements Runnable {
 
     public void setReady(boolean ready) {
         this.isReady = ready;
+    }
+
+    public PrintWriter GetOutStream() {
+        return this.out;
     }
 
     @Override
@@ -57,6 +65,8 @@ public class ClientHandler implements Runnable {
                         // Send Lobby UUID to client
                         System.out.println("Sending " + rawOutput + " to client " + this.socket.getInetAddress());
                         this.out.println(rawOutput);
+                        this.server.getLobbyManager().GetLobby(lobbyHash).AddPlayer(this);
+                        this.playerLobby = this.server.getLobbyManager().GetLobby(lobbyHash);
                         break;
                     }
 
@@ -66,11 +76,33 @@ public class ClientHandler implements Runnable {
 
                         Lobby lobby = this.server.getLobbyManager().GetLobby(lobbyHash);
                         if (lobby != null) {
+                            // TODO: Announce to client if lobby is full (>=4 players)
                             System.out.println("Client " + this.socket.getInetAddress() + "joined lobby: " + lobbyHash);
+                            lobby.AddPlayer(this);
+                            final int lobbySize = lobby.GetPlayerCount();
+                            System.out.println("Lobby size: " + lobbySize);
+
                         } else {
                             System.out.println("No such lobby as: " + lobbyHash);
-                        }
 
+                            // TODO: Announce to client that this lobby doesn't exist
+                        }
+                        break;
+                    }
+
+                    case MSG_TWOWAY_SEND_PLAYER_NAME: {
+                        final String receivedPlayerName = messageIn.GetPayload();
+                        System.out.println("Server received player name: " + receivedPlayerName);
+                        this.playerName = receivedPlayerName;
+
+                        // Broadcast message here, NOT ABOVE WHEN JOINING/CREATING (now we have playerName)
+                        messageOut = new Message(MessageType.MSG_TWOWAY_SEND_PLAYER_NAME, this.playerName);
+                        this.server.Broadcast(this.playerLobby.GetPlayers(), messageOut);
+                        break;
+                    }
+
+                    default: {
+                        System.out.println("Server received an unknown message: " + rawInput);
                         break;
                     }
                 }

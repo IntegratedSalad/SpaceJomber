@@ -1,5 +1,8 @@
 package io.github.SpaceJomber.server;
 
+import io.github.SpaceJomber.shared.Message;
+import io.github.SpaceJomber.shared.MessageType;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -62,6 +65,13 @@ public class GameServer {
 
             }
         }
+    }
+
+    public void Broadcast(final List<ClientHandler> clients, Message message) {
+       final String rawOutput = message.ConstructStringFromMessage();
+       for (ClientHandler clientHandler : clients) {
+           clientHandler.GetOutStream().println(rawOutput);
+       }
     }
 
     public LobbyManager getLobbyManager() {
