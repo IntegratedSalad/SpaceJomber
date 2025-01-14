@@ -67,6 +67,8 @@ public class ClientHandler implements Runnable {
                         this.server.getLobbyManager().GetLobby(lobbyHash).AddPlayer(this);
                         this.playerLobby = this.server.getLobbyManager().GetLobby(lobbyHash);
                         System.out.println("Player lobby: " + this.playerLobby);
+
+
                         break;
                     }
 
@@ -75,6 +77,7 @@ public class ClientHandler implements Runnable {
                         System.out.println("Client " + this.socket.getInetAddress() + "tries to join lobby: " + lobbyHash);
 
                         Lobby lobby = this.server.getLobbyManager().GetLobby(lobbyHash);
+                        this.playerLobby = lobby;
                         if (lobby != null) {
                             // TODO: Announce to client if lobby is full (>=4 players)
                             System.out.println("Client " + this.socket.getInetAddress() + "joined lobby: " + lobbyHash);
@@ -90,7 +93,6 @@ public class ClientHandler implements Runnable {
                         break;
                     }
 
-                    // TODO: We need a message that sends lobby/sets lobby for all players
 
                     case MSG_TWOWAY_SEND_PLAYER_NAME: {
                         final String receivedPlayerName = messageIn.GetPayload();
@@ -99,7 +101,9 @@ public class ClientHandler implements Runnable {
 
                         // Broadcast message here, NOT ABOVE WHEN JOINING/CREATING (now we have playerName)
                         messageOut = new Message(MessageType.MSG_TWOWAY_SEND_PLAYER_NAME, this.playerName);
-                        // BUG: ClientHandler for player joining the lobby doesn't have this instance
+                        // Here, the player joining the lobby didn't have this instance
+                        // But, because lobby can be accessed from the server instance, and there's only
+                        // one server instance, we can get the exact same lobby for this client when he joins it
                         this.server.Broadcast(this.playerLobby.GetPlayers(), messageOut);
                         break;
                     }
