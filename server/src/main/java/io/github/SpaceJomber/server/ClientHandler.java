@@ -54,7 +54,6 @@ public class ClientHandler implements Runnable {
                     case MSG_USER_LOGGED_IN: {
                         break;
                     }
-
                     case MSG_USER_CREATED_LOBBY: {
                         final String lobbyHash = this.server.getLobbyManager().CreateLobby();
                         System.out.println("Client " + this.socket.getInetAddress() + "created lobby " + lobbyHash);
@@ -67,6 +66,7 @@ public class ClientHandler implements Runnable {
                         this.out.println(rawOutput);
                         this.server.getLobbyManager().GetLobby(lobbyHash).AddPlayer(this);
                         this.playerLobby = this.server.getLobbyManager().GetLobby(lobbyHash);
+                        System.out.println("Player lobby: " + this.playerLobby);
                         break;
                     }
 
@@ -90,6 +90,8 @@ public class ClientHandler implements Runnable {
                         break;
                     }
 
+                    // TODO: We need a message that sends lobby/sets lobby for all players
+
                     case MSG_TWOWAY_SEND_PLAYER_NAME: {
                         final String receivedPlayerName = messageIn.GetPayload();
                         System.out.println("Server received player name: " + receivedPlayerName);
@@ -97,6 +99,7 @@ public class ClientHandler implements Runnable {
 
                         // Broadcast message here, NOT ABOVE WHEN JOINING/CREATING (now we have playerName)
                         messageOut = new Message(MessageType.MSG_TWOWAY_SEND_PLAYER_NAME, this.playerName);
+                        // BUG: ClientHandler for player joining the lobby doesn't have this instance
                         this.server.Broadcast(this.playerLobby.GetPlayers(), messageOut);
                         break;
                     }
