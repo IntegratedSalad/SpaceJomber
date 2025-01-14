@@ -103,6 +103,7 @@ public class MultiplayerClient implements Runnable {
 
 //                if (in.ready()) {
                     String rawServerResponse = in.readLine(); // Listen for server response
+                    // TODO: Server now blocks if it doesn't respond!!!
                     if (rawServerResponse != null) {
                         messageIn = new Message(rawServerResponse);
                         System.out.println("Raw server response received: " + rawServerResponse);
