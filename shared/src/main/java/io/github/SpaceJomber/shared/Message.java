@@ -1,7 +1,7 @@
 package io.github.SpaceJomber.shared;
 
 // Every message has a following structure:
-// ID:PAYLOAD
+// ID:PAYLOAD|PAYLOAD2|PAYLOAD3
 public class Message {
 
     private MessageType type;

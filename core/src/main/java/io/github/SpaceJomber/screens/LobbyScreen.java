@@ -120,14 +120,16 @@ public class LobbyScreen implements Screen,
             if (this.isCreator) {
                 final Message createdLobbyMessage = new Message(MessageType.MSG_USER_CREATED_LOBBY, "NULL");
                 this.multiplayerClient.SendMessage(createdLobbyMessage);
+                final Message nameMessage = new Message(MessageType.MSG_TWOWAY_SEND_PLAYER_NAME, this.instancePlayerName);
+                this.multiplayerClient.SendMessage(nameMessage);
             } else {
-                final Message joinedLobbyMessage = new Message(MessageType.MSG_USER_JOINED_LOBBY, this.lobbyID);
+                final Message joinedLobbyMessage = new Message(MessageType.MSG_USER_JOINED_LOBBY,
+                    this.lobbyID + "|" + this.instancePlayerName);
                 this.multiplayerClient.SendMessage(joinedLobbyMessage);
                 // TODO: If lobby id is wrong, go back to the menu and disconnect from the server
             }
             // TODO: Method for creating a message
-            final Message nameMessage = new Message(MessageType.MSG_TWOWAY_SEND_PLAYER_NAME, this.instancePlayerName);
-            this.multiplayerClient.SendMessage(nameMessage);
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -273,6 +275,7 @@ public class LobbyScreen implements Screen,
             final float namePosStartX = Gdx.graphics.getWidth() / 2f;
             final int offsetY = 30;
 
+            if (this.playerNames.contains(playerName)) return;
             this.playerNames.add(playerName);
 
             float positionY = namePosStartY - (this.playerNamesToRender.size() * offsetY);

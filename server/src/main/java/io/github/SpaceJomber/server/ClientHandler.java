@@ -68,12 +68,15 @@ public class ClientHandler implements Runnable {
                         this.playerLobby = this.server.getLobbyManager().GetLobby(lobbyHash);
                         System.out.println("Player lobby: " + this.playerLobby);
 
-
                         break;
                     }
 
                     case MSG_USER_JOINED_LOBBY: {
-                        final String lobbyHash = messageIn.GetPayload();
+                        final String lobbyHash = messageIn.GetPayload().split("\\|")[0]; // :lobbyHash|
+                        this.playerName = messageIn.GetPayload().split("\\|")[1];
+                        System.out.println("playername: " + this.playerName);
+                        System.out.println("Lobbyhash" + lobbyHash);
+
                         System.out.println("Client " + this.socket.getInetAddress() + "tries to join lobby: " + lobbyHash);
 
                         Lobby lobby = this.server.getLobbyManager().GetLobby(lobbyHash);
@@ -85,6 +88,15 @@ public class ClientHandler implements Runnable {
                             final int lobbySize = lobby.GetPlayerCount();
                             System.out.println("Lobby size: " + lobbySize);
 
+                            // TODO: Send names of playersInLobby
+                            System.out.println("Joined player name: " + this.playerName);
+                            System.out.println("Sending broadcast to: " + this.playerLobby.GetPlayers().size());
+                            for (ClientHandler p : this.playerLobby.GetPlayers()) {
+                                final String pName = p.playerName;
+                                messageOut = new Message(MessageType.MSG_TWOWAY_SEND_PLAYER_NAME, pName);
+                                this.server.Broadcast(this.playerLobby.GetPlayers(), messageOut);
+                            }
+
                         } else {
                             System.out.println("No such lobby as: " + lobbyHash);
 
@@ -92,7 +104,6 @@ public class ClientHandler implements Runnable {
                         }
                         break;
                     }
-
 
                     case MSG_TWOWAY_SEND_PLAYER_NAME: {
                         final String receivedPlayerName = messageIn.GetPayload();
