@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import io.github.SpaceJomber.Main;
 import io.github.SpaceJomber.UIElements.DynamicShapeTextButton;
 import io.github.SpaceJomber.UIElements.RenderableText;
+import io.github.SpaceJomber.UIElements.ShapeTextButton;
 import io.github.SpaceJomber.networking.MultiplayerClient;
 import io.github.SpaceJomber.shared.Message;
 import io.github.SpaceJomber.shared.MessageType;
@@ -45,6 +46,7 @@ public class LobbyScreen implements Screen,
     private List<RenderableText> playerNamesToRender;
 
     private DynamicShapeTextButton colorChangeTextButton;
+    private ShapeTextButton leaveLobbyButton;
 
     private String lobbyID = "XXXXXXXX";
     private RenderableText lobbyIDText;
@@ -102,15 +104,6 @@ public class LobbyScreen implements Screen,
             20,
             16,
             16);
-
-        SpriteDrawable spriteDrawableGreenShip =
-            new SpriteDrawable(this.renderingSystem.GetSprite("greenShip"));
-        SpriteDrawable spriteDrawableRedShip =
-            new SpriteDrawable(this.renderingSystem.GetSprite("redShip"));
-        SpriteDrawable spriteDrawableBlueShip =
-            new SpriteDrawable(this.renderingSystem.GetSprite("blueShip"));
-        SpriteDrawable spriteDrawableBlackShip =
-            new SpriteDrawable(this.renderingSystem.GetSprite("blackShip"));
 
         // Connect
         try {
@@ -183,6 +176,19 @@ public class LobbyScreen implements Screen,
 
         this.changeColorText = new RenderableText("Change color", this.colorChangeTextButton.getX() + 20,
             this.colorChangeTextButton.getY() + this.colorChangeTextButton.getWidth()/2 - 21, this.renderingSystem.GetFontWithNumbers());
+
+        this.leaveLobbyButton = new ShapeTextButton(this.renderingSystem.getShapeRenderer(),
+            "Leave",
+            textButtonStyle,
+            Color.BLACK,
+            Color.BLUE,
+            Color.CYAN,
+            Color.WHITE
+        );
+        this.leaveLobbyButton.setPosition(this.colorChangeTextButton.getX(), this.colorChangeTextButton.getY() +
+            this.colorChangeTextButton.getHeight() + 3);
+        this.leaveLobbyButton.setSize(buttonWidth, buttonHeight);
+        this.stage.addActor(this.leaveLobbyButton);
 
         if (this.isCreator) {
             // TODO: Show button for Cancelling the lobby/starting
@@ -271,8 +277,8 @@ public class LobbyScreen implements Screen,
     @Override
     public synchronized void onLobbyPlayerJoined(String playerName) {
         Gdx.app.postRunnable(() -> {
-            final float namePosStartY = Gdx.graphics.getHeight() * 0.4f;
-            final float namePosStartX = Gdx.graphics.getWidth() / 2f;
+            final float namePosStartY = Gdx.graphics.getHeight() * 0.60f;
+            final float namePosStartX = Gdx.graphics.getWidth() / 2f - 10;
             final int offsetY = 30;
 
             if (this.playerNames.contains(playerName)) return;
