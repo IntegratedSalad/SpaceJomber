@@ -9,10 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 /*
 * This entity communicates with server -> sends messages to the socket.
@@ -145,9 +142,10 @@ public class MultiplayerClient implements Runnable {
                             break;
                         }
                         case MSG_SERVER_STARTS_SESSION: {
+                            Gdx.app.debug("MultiplayerClient", "Received server starts session");
                             this.lobbyListener.onSessionStarted();
+                            break;
                         }
-
                         default: {
                             Gdx.app.debug("MultiplayerClient", "Received unknown server response: " +
                                 rawServerResponse);
@@ -163,6 +161,8 @@ public class MultiplayerClient implements Runnable {
 
     @Override
     public void run() {
+
+        System.out.println("MultiplayerClient run() new thread called from " + Thread.currentThread().getName());
         this.messageHandlerExecutor.execute(this::HandleIncomingMessages);
         this.messageHandlerExecutor.execute(() -> {
             try {
@@ -172,8 +172,20 @@ public class MultiplayerClient implements Runnable {
                 isRunning = false;
             }
         });
-        while (this.isRunning) {
-            // Thread idle
+
+        try {
+            this.messageHandlerExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
+
+//        while (this.isRunning) {
+//            // Thread idle
+//            try {
+//                Thread.sleep(10);
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
     }
 }

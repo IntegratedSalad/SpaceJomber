@@ -17,6 +17,7 @@ public class GameScreen implements Screen {
     private RenderingSystem renderingSystem;
     private FireCollisionSystem fireCollisionSystem;
 
+    private String shipColor;
     private Player instanceControlledPlayer = null;
 
     public GameScreen(RenderingSystem renderingSystem,
@@ -33,6 +34,27 @@ public class GameScreen implements Screen {
             "tiles/Asset-Sheet-with-transparency.png",
             1,
             11,
+            16,
+            16);
+
+        renderingSystem.RegisterSprite("redShip",
+            "tiles/Asset-Sheet-with-transparency.png",
+            1,
+            14,
+            16,
+            16);
+
+        renderingSystem.RegisterSprite("blueShip",
+            "tiles/Asset-Sheet-with-transparency.png",
+            1,
+            17,
+            16,
+            16);
+
+        renderingSystem.RegisterSprite("blackShip",
+            "tiles/Asset-Sheet-with-transparency.png",
+            1,
+            20,
             16,
             16);
 
@@ -103,11 +125,17 @@ public class GameScreen implements Screen {
             renderingSystem.GetSprite("leftFire"),
             renderingSystem.GetSprite("rightFire"));
 
+        this.shipColor = "greenShip";
+        this.SetupGame();
+        Gdx.app.debug("GameScreen", "Initialized game screen...");
+    }
+
+    public void SetupGame() {
         // Set up players
-        this.instanceControlledPlayer = new Player(renderingSystem.GetSprite("greenShip"),
+        this.instanceControlledPlayer = new Player(renderingSystem.GetSprite(shipColor),
             1,
             1,
-            "Dodo",
+            shipColor.toUpperCase().split("SHIP")[0] + " Player",
             ENTITYID.PLAYER_GREEN,
             this.renderingSystem);
         this.renderingSystem.AddRenderable(this.instanceControlledPlayer);

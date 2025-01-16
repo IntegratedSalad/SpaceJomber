@@ -13,6 +13,8 @@ import io.github.SpaceJomber.networking.MultiplayerClient;
 import io.github.SpaceJomber.screens.*;
 import io.github.SpaceJomber.systems.RenderingSystem;
 
+import java.awt.*;
+
 /*
  * Main class should handle high-level game lifecycle
  * + Initialization of Systems
@@ -48,12 +50,14 @@ public class Main extends Game {
     private ScoreScreen scoreScreen;
     private MultiplayerDecisionScreen multiplayerDecisionScreen;
     private LobbyScreen lobbyScreen;
-    private JoinLobbyScreen joinLobbyScreen;
+    private MultiplayerGameScreen multiplayerGameScreen;
+
     private EnterNameScreen enterNameScreen;
     private EnterLobbyUIDScreen enterLobbyUIDScreen;
 
     public Main(MultiplayerClient multiplayerClient) {
         this.multiplayerClient = multiplayerClient;
+        System.out.println("This thread name: " + Thread.currentThread().getName());
 //        this.menuScreen = new MenuScreen(new RenderingSystem());
 //        this.gameScreen = new GameScreen();
 //        this.scoreScreen = new ScoreScreen();
@@ -98,6 +102,18 @@ public class Main extends Game {
         this.setScreen(this.gameScreen);
     }
 
+    public void SetupMultiplayerGameScreen(MultiplayerClient multiplayerClient, final String shipColor) {
+
+        System.out.println("SETUP MULTIPLAYER GAME SCREEN thread name: " + Thread.currentThread().getName());
+
+        OrthographicCamera camera = new OrthographicCamera();
+        RenderingSystem gameRenderingSystem = new RenderingSystem(camera);
+        gameRenderingSystem.RegisterMainFont("roboticsfont.ttf");
+        this.multiplayerGameScreen = new MultiplayerGameScreen(gameRenderingSystem,
+            this, multiplayerClient, shipColor);
+        this.setScreen(this.multiplayerGameScreen);
+    }
+
     public void SetupMultiplayerDecisionScreen() {
         OrthographicCamera camera = new OrthographicCamera();
         RenderingSystem lobbyRenderingSystem = new RenderingSystem(camera);
@@ -135,13 +151,6 @@ public class Main extends Game {
         enterLobbyUIDRenderingSystem.RegisterFontWithNumbers("fontwithnumbers.ttf");
         this.enterLobbyUIDScreen = new EnterLobbyUIDScreen(this, enterLobbyUIDRenderingSystem, isCreator);
         this.setScreen(this.enterLobbyUIDScreen);
-    }
-
-    public void JoinLobbyScreen() {
-        OrthographicCamera camera = new OrthographicCamera();
-        RenderingSystem lobbyRenderingSystem = new RenderingSystem(camera);
-        lobbyRenderingSystem.RegisterMainFont("roboticsfont.ttf");
-        this.joinLobbyScreen = new JoinLobbyScreen(lobbyRenderingSystem, this);
     }
 
     @Override
