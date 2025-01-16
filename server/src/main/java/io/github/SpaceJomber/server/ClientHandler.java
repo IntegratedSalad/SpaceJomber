@@ -156,8 +156,8 @@ public class ClientHandler implements Runnable {
                             List<int[]> posList = new ArrayList<>();
                             posList.add(new int[]{1, 1});
                             posList.add(new int[]{13, 1});
-                            posList.add(new int[]{1, 13});
-                            posList.add(new int[]{13, 13});
+                            posList.add(new int[]{1, 11});
+                            posList.add(new int[]{13, 11});
                             for (int i = 0; i < this.playerLobby.GetPlayers().size(); i++) {
                                 String payload = "";
                                 payload += String.valueOf(posList.get(i)[0]);

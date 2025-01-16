@@ -23,7 +23,6 @@ public class MultiplayerGameScreen extends GameScreen {
 
     @Override
     public void SetupGame() {
-//        super.SetupGame();
         this.shipColor += "Ship";
         Gdx.app.debug("MultiplayerGameScreen, SetupGame", "shipColor: " + this.shipColor);
         this.instanceControlledPlayer = new Player(renderingSystem.GetSprite(this.shipColor),
