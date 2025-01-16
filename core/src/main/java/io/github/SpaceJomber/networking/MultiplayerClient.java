@@ -143,7 +143,14 @@ public class MultiplayerClient implements Runnable {
                         }
                         case MSG_SERVER_STARTS_SESSION: {
                             Gdx.app.debug("MultiplayerClient", "Received server starts session");
-                            this.lobbyListener.onSessionStarted();
+
+                            Gdx.app.debug("MultiplayerClient", "Positions: " + messageIn.GetPayload());
+
+                            final String[] positions = messageIn.GetPayload().split(" ");
+                            final int positionX = Integer.parseInt(positions[0]);
+                            final int positionY = Integer.parseInt(positions[1]);
+
+                            this.lobbyListener.onSessionStarted(positionX, positionY);
                             break;
                         }
                         default: {

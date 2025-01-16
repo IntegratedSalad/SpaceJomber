@@ -34,6 +34,11 @@ public class GameServer {
         this.port = port;
     }
 
+    public void StartSession(List<ClientHandler> players, String sessionHash) {
+        GameSession newGs = new GameSession(players, sessionHash);
+        this.sessionThreadPool.execute(newGs);
+    }
+
     public void Start() throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(this.port)) {
             System.out.println("Starting server on port " + this.port);

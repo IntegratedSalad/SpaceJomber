@@ -7,6 +7,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
+import jdk.internal.net.http.common.Pair;
 
 public class ClientHandler implements Runnable {
     private final Socket socket;
@@ -18,6 +21,8 @@ public class ClientHandler implements Runnable {
     private String playerName;
 
     private Lobby playerLobby;
+
+    private ClientHandlerListener clientHandlerListener;
 
     public ClientHandler(Socket socket, GameServer server) {
         this.socket = socket;
@@ -34,6 +39,10 @@ public class ClientHandler implements Runnable {
 
     public PrintWriter GetOutStream() {
         return this.out;
+    }
+
+    public void SetListener(GameSession session) {
+        this.clientHandlerListener = session;
     }
 
     @Override
@@ -143,8 +152,28 @@ public class ClientHandler implements Runnable {
                             // All are ready, start session.
                             // This means that the last player clicked "Ready"
                             System.out.println("All are ready!");
-                            messageOut = new Message(MessageType.MSG_SERVER_STARTS_SESSION, "NULL");
-                            this.server.Broadcast(this.playerLobby.GetPlayers(), messageOut);
+
+                            List<int[]> posList = new ArrayList<>();
+                            posList.add(new int[]{1, 1});
+                            posList.add(new int[]{13, 1});
+                            posList.add(new int[]{1, 13});
+                            posList.add(new int[]{13, 13});
+                            for (int i = 0; i < this.playerLobby.GetPlayers().size(); i++) {
+                                String payload = "";
+                                payload += String.valueOf(posList.get(i)[0]);
+                                payload += " ";
+                                payload += String.valueOf(posList.get(i)[1]);
+                                System.out.println("Payload of start session: " + payload);
+                                messageOut = new Message(MessageType.MSG_SERVER_STARTS_SESSION, payload);
+                                final String rawMessage = messageOut.ConstructStringFromMessage();
+                                this.playerLobby.GetPlayers().get(i).GetOutStream().println(rawMessage);
+                            }
+
+//                            messageOut = new Message(MessageType.MSG_SERVER_STARTS_SESSION, "NULL");
+//                            this.server.Broadcast(this.playerLobby.GetPlayers(), messageOut);
+                            // Set positions
+
+                            this.server.StartSession(this.playerLobby.GetPlayers(), this.playerLobby.GetLobbyHash());
                         }
 
                         // TODO: Check if all users in lobby are ready

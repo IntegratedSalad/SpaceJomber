@@ -330,11 +330,11 @@ public class LobbyScreen implements Screen,
     }
 
     @Override
-    public void onSessionStarted() {
+    public void onSessionStarted(final int x, final int y) {
         System.out.println("onSessionStarted called from: " + Thread.currentThread().getName());
         Gdx.app.postRunnable(() ->
             this.game.SetupMultiplayerGameScreen(this.multiplayerClient,
-                this.colorChangeTextButton.getText().toString()));
+                this.colorChangeTextButton.getText().toString(), x, y));
     }
 
     @Override

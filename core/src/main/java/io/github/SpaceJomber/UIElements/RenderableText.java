@@ -18,6 +18,10 @@ public class RenderableText implements Renderable {
         this.font = font;
     }
 
+    public synchronized String GetText() {
+        return this.text;
+    }
+
     public synchronized void SetText(String text) {
         this.text = text;
     }

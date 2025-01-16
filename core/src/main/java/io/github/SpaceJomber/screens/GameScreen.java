@@ -13,17 +13,25 @@ import io.github.SpaceJomber.systems.RenderingSystem;
 
 public class GameScreen implements Screen {
 
-    private Main game;
-    private RenderingSystem renderingSystem;
-    private FireCollisionSystem fireCollisionSystem;
+    protected Main game;
+    protected RenderingSystem renderingSystem;
+    protected FireCollisionSystem fireCollisionSystem;
 
-    private String shipColor;
-    private Player instanceControlledPlayer = null;
+    protected String shipColor;
+    protected Player instanceControlledPlayer = null;
+
+    protected final int startX;
+    protected final int startY;
 
     public GameScreen(RenderingSystem renderingSystem,
-                      Main game) {
+                      Main game, final String shipColor,
+                      final int startX,
+                      final int startY) {
         this.renderingSystem = renderingSystem;
         this.game = game;
+        this.shipColor = shipColor;
+        this.startX = startX;
+        this.startY = startY;
 
         // TODO: Pass information about type of game - multiplayer or local
         // After that, the players will be either controlled manually or they will be given
@@ -125,16 +133,18 @@ public class GameScreen implements Screen {
             renderingSystem.GetSprite("leftFire"),
             renderingSystem.GetSprite("rightFire"));
 
-        this.shipColor = "greenShip";
         this.SetupGame();
         Gdx.app.debug("GameScreen", "Initialized game screen...");
     }
 
     public void SetupGame() {
         // Set up players
+
+        Gdx.app.debug("GameScreen, SetupGame", "SetupGame called...");
+
         this.instanceControlledPlayer = new Player(renderingSystem.GetSprite(shipColor),
-            1,
-            1,
+            this.startX,
+            this.startY,
             shipColor.toUpperCase().split("SHIP")[0] + " Player",
             ENTITYID.PLAYER_GREEN,
             this.renderingSystem);
