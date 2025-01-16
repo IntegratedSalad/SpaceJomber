@@ -37,25 +37,25 @@ public class Message {
                 break;
             }
             case "5": {
+                this.type = MessageType.MSG_USER_READY;
+                break;
+            }
+            case "6": {
                 this.type = MessageType.MSG_SERVER_SENDS_SESSION_ID;
                 break;
             }
-
-            case "6": {
+            case "7": {
                 this.type = MessageType.MSG_SERVER_DENIES_ENTRY;
                 break;
             }
-
-            case "7": {
+            case "8": {
                 this.type = MessageType.MSG_SERVER_LOBBY_DOESNT_EXIST;
                 break;
             }
-
-            case "8": {
+            case "9": {
                 this.type = MessageType.MSG_SERVER_TERMINATE_CONNECTION;
                 break;
             }
-
             case "20": {
                 this.type = MessageType.MSG_TWOWAY_SEND_PLAYER_NAME;
                 break;

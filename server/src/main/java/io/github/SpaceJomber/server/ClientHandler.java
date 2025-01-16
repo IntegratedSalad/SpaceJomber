@@ -119,6 +119,32 @@ public class ClientHandler implements Runnable {
                         break;
                     }
 
+                    case MSG_USER_READY: {
+                        final String isPlayerReadyStr = messageIn.GetPayload();
+                        System.out.println("Received MSG_USER_READY: " + isPlayerReadyStr);
+
+                        if (isPlayerReadyStr.equals("TRUE")) {
+                            this.isReady = true;
+                        } else {
+                            this.isReady = false;
+                        }
+
+                        int readyPlayers = 0;
+                        final int allPlayers = this.playerLobby.GetPlayers().size();
+                        for (final ClientHandler p : this.playerLobby.GetPlayers()) {
+                            if (p.isReady) {
+                                readyPlayers++;
+                            }
+                        }
+                        if (readyPlayers == allPlayers) {
+                            // All are ready, start session.
+                            System.out.println("All are ready!");
+                        }
+
+                        // TODO: Check if all users in lobby are ready
+                        break;
+                    }
+
                     default: {
                         System.out.println("Server received an unknown message: " + rawInput);
                         break;

@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
@@ -47,11 +49,14 @@ public class LobbyScreen implements Screen,
 
     private DynamicShapeTextButton colorChangeTextButton;
     private ShapeTextButton leaveLobbyButton;
+    private ShapeTextButton playerReadyButton;
 
     private String lobbyID = "XXXXXXXX";
     private RenderableText lobbyIDText;
 
     private RenderableText changeColorText;
+
+    private boolean isPlayerReady = false;
 
     public LobbyScreen(RenderingSystem renderingSystem,
                              Main game, MultiplayerClient multiplayerClient, final boolean isCreator,
@@ -189,6 +194,32 @@ public class LobbyScreen implements Screen,
             this.colorChangeTextButton.getHeight() + 3);
         this.leaveLobbyButton.setSize(buttonWidth, buttonHeight);
         this.stage.addActor(this.leaveLobbyButton);
+
+        this.playerReadyButton = new ShapeTextButton(this.renderingSystem.getShapeRenderer(),
+            "Not Ready",
+            textButtonStyle,
+            Color.BLACK,
+            Color.BLUE,
+            Color.CYAN,
+            Color.WHITE
+        );
+        this.playerReadyButton.setPosition(this.leaveLobbyButton.getX(),
+            this.leaveLobbyButton.getY() + this.colorChangeTextButton.getHeight() + 3);
+        this.playerReadyButton.setSize(buttonWidth, buttonHeight);
+        this.stage.addActor(this.playerReadyButton);
+        this.playerReadyButton.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                Message readyMessage = new Message(MessageType.MSG_USER_READY, "FALSE");
+                isPlayerReady = !isPlayerReady;
+                if (isPlayerReady) {
+                    playerReadyButton.setText("Ready");
+                    readyMessage.SetPayload("TRUE");
+                } else {
+                    playerReadyButton.setText("Not Ready");
+                }
+                multiplayerClient.SendMessage(readyMessage);
+                return true;
+            }});
 
         if (this.isCreator) {
             // TODO: Show button for Cancelling the lobby/starting
