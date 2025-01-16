@@ -120,6 +120,9 @@ public class ClientHandler implements Runnable {
                     }
 
                     case MSG_USER_READY: {
+                        // When user clicks ready
+                        // This clause handles this client's message.
+                        // So this is called once
                         final String isPlayerReadyStr = messageIn.GetPayload();
                         System.out.println("Received MSG_USER_READY: " + isPlayerReadyStr);
 
@@ -138,7 +141,10 @@ public class ClientHandler implements Runnable {
                         }
                         if (readyPlayers == allPlayers) {
                             // All are ready, start session.
+                            // This means that the last player clicked "Ready"
                             System.out.println("All are ready!");
+                            messageOut = new Message(MessageType.MSG_SERVER_STARTS_SESSION, "NULL");
+                            this.server.Broadcast(this.playerLobby.GetPlayers(), messageOut);
                         }
 
                         // TODO: Check if all users in lobby are ready

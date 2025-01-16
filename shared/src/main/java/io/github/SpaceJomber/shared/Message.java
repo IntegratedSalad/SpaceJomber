@@ -56,6 +56,10 @@ public class Message {
                 this.type = MessageType.MSG_SERVER_TERMINATE_CONNECTION;
                 break;
             }
+            case "10": {
+                this.type = MessageType.MSG_SERVER_STARTS_SESSION;
+                break;
+            }
             case "20": {
                 this.type = MessageType.MSG_TWOWAY_SEND_PLAYER_NAME;
                 break;

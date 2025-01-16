@@ -144,6 +144,10 @@ public class MultiplayerClient implements Runnable {
                             this.lobbyListener.onLobbyPlayerJoined(messageIn.GetPayload());
                             break;
                         }
+                        case MSG_SERVER_STARTS_SESSION: {
+                            this.lobbyListener.onSessionStarted();
+                        }
+
                         default: {
                             Gdx.app.debug("MultiplayerClient", "Received unknown server response: " +
                                 rawServerResponse);

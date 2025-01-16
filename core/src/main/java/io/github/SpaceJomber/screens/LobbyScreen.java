@@ -330,6 +330,11 @@ public class LobbyScreen implements Screen,
     }
 
     @Override
+    public void onSessionStarted() {
+
+    }
+
+    @Override
     public void onLobbyPlayerLeft(String playerName) {
 
     }
