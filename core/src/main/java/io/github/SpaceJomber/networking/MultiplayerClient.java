@@ -153,6 +153,10 @@ public class MultiplayerClient implements Runnable {
                             this.lobbyListener.onSessionStarted(positionX, positionY);
                             break;
                         }
+                        case MSG_USER_SENDS_POSITION: {
+                            Gdx.app.debug("MultiplayerClient", "Received user sends position");
+                            break;
+                        }
                         default: {
                             Gdx.app.debug("MultiplayerClient", "Received unknown server response: " +
                                 rawServerResponse);

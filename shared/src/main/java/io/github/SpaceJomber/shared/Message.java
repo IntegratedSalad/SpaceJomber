@@ -45,18 +45,22 @@ public class Message {
                 break;
             }
             case "7": {
-                this.type = MessageType.MSG_SERVER_DENIES_ENTRY;
+                this.type = MessageType.MSG_SERVER_SENDS_SESSION_ID;
                 break;
             }
             case "8": {
-                this.type = MessageType.MSG_SERVER_LOBBY_DOESNT_EXIST;
+                this.type = MessageType.MSG_SERVER_DENIES_ENTRY;
                 break;
             }
             case "9": {
-                this.type = MessageType.MSG_SERVER_TERMINATE_CONNECTION;
+                this.type = MessageType.MSG_SERVER_LOBBY_DOESNT_EXIST;
                 break;
             }
             case "10": {
+                this.type = MessageType.MSG_SERVER_TERMINATE_CONNECTION;
+                break;
+            }
+            case "11": {
                 this.type = MessageType.MSG_SERVER_STARTS_SESSION;
                 break;
             }

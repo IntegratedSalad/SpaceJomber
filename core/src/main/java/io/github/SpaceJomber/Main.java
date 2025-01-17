@@ -98,13 +98,15 @@ public class Main extends Game {
         OrthographicCamera camera = new OrthographicCamera();
         RenderingSystem gameRenderingSystem = new RenderingSystem(camera);
         gameRenderingSystem.RegisterMainFont("roboticsfont.ttf");
-        this.gameScreen = new GameScreen(gameRenderingSystem, this, "greenShip", 1, 1);
+        this.gameScreen = new GameScreen(gameRenderingSystem, this, "greenShip", 1, 1,
+            "dodo");
         this.setScreen(this.gameScreen);
     }
 
     public void SetupMultiplayerGameScreen(MultiplayerClient multiplayerClient, final String shipColor,
                                            final int startX,
-                                           final int startY) {
+                                           final int startY,
+                                           final String playerName) {
 
         System.out.println("SETUP MULTIPLAYER GAME SCREEN thread name: " + Thread.currentThread().getName());
         Gdx.app.debug("Main, SetupMultiplayerGameScreen", "Ship color: " + shipColor);
@@ -113,7 +115,7 @@ public class Main extends Game {
         RenderingSystem gameRenderingSystem = new RenderingSystem(camera);
         gameRenderingSystem.RegisterMainFont("roboticsfont.ttf");
         this.multiplayerGameScreen = new MultiplayerGameScreen(gameRenderingSystem,
-            this, multiplayerClient, shipColor, startX, startY);
+            this, multiplayerClient, shipColor, startX, startY, playerName);
         this.setScreen(this.multiplayerGameScreen);
     }
 

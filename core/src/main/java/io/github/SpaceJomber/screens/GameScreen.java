@@ -23,15 +23,19 @@ public class GameScreen implements Screen {
     protected final int startX;
     protected final int startY;
 
+    protected String playerName;
+
     public GameScreen(RenderingSystem renderingSystem,
                       Main game, final String shipColor,
                       final int startX,
-                      final int startY) {
+                      final int startY,
+                      final String playerName) {
         this.renderingSystem = renderingSystem;
         this.game = game;
         this.shipColor = shipColor;
         this.startX = startX;
         this.startY = startY;
+        this.playerName = playerName;
 
         // TODO: Pass information about type of game - multiplayer or local
         // After that, the players will be either controlled manually or they will be given
@@ -145,7 +149,7 @@ public class GameScreen implements Screen {
         this.instanceControlledPlayer = new Player(renderingSystem.GetSprite(shipColor),
             this.startX,
             this.startY,
-            shipColor.toUpperCase().split("SHIP")[0] + " Player",
+            this.playerName,
             ENTITYID.PLAYER_GREEN,
             this.renderingSystem);
         this.renderingSystem.AddRenderable(this.instanceControlledPlayer);

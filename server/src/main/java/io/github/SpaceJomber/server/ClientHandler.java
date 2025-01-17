@@ -9,7 +9,6 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import jdk.internal.net.http.common.Pair;
 
 public class ClientHandler implements Runnable {
     private final Socket socket;
@@ -17,12 +16,13 @@ public class ClientHandler implements Runnable {
     private BufferedReader in;
     private PrintWriter out;
     private boolean isReady = false;
-
-    private String playerName;
-
     private Lobby playerLobby;
-
     private ClientHandlerListener clientHandlerListener;
+
+    // There should be a small class keeping all the player related data, but we can keep it all here
+    private String playerName;
+    private int playerX = 0;
+    private int playerY = 0;
 
     public ClientHandler(Socket socket, GameServer server) {
         this.socket = socket;
@@ -39,6 +39,18 @@ public class ClientHandler implements Runnable {
 
     public PrintWriter GetOutStream() {
         return this.out;
+    }
+
+    public int GetPlayerX() {
+        return this.playerX;
+    }
+
+    public int GetPlayerY() {
+        return this.playerY;
+    }
+
+    public String GetPlayerName() {
+        return this.playerName;
     }
 
     public void SetListener(GameSession session) {
@@ -76,7 +88,6 @@ public class ClientHandler implements Runnable {
                         this.server.getLobbyManager().GetLobby(lobbyHash).AddPlayer(this);
                         this.playerLobby = this.server.getLobbyManager().GetLobby(lobbyHash);
                         System.out.println("Player lobby: " + this.playerLobby);
-
                         break;
                     }
 
@@ -85,7 +96,6 @@ public class ClientHandler implements Runnable {
                         this.playerName = messageIn.GetPayload().split("\\|")[1];
                         System.out.println("playername: " + this.playerName);
                         System.out.println("Lobbyhash" + lobbyHash);
-
                         System.out.println("Client " + this.socket.getInetAddress() + "tries to join lobby: " + lobbyHash);
 
                         Lobby lobby = this.server.getLobbyManager().GetLobby(lobbyHash);
@@ -105,15 +115,12 @@ public class ClientHandler implements Runnable {
                                 messageOut = new Message(MessageType.MSG_TWOWAY_SEND_PLAYER_NAME, pName);
                                 this.server.Broadcast(this.playerLobby.GetPlayers(), messageOut);
                             }
-
                         } else {
                             System.out.println("No such lobby as: " + lobbyHash);
-
                             // TODO: Announce to client that this lobby doesn't exist
                         }
                         break;
                     }
-
                     case MSG_TWOWAY_SEND_PLAYER_NAME: {
                         final String receivedPlayerName = messageIn.GetPayload();
                         System.out.println("Server received player name: " + receivedPlayerName);
@@ -127,7 +134,6 @@ public class ClientHandler implements Runnable {
                         this.server.Broadcast(this.playerLobby.GetPlayers(), messageOut);
                         break;
                     }
-
                     case MSG_USER_READY: {
                         // When user clicks ready
                         // This clause handles this client's message.
@@ -164,29 +170,24 @@ public class ClientHandler implements Runnable {
                                 payload += " ";
                                 payload += String.valueOf(posList.get(i)[1]);
                                 System.out.println("Payload of start session: " + payload);
+                                if (this.playerLobby.GetPlayers().get(i) == this) {
+                                    this.playerX = posList.get(i)[0];
+                                    this.playerY = posList.get(i)[1];
+                                }
                                 messageOut = new Message(MessageType.MSG_SERVER_STARTS_SESSION, payload);
                                 final String rawMessage = messageOut.ConstructStringFromMessage();
                                 this.playerLobby.GetPlayers().get(i).GetOutStream().println(rawMessage);
                             }
-
-//                            messageOut = new Message(MessageType.MSG_SERVER_STARTS_SESSION, "NULL");
-//                            this.server.Broadcast(this.playerLobby.GetPlayers(), messageOut);
-                            // Set positions
-
                             this.server.StartSession(this.playerLobby.GetPlayers(), this.playerLobby.GetLobbyHash());
                         }
-
-                        // TODO: Check if all users in lobby are ready
                         break;
                     }
-
                     default: {
                         System.out.println("Server received an unknown message: " + rawInput);
                         break;
                     }
                 }
             }
-
             // Handle game communication (after ready state)
         } catch (IOException e) {
             e.printStackTrace();

@@ -10,15 +10,24 @@ import io.github.SpaceJomber.systems.FireCollisionSystem;
 import io.github.SpaceJomber.systems.InputSystem;
 import io.github.SpaceJomber.systems.RenderingSystem;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MultiplayerGameScreen extends GameScreen {
     private MultiplayerClient multiplayerClient;
 
+    private List<Player> players;
+
     public MultiplayerGameScreen(RenderingSystem renderingSystem, Main game,
                                  MultiplayerClient multiplayerClient, String shipColor,
-                                 final int startX, final int startY) {
-        super(renderingSystem, game, shipColor, startX, startY);
+                                 final int startX, final int startY,
+                                 final String playerName) {
+        super(renderingSystem, game, shipColor, startX, startY, playerName);
         this.multiplayerClient = multiplayerClient;
+        this.players = new ArrayList<>();
+        this.players.add(this.instanceControlledPlayer);
         Gdx.app.log("MultiplayerGameScreen", "X: " + startX + " Y: " + startY);
+        Gdx.app.log("MultiplayerGameScreen", "Received player name: " + playerName);
     }
 
     @Override
@@ -28,7 +37,7 @@ public class MultiplayerGameScreen extends GameScreen {
         this.instanceControlledPlayer = new Player(renderingSystem.GetSprite(this.shipColor),
             this.startX,
             this.startY,
-            this.shipColor.toUpperCase().split("SHIP")[0] + " Player",
+            this.shipColor.toUpperCase().split("SHIP")[0] + " Player", // TODO: acquire name entered
             ENTITYID.PLAYER_GREEN,
             this.renderingSystem);
         this.renderingSystem.AddRenderable(this.instanceControlledPlayer);

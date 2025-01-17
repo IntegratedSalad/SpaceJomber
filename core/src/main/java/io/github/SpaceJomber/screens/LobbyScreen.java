@@ -334,7 +334,7 @@ public class LobbyScreen implements Screen,
         System.out.println("onSessionStarted called from: " + Thread.currentThread().getName());
         Gdx.app.postRunnable(() ->
             this.game.SetupMultiplayerGameScreen(this.multiplayerClient,
-                this.colorChangeTextButton.getText().toString(), x, y));
+                this.colorChangeTextButton.getText().toString(), x, y, this.instancePlayerName));
     }
 
     @Override
