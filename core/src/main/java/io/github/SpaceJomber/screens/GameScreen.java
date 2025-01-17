@@ -143,7 +143,6 @@ public class GameScreen implements Screen {
 
     public void SetupGame() {
         // Set up players
-
         Gdx.app.debug("GameScreen, SetupGame", "SetupGame called...");
 
         this.instanceControlledPlayer = new Player(renderingSystem.GetSprite(shipColor),
@@ -157,6 +156,8 @@ public class GameScreen implements Screen {
         // Setup input processor
         InputSystem ins = new InputSystem(this.instanceControlledPlayer);
         Gdx.input.setInputProcessor(ins);
+
+        // Setup Systems
         this.fireCollisionSystem = new FireCollisionSystem(renderingSystem.GetRenderableFlameQueue());
         this.fireCollisionSystem.addPlayer(this.instanceControlledPlayer);
     }

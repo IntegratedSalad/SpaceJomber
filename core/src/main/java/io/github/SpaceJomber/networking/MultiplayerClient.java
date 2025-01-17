@@ -1,6 +1,8 @@
 package io.github.SpaceJomber.networking;
 
 import com.badlogic.gdx.Gdx;
+import io.github.SpaceJomber.listeners.MultiplayerGameListener;
+import io.github.SpaceJomber.screens.MultiplayerGameScreen;
 import io.github.SpaceJomber.shared.Message;
 import io.github.SpaceJomber.listeners.LobbyUIUpdateListener;
 
@@ -9,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.concurrent.*;
 
 /*
@@ -29,6 +32,7 @@ public class MultiplayerClient implements Runnable {
     private boolean isLobbyHost = false;
 
     private LobbyUIUpdateListener lobbyListener;
+    private MultiplayerGameListener multiplayerGameListener;
 
     private boolean isRunning = true;
 
@@ -41,6 +45,10 @@ public class MultiplayerClient implements Runnable {
 
     public void SetLobbyUIUpdateListener(LobbyUIUpdateListener lobbyListener) {
         this.lobbyListener = lobbyListener;
+    }
+
+    public void SetMultiplayerGameListener(MultiplayerGameListener multiplayerGameListener) {
+        this.multiplayerGameListener = multiplayerGameListener;
     }
 
     public int GetPort() {
@@ -153,8 +161,18 @@ public class MultiplayerClient implements Runnable {
                             this.lobbyListener.onSessionStarted(positionX, positionY);
                             break;
                         }
-                        case MSG_USER_SENDS_POSITION: {
-                            Gdx.app.debug("MultiplayerClient", "Received user sends position");
+                        case MSG_TWOWAY_SENDS_POSITION: {
+                            final String[] payload = messageIn.GetPayload().split(" ");
+                            System.out.println(Arrays.toString(payload));
+                            final int positionX = Integer.parseInt(payload[0]);
+                            final int positionY = Integer.parseInt(payload[1]);
+                            final String name = payload[2];
+
+                            Gdx.app.debug("MultiplayerClient", "Received MSG_TWOWAY_SENDS_POSITION. " +
+                                "Payload:");
+                            Gdx.app.debug("MultiplayerClient", "Position: " + positionX + ", " +
+                                positionY + ": " + name);
+                            this.multiplayerGameListener.onPlayerMove(name, positionX, positionY);
                             break;
                         }
                         default: {
@@ -199,4 +217,6 @@ public class MultiplayerClient implements Runnable {
 //            }
 //        }
     }
+
+
 }

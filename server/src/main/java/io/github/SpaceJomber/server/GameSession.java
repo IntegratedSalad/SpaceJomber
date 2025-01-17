@@ -17,12 +17,18 @@ public class GameSession implements Runnable, ClientHandlerListener {
     public GameSession(List<ClientHandler> playersInSession, String sessionHash) {
         this.playersInSession = playersInSession;
         this.sessionHash = sessionHash;
-        for (ClientHandler ch : playersInSession) {
-            ch.SetListener(this);
-            String payload = String.valueOf(ch.GetPlayerX()) + " " + String.valueOf(ch.GetPlayerY()) + ch.GetPlayerName();
-            Message sendPosMsg = new Message(MessageType.MSG_USER_SENDS_POSITION, payload);
-            final String rawMessage = sendPosMsg.ConstructStringFromMessage();
-            ch.GetOutStream().println(rawMessage); // send to client
+
+        // TODO: Send all clients all positions on message receive "MSG_USER_SENDS_GAMESCREEN_SETUP"
+        for (ClientHandler chOut : playersInSession) {
+            chOut.SetListener(this);
+            for (ClientHandler chPos : playersInSession) {
+                final int xpos = chPos.GetPlayerX();
+                final int ypos = chPos.GetPlayerY();
+                String payload = String.valueOf(xpos) + " " + String.valueOf(ypos) + " " + chPos.GetPlayerName();
+                Message sendPosMsg = new Message(MessageType.MSG_TWOWAY_SENDS_POSITION, payload);
+                final String rawMessage = sendPosMsg.ConstructStringFromMessage();
+                chOut.GetOutStream().println(rawMessage); // send to client
+            }
         }
     }
 

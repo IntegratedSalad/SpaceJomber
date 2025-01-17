@@ -14,5 +14,6 @@ public enum ENTITYID {
     BOMB_FIRE_RIGHT,
     BOMB_FIRE_LEFT,
     BOMB_FIRE_UP,
-    BOMB_FIRE_DOWN
+    BOMB_FIRE_DOWN,
+    UNKNOWN
 }

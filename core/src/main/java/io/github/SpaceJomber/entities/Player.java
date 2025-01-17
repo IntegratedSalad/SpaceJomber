@@ -54,6 +54,14 @@ public class Player implements Renderable {
         this.y += y;
     }
 
+    // Only to set the player
+    public void Teleport(final int x, final int y) {
+        this.sprite.setX(x);
+        this.sprite.setY(y);
+        this.x = x;
+        this.y = y;
+    }
+
     public void SetBombPlanted(final boolean isPlanted) {
         this.bombPlanted = isPlanted;
     }
@@ -68,6 +76,10 @@ public class Player implements Renderable {
 
     public int GetY() {
         return this.y;
+    }
+
+    public String GetName() {
+        return this.name;
     }
 
     public void PlantBomb(Sprite sprite, final String name, ENTITYID beid) {

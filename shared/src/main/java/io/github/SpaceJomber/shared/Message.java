@@ -41,7 +41,7 @@ public class Message {
                 break;
             }
             case "6": {
-                this.type = MessageType.MSG_SERVER_SENDS_SESSION_ID;
+                this.type = MessageType.MSG_TWOWAY_SENDS_POSITION;
                 break;
             }
             case "7": {
