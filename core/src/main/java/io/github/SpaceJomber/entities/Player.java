@@ -78,6 +78,10 @@ public class Player implements Renderable {
         return this.y;
     }
 
+    public void SetName(final String name) {
+        this.name = name;
+    }
+
     public String GetName() {
         return this.name;
     }

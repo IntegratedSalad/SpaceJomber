@@ -213,7 +213,7 @@ public class LobbyScreen implements Screen,
                 isPlayerReady = !isPlayerReady;
                 if (isPlayerReady) {
                     playerReadyButton.setText("Ready");
-                    readyMessage.SetPayload("TRUE");
+                    readyMessage.SetPayload("TRUE " + colorChangeTextButton.getText().toString());
                 } else {
                     playerReadyButton.setText("Not Ready");
                 }

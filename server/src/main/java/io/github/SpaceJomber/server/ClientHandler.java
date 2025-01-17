@@ -17,6 +17,7 @@ public class ClientHandler implements Runnable {
     private PrintWriter out;
     private boolean isReady = false;
     private Lobby playerLobby;
+    private String playerColor;
     private ClientHandlerListener clientHandlerListener;
 
     // There should be a small class keeping all the player related data, but we can keep it all here
@@ -51,6 +52,10 @@ public class ClientHandler implements Runnable {
 
     public String GetPlayerName() {
         return this.playerName;
+    }
+
+    public String GetPlayerColor() {
+        return this.playerColor;
     }
 
     public void SetListener(GameSession session) {
@@ -90,7 +95,6 @@ public class ClientHandler implements Runnable {
                         System.out.println("Player lobby: " + this.playerLobby);
                         break;
                     }
-
                     case MSG_USER_JOINED_LOBBY: {
                         final String lobbyHash = messageIn.GetPayload().split("\\|")[0]; // :lobbyHash|
                         this.playerName = messageIn.GetPayload().split("\\|")[1];
@@ -138,14 +142,16 @@ public class ClientHandler implements Runnable {
                         // When user clicks ready
                         // This clause handles this client's message.
                         // So this is called once
-                        final String isPlayerReadyStr = messageIn.GetPayload();
-                        System.out.println("Received MSG_USER_READY: " + isPlayerReadyStr);
+                        final String[] isPlayerReadyStr = messageIn.GetPayload().split(" ");
+                        System.out.println("Received MSG_USER_READY: " + isPlayerReadyStr[0]);
 
-                        if (isPlayerReadyStr.equals("TRUE")) {
+                        // TODO: Set color?
+                        if (isPlayerReadyStr[0].equals("TRUE")) {
                             this.isReady = true;
                         } else {
                             this.isReady = false;
                         }
+                        this.playerColor = isPlayerReadyStr[1];
 
                         int readyPlayers = 0;
                         final int allPlayers = this.playerLobby.GetPlayers().size();
@@ -179,7 +185,27 @@ public class ClientHandler implements Runnable {
                                 this.playerLobby.GetPlayers().get(i).GetOutStream().println(rawMessage);
                             }
                             this.server.StartSession(this.playerLobby.GetPlayers(), this.playerLobby.GetLobbyHash());
+
+                            // TODO: When starting session, assign to each player a unique ID.
+                            // This id will help assign position to a desired player.
                         }
+                        break;
+                    }
+                    case MSG_USER_GAMESCREEN_READY: {
+                        // Send player names
+                        String payload = "";
+                        for (ClientHandler p : this.playerLobby.GetPlayers()) {
+                            final String name = p.GetPlayerName();
+                            final String color = p.GetPlayerColor();
+                            payload += name;
+                            payload += " ";
+                            payload += color;
+                            payload += " ";
+                        }
+                        messageOut = new Message(MessageType.MSG_SERVER_SENDS_PLAYER_NAMES, payload);
+                        final String rawMessage = messageOut.ConstructStringFromMessage();
+                        this.out.println(rawMessage);
+                        this.clientHandlerListener.onPlayerReady(this.playerName);
                         break;
                     }
                     default: {

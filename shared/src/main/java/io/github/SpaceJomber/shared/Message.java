@@ -41,7 +41,7 @@ public class Message {
                 break;
             }
             case "6": {
-                this.type = MessageType.MSG_TWOWAY_SENDS_POSITION;
+                this.type = MessageType.MSG_USER_GAMESCREEN_READY;
                 break;
             }
             case "7": {
@@ -64,11 +64,18 @@ public class Message {
                 this.type = MessageType.MSG_SERVER_STARTS_SESSION;
                 break;
             }
+            case "12": {
+                this.type = MessageType.MSG_SERVER_SENDS_PLAYER_NAMES;
+                break;
+            }
             case "20": {
                 this.type = MessageType.MSG_TWOWAY_SEND_PLAYER_NAME;
                 break;
             }
-
+            case "21": {
+                this.type = MessageType.MSG_TWOWAY_SENDS_POSITION;
+                break;
+            }
             default: {
                 throw new IllegalArgumentException("Unknown message type: " + strID);
             }

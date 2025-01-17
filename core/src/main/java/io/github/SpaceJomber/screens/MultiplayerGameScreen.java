@@ -8,6 +8,8 @@ import io.github.SpaceJomber.entities.Player;
 import io.github.SpaceJomber.listeners.BombPlacementListener;
 import io.github.SpaceJomber.listeners.MultiplayerGameListener;
 import io.github.SpaceJomber.networking.MultiplayerClient;
+import io.github.SpaceJomber.shared.Message;
+import io.github.SpaceJomber.shared.MessageType;
 import io.github.SpaceJomber.systems.FireCollisionSystem;
 import io.github.SpaceJomber.systems.InputSystem;
 import io.github.SpaceJomber.systems.RenderingSystem;
@@ -32,6 +34,8 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
         Gdx.app.log("MultiplayerGameScreen", "X: " + startX + " Y: " + startY);
         Gdx.app.log("MultiplayerGameScreen", "Received player name: " + playerName);
         this.InitializeMultiplayerPlayers();
+        Message msgGameScreenReady = new Message(MessageType.MSG_USER_GAMESCREEN_READY, "NULL");
+        this.multiplayerClient.SendMessage(msgGameScreenReady); // send AFTER InitializeMultiplayerPlayers
     }
 
     private void InitializeMultiplayerPlayers() {
@@ -71,6 +75,7 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
             Player playerToAdd = new Player(this.renderingSystem.GetSprite(spriteColor),
                 -1, -1, "BLANK", eid, this.renderingSystem);
             this.players.add(playerToAdd);
+            this.renderingSystem.AddRenderable(playerToAdd);
             this.fireCollisionSystem.addPlayer(playerToAdd);
         }
     }
@@ -143,7 +148,6 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
         Gdx.app.postRunnable(() -> {
             Player playerToMove = GetPlayerByName(name);
             if (playerToMove != null) {
-                // Player pos is not Setup
                 if (playerToMove.GetX() == playerToMove.GetY() && playerToMove.GetX() == -1) {
                     playerToMove.Teleport(newPositionX, newPositionY);
                     Gdx.app.debug("MultiplayerGameScreen", "Player " + playerToMove.GetName() +
@@ -153,6 +157,55 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
             } else {
                 Gdx.app.debug("MultiplayerGameScreen", "Attempt to move player: " + name +
                     " to position:" + newPositionX + " " + newPositionY + " which doesn't exist");
+            }
+        });
+    }
+
+    @Override
+    public void onPlayerReceiveNames(final String[] payload) {
+        Gdx.app.postRunnable(() -> {
+            for (int i = 0; i < payload.length; i+=2) {
+                final String name = payload[i];
+                final String color = payload[i+1];
+                for (Player player : this.players) {
+                    switch (color) {
+                        case "green": {
+                            if (player.GetEntityID() == ENTITYID.PLAYER_GREEN) {
+                                player.SetName(name);
+                                Gdx.app.debug("MultiplayerGameScreen, onPlayerReceiveNames",
+                                    "matched " + playerName + " with green color!");
+                            }
+                            break;
+                        }
+                        case "red": {
+                            if (player.GetEntityID() == ENTITYID.PLAYER_RED) {
+                                player.SetName(name);
+                                Gdx.app.debug("MultiplayerGameScreen, onPlayerReceiveNames",
+                                    "matched " + playerName + " with red color!");
+                            }
+                            break;
+                        }
+                        case "blue": {
+                            if (player.GetEntityID() == ENTITYID.PLAYER_BLUE) {
+                                player.SetName(name);
+                                Gdx.app.debug("MultiplayerGameScreen, onPlayerReceiveNames",
+                                    "matched " + playerName + " with blue color!");
+                            }
+                            break;
+                        }
+                        case "black": {
+                            if (player.GetEntityID() == ENTITYID.PLAYER_BLACK) {
+                                player.SetName(name);
+                                Gdx.app.debug("MultiplayerGameScreen, onPlayerReceiveNames",
+                                    "matched " + playerName + " with black color!");
+                            }
+                            break;
+                        } default: {
+                            Gdx.app.debug("MultiplayerGameScreen, onPlayerReceiveNames",
+                                "Unknown color: " + color);
+                        }
+                    }
+                }
             }
         });
     }

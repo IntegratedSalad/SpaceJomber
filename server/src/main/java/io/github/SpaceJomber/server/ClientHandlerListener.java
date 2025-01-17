@@ -5,4 +5,5 @@ public interface ClientHandlerListener {
     void onPlayerDeath();
     void onPlayerSpawnBomb();
     void onPlayerSpawn();
+    void onPlayerReady(final String playerName);
 }

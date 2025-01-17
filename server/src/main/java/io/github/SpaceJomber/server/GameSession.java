@@ -4,6 +4,7 @@ import io.github.SpaceJomber.shared.Message;
 import io.github.SpaceJomber.shared.MessageType;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /*
 * Game Session is a session containing up to 4 players
@@ -17,18 +18,8 @@ public class GameSession implements Runnable, ClientHandlerListener {
     public GameSession(List<ClientHandler> playersInSession, String sessionHash) {
         this.playersInSession = playersInSession;
         this.sessionHash = sessionHash;
-
-        // TODO: Send all clients all positions on message receive "MSG_USER_SENDS_GAMESCREEN_SETUP"
         for (ClientHandler chOut : playersInSession) {
-            chOut.SetListener(this);
-            for (ClientHandler chPos : playersInSession) {
-                final int xpos = chPos.GetPlayerX();
-                final int ypos = chPos.GetPlayerY();
-                String payload = String.valueOf(xpos) + " " + String.valueOf(ypos) + " " + chPos.GetPlayerName();
-                Message sendPosMsg = new Message(MessageType.MSG_TWOWAY_SENDS_POSITION, payload);
-                final String rawMessage = sendPosMsg.ConstructStringFromMessage();
-                chOut.GetOutStream().println(rawMessage); // send to client
-            }
+            chOut.SetListener(this); // create session for all (add listener)
         }
     }
 
@@ -37,13 +28,8 @@ public class GameSession implements Runnable, ClientHandlerListener {
         System.out.println("Starting game session: " + sessionHash);
 //        broadcast("Game session " + sessionHash + " is starting!");
         // Wait for game to end (optional synchronization here)
-        try {
-            Thread.sleep(60000); // Placeholder for actual game logic duration
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        while (true) {
         }
-
-        System.out.println("Game session " + sessionHash + " ended.");
     }
 
     private void Broadcast(String message) {
@@ -71,5 +57,24 @@ public class GameSession implements Runnable, ClientHandlerListener {
     public synchronized void onPlayerSpawn() {
         // TODO: First thing that happens when player connect
 
+    }
+
+    @Override
+    public void onPlayerReady(String playerName) {
+        // TODO: Send all clients all positions on message receive "MSG_USER_SENDS_GAMESCREEN_SETUP"
+        for (ClientHandler chOut : playersInSession) {
+            if (chOut.GetPlayerName().equals(playerName)) {
+                System.out.println("Sending " + chOut.GetPlayerName() + "all names.");
+                for (ClientHandler chPos : playersInSession) {
+                    final int xpos = chPos.GetPlayerX();
+                    final int ypos = chPos.GetPlayerY();
+                    String payload = String.valueOf(xpos) + " " + String.valueOf(ypos) + " " + chPos.GetPlayerName();
+                    Message sendPosMsg = new Message(MessageType.MSG_TWOWAY_SENDS_POSITION, payload);
+                    final String rawMessage = sendPosMsg.ConstructStringFromMessage();
+                    chOut.GetOutStream().println(rawMessage); // send to client
+                }
+                return;
+            }
+        }
     }
 }
