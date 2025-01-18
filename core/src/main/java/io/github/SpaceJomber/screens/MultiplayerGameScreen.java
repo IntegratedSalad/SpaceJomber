@@ -46,7 +46,7 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
         spriteStrings.add("redShip");
         spriteStrings.add("blueShip");
         spriteStrings.add("blackShip");
-        for (int i = 0; i < 3; i ++) {
+        for (int i = 0; i < 4; i ++) {
             final String spriteColor = spriteStrings.get(i);
             ENTITYID eid = ENTITYID.UNKNOWN;
             switch (spriteColor) {
@@ -170,7 +170,7 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
     public synchronized void onPlayerMove(String name, int newPositionX, int newPositionY) {
         Gdx.app.postRunnable(() -> {
             Player playerToMove = GetPlayerByName(name);
-            if (playerToMove != null) {
+            if (playerToMove != null && playerToMove != this.instanceControlledPlayer) {
                 if (playerToMove.GetX() == playerToMove.GetY() && playerToMove.GetX() == -1) {
                     playerToMove.Teleport(newPositionX, newPositionY);
                     Gdx.app.debug("MultiplayerGameScreen", "Player " + playerToMove.GetName() +
