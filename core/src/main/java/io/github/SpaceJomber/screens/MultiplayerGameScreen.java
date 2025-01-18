@@ -28,7 +28,7 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
                                  final String playerName) {
         super(renderingSystem, game, shipColor, startX, startY, playerName);
         this.multiplayerClient = multiplayerClient;
-        this.multiplayerClient.SetMultiplayerGameListener(this); // to late!
+        this.multiplayerClient.SetMultiplayerGameListener(this);
         this.players = new ArrayList<>();
         this.players.add(this.instanceControlledPlayer);
         Gdx.app.log("MultiplayerGameScreen", "X: " + startX + " Y: " + startY);
@@ -93,11 +93,34 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
     public void SetupGame() {
         this.shipColor += "Ship";
         Gdx.app.debug("MultiplayerGameScreen, SetupGame", "shipColor: " + this.shipColor);
+
+        ENTITYID idToSet = ENTITYID.UNKNOWN;
+        switch (shipColor) {
+            case "greenShip": {
+                idToSet = ENTITYID.PLAYER_GREEN;
+                break;
+            }
+            case "redShip": {
+                idToSet = ENTITYID.PLAYER_RED;
+                break;
+            }
+            case "blueShip": {
+                idToSet = ENTITYID.PLAYER_BLUE;
+                break;
+            }
+            case "blackShip": {
+                idToSet = ENTITYID.PLAYER_BLACK;
+                break;
+            } default: {
+                Gdx.app.debug("GameScreen", "Unknown ship color: " + shipColor);
+            }
+        }
+
         this.instanceControlledPlayer = new Player(renderingSystem.GetSprite(this.shipColor),
             this.startX,
             this.startY,
             this.shipColor.toUpperCase().split("SHIP")[0] + " Player", // TODO: acquire name entered
-            ENTITYID.PLAYER_GREEN,
+            idToSet, // ALWAYS THINK ABOUT DEFAULT VALUES!!!
             this.renderingSystem);
         this.renderingSystem.AddRenderable(this.instanceControlledPlayer);
 
@@ -144,7 +167,7 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
     }
 
     @Override
-    public void onPlayerMove(String name, int newPositionX, int newPositionY) {
+    public synchronized void onPlayerMove(String name, int newPositionX, int newPositionY) {
         Gdx.app.postRunnable(() -> {
             Player playerToMove = GetPlayerByName(name);
             if (playerToMove != null) {
@@ -163,6 +186,8 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
 
     @Override
     public void onPlayerReceiveNames(final String[] payload) {
+
+        // TODO: Sync not on colors but ids
         Gdx.app.postRunnable(() -> {
             for (int i = 0; i < payload.length; i+=2) {
                 final String name = payload[i];
@@ -203,6 +228,7 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
                         } default: {
                             Gdx.app.debug("MultiplayerGameScreen, onPlayerReceiveNames",
                                 "Unknown color: " + color);
+                            break;
                         }
                     }
                 }

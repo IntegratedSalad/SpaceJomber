@@ -36,6 +36,9 @@ public class GameServer {
 
     public void StartSession(List<ClientHandler> players, String sessionHash) {
         GameSession newGs = new GameSession(players, sessionHash);
+
+        System.out.println("Starting session... num of players: " + players.size());
+
         this.sessionThreadPool.execute(newGs);
     }
 

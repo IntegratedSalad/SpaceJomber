@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutorService;
 public class Lobby {
 
     private final String lobbyHash;
-    private final List<ClientHandler> players = new ArrayList<>();
+    private List<ClientHandler> players = new ArrayList<>();
     private final int maxPlayers = 4;
     private boolean gameStarted = false;
 
@@ -32,7 +32,7 @@ public class Lobby {
     }
 
     public synchronized List<ClientHandler> GetPlayers() {
-        return new ArrayList<>(this.players);
+        return this.players;
     }
 
     public synchronized boolean AllPlayersReady() {

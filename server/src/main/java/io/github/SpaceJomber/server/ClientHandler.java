@@ -50,6 +50,14 @@ public class ClientHandler implements Runnable {
         return this.playerY;
     }
 
+    public void SetPlayerX(int x) {
+        this.playerX = x;
+    }
+
+    public void SetPlayerY(int y) {
+        this.playerY = y;
+    }
+
     public String GetPlayerName() {
         return this.playerName;
     }
@@ -145,6 +153,8 @@ public class ClientHandler implements Runnable {
                         final String[] isPlayerReadyStr = messageIn.GetPayload().split(" ");
                         System.out.println("Received MSG_USER_READY: " + isPlayerReadyStr[0]);
 
+                        System.out.println("This: " + this);
+
                         // TODO: Set color?
                         if (isPlayerReadyStr[0].equals("TRUE")) {
                             this.isReady = true;
@@ -163,31 +173,52 @@ public class ClientHandler implements Runnable {
                         if (readyPlayers == allPlayers) {
                             // All are ready, start session.
                             // This means that the last player clicked "Ready"
+
+                            // BUG -> ONLY THE PERSON THAT CLICKS "READY" LAST GETS THEIR
+                            // POSITION ASSIGNED
+
                             System.out.println("All are ready!");
+
+                            // BUG HOST DOESN'T RECEIVE THEIR POSITION
 
                             List<int[]> posList = new ArrayList<>();
                             posList.add(new int[]{1, 1});
                             posList.add(new int[]{13, 1});
                             posList.add(new int[]{1, 11});
                             posList.add(new int[]{13, 11});
+
+                            System.out.println("Lobby size:" + this.playerLobby.GetPlayers().size());
+                            System.out.println("ReadyPlayers: ");
+                            for (ClientHandler p : this.playerLobby.GetPlayers()) {
+                                System.out.println(p);
+                            }
+
                             for (int i = 0; i < this.playerLobby.GetPlayers().size(); i++) {
                                 String payload = "";
                                 payload += String.valueOf(posList.get(i)[0]);
                                 payload += " ";
                                 payload += String.valueOf(posList.get(i)[1]);
                                 System.out.println("Payload of start session: " + payload);
-                                if (this.playerLobby.GetPlayers().get(i) == this) {
-                                    this.playerX = posList.get(i)[0];
-                                    this.playerY = posList.get(i)[1];
-                                }
+
+                                this.playerLobby.GetPlayers().get(i).SetPlayerX(posList.get(i)[0]);
+                                this.playerLobby.GetPlayers().get(i).SetPlayerY(posList.get(i)[1]);
+//
+                                System.out.println("For clientHandler:" + this.playerLobby.GetPlayers().get(i));
+                                System.out.println("I am " + this.playerLobby.GetPlayers().get(i).GetPlayerName()
+                                    + "and I received X: " + this.playerLobby.GetPlayers().get(i).playerX + " Y: " +
+                                    this.playerLobby.GetPlayers().get(i).playerY);
+
                                 messageOut = new Message(MessageType.MSG_SERVER_STARTS_SESSION, payload);
                                 final String rawMessage = messageOut.ConstructStringFromMessage();
+
                                 this.playerLobby.GetPlayers().get(i).GetOutStream().println(rawMessage);
                             }
+
                             this.server.StartSession(this.playerLobby.GetPlayers(), this.playerLobby.GetLobbyHash());
 
                             // TODO: When starting session, assign to each player a unique ID.
                             // This id will help assign position to a desired player.
+                            // Usually, this needs to be on the server (or lobby) side, NOT ON ONE CLIENTHANDLER SIDE!!!
                         }
                         break;
                     }
@@ -202,9 +233,13 @@ public class ClientHandler implements Runnable {
                             payload += color;
                             payload += " ";
                         }
+                        System.out.println("Sending " + this.playerName +
+                            " all player names: " + this.playerLobby.GetPlayers().size());
                         messageOut = new Message(MessageType.MSG_SERVER_SENDS_PLAYER_NAMES, payload);
                         final String rawMessage = messageOut.ConstructStringFromMessage();
                         this.out.println(rawMessage);
+
+                        Thread.sleep(200);
                         this.clientHandlerListener.onPlayerReady(this.playerName);
                         break;
                     }
@@ -215,7 +250,7 @@ public class ClientHandler implements Runnable {
                 }
             }
             // Handle game communication (after ready state)
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
             close();

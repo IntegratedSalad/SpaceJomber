@@ -145,11 +145,32 @@ public class GameScreen implements Screen {
         // Set up players
         Gdx.app.debug("GameScreen, SetupGame", "SetupGame called...");
 
+        ENTITYID idToSet = ENTITYID.UNKNOWN;
+        switch (shipColor) {
+            case "greenShip": {
+                idToSet = ENTITYID.PLAYER_GREEN;
+                break;
+            }
+            case "redShip": {
+                idToSet = ENTITYID.PLAYER_RED;
+                break;
+            }
+            case "blueShip": {
+                idToSet = ENTITYID.PLAYER_BLUE;
+                break;
+            }
+            case "blackShip": {
+                idToSet = ENTITYID.PLAYER_BLACK;
+                break;
+            } default: {
+                Gdx.app.debug("GameScreen", "Unknown ship color: " + shipColor);
+            }
+        }
         this.instanceControlledPlayer = new Player(renderingSystem.GetSprite(shipColor),
             this.startX,
             this.startY,
             this.playerName,
-            ENTITYID.PLAYER_GREEN,
+            idToSet, // ALWAYS THINK ABOUT DEFAULT VALUES!!!
             this.renderingSystem);
         this.renderingSystem.AddRenderable(this.instanceControlledPlayer);
 

@@ -60,17 +60,22 @@ public class GameSession implements Runnable, ClientHandlerListener {
     }
 
     @Override
-    public void onPlayerReady(String playerName) {
+    public synchronized void onPlayerReady(String playerName) throws InterruptedException {
         // TODO: Send all clients all positions on message receive "MSG_USER_SENDS_GAMESCREEN_SETUP"
+
+        System.out.println("onPlayerReady: " + playerName + " playersInSession: " + playersInSession.size());
         for (ClientHandler chOut : playersInSession) {
             if (chOut.GetPlayerName().equals(playerName)) {
-                System.out.println("Sending " + chOut.GetPlayerName() + "all names.");
+                System.out.println("Sending " + chOut.GetPlayerName() + " all positions.");
                 for (ClientHandler chPos : playersInSession) {
                     final int xpos = chPos.GetPlayerX();
                     final int ypos = chPos.GetPlayerY();
+                    System.out.println("Sending " + chPos.GetPlayerName() + " at " + xpos + " " + ypos);
                     String payload = String.valueOf(xpos) + " " + String.valueOf(ypos) + " " + chPos.GetPlayerName();
                     Message sendPosMsg = new Message(MessageType.MSG_TWOWAY_SENDS_POSITION, payload);
                     final String rawMessage = sendPosMsg.ConstructStringFromMessage();
+
+                    Thread.sleep(200);
                     chOut.GetOutStream().println(rawMessage); // send to client
                 }
                 return;
