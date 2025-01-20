@@ -43,7 +43,8 @@ public class InputSystem implements InputProcessor {
         // TODO: Only one bomb at a time
         Sprite bombSprite = null;
         final ENTITYID beid = this.controlledPlayer.GetBombID();
-        Gdx.app.debug("InputSystem, keyDown", "Beid: " + beid);
+        Gdx.app.debug("InputSystem, OnActionKey", "Beid: " + beid);
+        Gdx.app.debug("InputSystem, OnActionKey", controlledPlayer.GetName() + " plants bomb!");
         if (beid != null) {
             switch (beid) {
                 case BOMB_RED: {

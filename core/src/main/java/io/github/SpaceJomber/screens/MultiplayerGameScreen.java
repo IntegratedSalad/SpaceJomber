@@ -247,6 +247,9 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
     public void onPlayerPlantsBomb(String playerName, int posX, int posY) {
         Gdx.app.postRunnable(() -> {
             Player p = this.GetPlayerByName(playerName);
+
+            if (p.GetName().equals(this.playerName)) {return;}
+
             Sprite bombSprite = null;
             final ENTITYID beid = p.GetBombID();
             Gdx.app.debug("onPlayerPlantsbomb", "Beid: " + beid);
