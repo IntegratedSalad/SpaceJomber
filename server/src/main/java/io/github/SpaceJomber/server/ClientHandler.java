@@ -261,7 +261,6 @@ public class ClientHandler implements Runnable {
                     }
                 }
             }
-            // Handle game communication (after ready state)
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
