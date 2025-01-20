@@ -1,5 +1,14 @@
 plugins {
   id 'application'
+  id 'java'
+}
+
+jar {
+  manifest {
+    attributes(
+      'Main-Class': 'io.github.SpaceJomber.server.Main'
+    )
+  }
 }
 
 dependencies {
