@@ -8,8 +8,6 @@ public class LobbyManager {
 
     private final Map<String, Lobby> lobbyConcurrentHashMap = new ConcurrentHashMap<>();
 
-    // Pass Executor
-
     public String CreateLobby() {
         String lobbyHash = this.GenerateLobbyHash();
         Lobby lobby = new Lobby(lobbyHash);

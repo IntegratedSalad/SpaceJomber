@@ -59,18 +59,12 @@ public class GameServer {
                 // Each lobby can hold only four players that press space to signal
                 // that they are ready.
                 // If all are ready, the game starts.
-
                 Socket clientSocket = serverSocket.accept(); // blocks
                 System.out.println("New connection from " + clientSocket.getInetAddress());
                 connectedPlayers++;
 
                 ClientHandler clientHandler = new ClientHandler(clientSocket, this);
                 this.clientThreadPool.execute(clientHandler); // assign a thread from thread pool
-
-                // TODO: Listen for the "create lobby" and "join lobby" messages.
-
-                // TODO: When user clicks "New Multiplayer Game", he connects to the server
-
             }
         }
     }

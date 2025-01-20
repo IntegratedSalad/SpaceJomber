@@ -47,7 +47,6 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
 
     private void InitializeMultiplayerPlayers() {
         // Setup Players
-        // Idea: always add 3 more players no matter what
         final List<String> spriteStrings = new ArrayList<>();
         spriteStrings.add("greenShip");
         spriteStrings.add("redShip");

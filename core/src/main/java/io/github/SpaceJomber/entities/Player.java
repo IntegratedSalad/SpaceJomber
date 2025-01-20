@@ -138,7 +138,6 @@ public class Player implements Renderable {
 
     @Override
     public void render(SpriteBatch sbatch) {
-//        Gdx.app.log("Player render", "Sprite X: " + this.sprite.getX() + ", Y: " + this.sprite.getY());
         this.sprite.draw(sbatch);
     }
 

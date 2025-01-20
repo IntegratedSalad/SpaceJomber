@@ -20,7 +20,6 @@ public class MenuScreen implements Screen {
 
     /*
         Screen has to receive a renderer and initialize needed assets
-        TODO: Allow for the user name input below or in another Screen.
      */
 
     private RenderingSystem renderingSystem; // handles entities

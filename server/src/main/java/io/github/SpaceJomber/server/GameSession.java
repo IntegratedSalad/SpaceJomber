@@ -1,12 +1,8 @@
 package io.github.SpaceJomber.server;
 
-import com.badlogic.gdx.Gdx;
 import io.github.SpaceJomber.shared.Message;
 import io.github.SpaceJomber.shared.MessageType;
-
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /*
 * Game Session is a session containing up to 4 players
@@ -20,9 +16,6 @@ public class GameSession implements Runnable, ClientHandlerListener {
     private final int MAP_WIDTH = 13;
     private final int PLAYER_ID = 1;
     private final int BOX_ID = 2;
-
-    // TODO?: Add map 2D array
-//    private ArrayList<ArrayList<String>> sessionMap;
 
     public GameSession(List<ClientHandler> playersInSession, String sessionHash) {
         this.playersInSession = playersInSession;
@@ -67,7 +60,6 @@ public class GameSession implements Runnable, ClientHandlerListener {
     public synchronized void onPlayerMoves(final int finalX, final int finalY,
                                            final int deltaX, final int deltaY,
                                            final String playerName) {
-        // TODO: Broadcast message with payload
         // IF IN PAYLOAD THERE IS A "RECONCILIATION"/"STEPBACK" -> client with that playerName steps back
 
         for (ClientHandler player : playersInSession) {
@@ -79,7 +71,6 @@ public class GameSession implements Runnable, ClientHandlerListener {
                 return;
             }
         }
-        // TODO: message to every client stating that playerName moved
         final String finalXString = String.valueOf(finalX);
         final String finalYString = String.valueOf(finalY);
         String payload = "";
@@ -135,8 +126,6 @@ public class GameSession implements Runnable, ClientHandlerListener {
 
     @Override
     public synchronized void onPlayerReady(String playerName) throws InterruptedException {
-        // TODO: Send all clients all positions on message receive "MSG_USER_SENDS_GAMESCREEN_SETUP"
-
         System.out.println("onPlayerReady: " + playerName + " playersInSession: " + playersInSession.size());
         for (ClientHandler chOut : playersInSession) {
             if (chOut.GetPlayerName().equals(playerName)) {
@@ -148,8 +137,6 @@ public class GameSession implements Runnable, ClientHandlerListener {
                     String payload = String.valueOf(xpos) + " " + String.valueOf(ypos) + " " + chPos.GetPlayerName();
                     Message sendPosMsg = new Message(MessageType.MSG_TWOWAY_SENDS_POSITION, payload);
                     final String rawMessage = sendPosMsg.ConstructStringFromMessage();
-
-//                    Thread.sleep(200);
                     chOut.GetOutStream().println(rawMessage); // send to client
                 }
                 return;

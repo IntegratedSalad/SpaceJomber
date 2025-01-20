@@ -99,7 +99,6 @@ public class Bomb implements Renderable {
 
     @Override
     public void render(SpriteBatch sbatch) {
-//        Gdx.app.log("Bomb render", "Sprite X: " + this.sprite.getX() + ", Y: " + this.sprite.getY());
         this.sprite.draw(sbatch);
     }
 

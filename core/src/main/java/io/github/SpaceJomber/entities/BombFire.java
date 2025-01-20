@@ -14,8 +14,6 @@ import java.util.List;
 * */
 public class BombFire {
 
-//    private Sprite sprite;
-//    private String name;
     private int x;
     private int y;
     private ENTITYID eid;
