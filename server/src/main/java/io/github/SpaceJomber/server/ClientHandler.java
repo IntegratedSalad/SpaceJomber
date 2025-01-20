@@ -188,7 +188,6 @@ public class ClientHandler implements Runnable {
                             for (ClientHandler p : this.playerLobby.GetPlayers()) {
                                 System.out.println(p);
                             }
-
                             for (int i = 0; i < this.playerLobby.GetPlayers().size(); i++) {
                                 String payload = "";
                                 payload += String.valueOf(posList.get(i)[0]);
@@ -238,7 +237,7 @@ public class ClientHandler implements Runnable {
                         this.clientHandlerListener.onPlayerReady(this.playerName);
                         break;
                     }
-                    case MSG_USER_MOVES: {
+                    case MSG_USER_MAKES_ACTION: {
                         final String[] movesStr = messageIn.GetPayload().split(" ");
                         if (!movesStr[0].equals("PLANT")) {
                             final int deltaX = Integer.parseInt(movesStr[0]);
@@ -246,12 +245,13 @@ public class ClientHandler implements Runnable {
                             System.out.println("Received MOVE: X: " + deltaX + " Y: " + deltaY);
                             System.out.println("From: " + this.playerName);
                             System.out.println("By: X:" + deltaX + " Y:" + deltaY);
-                            this.clientHandlerListener.onPlayerMove(deltaX + this.playerX,
+                            this.clientHandlerListener.onPlayerMoves(deltaX + this.playerX,
                                 deltaY + this.playerY,
                                 deltaX, deltaY,
                                 this.playerName);
                         } else {
                             System.out.println("Client plants bomb!");
+                            this.clientHandlerListener.onPlayerSpawnBomb(this.playerX, this.playerY, this.playerName);
                         }
                         break;
                     }

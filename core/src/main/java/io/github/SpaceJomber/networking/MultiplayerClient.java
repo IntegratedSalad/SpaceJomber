@@ -201,6 +201,18 @@ public class MultiplayerClient implements Runnable {
                             this.multiplayerGameListener.onPlayerMove(name, x, y);
                             break;
                         }
+                        case MSG_SERVER_SENDS_PLAYER_PLANTS_BOMB: {
+                            Gdx.app.debug("MultiplayerClient",
+                                "Received MSG_SERVER_SENDS_PLAYER_PLANTS_BOMB");
+                            final String[] payload = messageIn.GetPayload().split(" ");
+                            final int x = Integer.parseInt(payload[0]);
+                            final int y = Integer.parseInt(payload[1]);
+                            final String name = payload[2];
+
+                            Gdx.app.debug("MultiplayerClient", name + "plants bomb at:" + x + " " + y);
+                            this.multiplayerGameListener.onPlayerPlantsBomb(name, x, y);
+                            break;
+                        }
                         default: {
                             Gdx.app.debug("MultiplayerClient", "Received unknown server response: " +
                                 rawServerResponse);
@@ -233,16 +245,5 @@ public class MultiplayerClient implements Runnable {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-
-//        while (this.isRunning) {
-//            // Thread idle
-//            try {
-//                Thread.sleep(10);
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//        }
     }
-
-
 }

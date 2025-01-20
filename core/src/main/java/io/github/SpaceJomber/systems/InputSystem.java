@@ -6,14 +6,17 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import io.github.SpaceJomber.entities.Bomb;
 import io.github.SpaceJomber.entities.ENTITYID;
 import io.github.SpaceJomber.entities.Player;
+import io.github.SpaceJomber.listeners.SoundPlayerListener;
 
 import java.awt.event.KeyEvent;
 
 public class InputSystem implements InputProcessor {
 
     private Player controlledPlayer;
-    public InputSystem(Player controlledPlayer) {
+    SoundPlayerListener spl;
+    public InputSystem(Player controlledPlayer, SoundPlayerListener spl) {
         this.controlledPlayer = controlledPlayer;
+        this.spl = spl;
     }
 
     public boolean OnMoveUp() {
@@ -40,19 +43,24 @@ public class InputSystem implements InputProcessor {
         // TODO: Only one bomb at a time
         Sprite bombSprite = null;
         final ENTITYID beid = this.controlledPlayer.GetBombID();
+        Gdx.app.debug("InputSystem, keyDown", "Beid: " + beid);
         if (beid != null) {
             switch (beid) {
                 case BOMB_RED: {
                     bombSprite = Bomb.redBombSprite;
+                    break;
                 }
                 case BOMB_BLACK: {
                     bombSprite = Bomb.blackBombSprite;
+                    break;
                 }
                 case BOMB_BLUE: {
                     bombSprite = Bomb.blueBombSprite;
+                    break;
                 }
                 case BOMB_GREEN: {
                     bombSprite = Bomb.greenBombSprite;
+                    break;
                 } default: {
                     Gdx.app.debug("InputSystem, OnActionKey", "Bomb id null!");
                     return false;
@@ -71,12 +79,16 @@ public class InputSystem implements InputProcessor {
         } else if (keycode == Input.Keys.SPACE) {
             return this.OnActionKey();
         } else if (keycode == Input.Keys.A) {
+            this.spl.PlayMoveSoundEffect();
             return this.OnMoveLeft();
         } else if (keycode == Input.Keys.D) {
+            this.spl.PlayMoveSoundEffect();
             return this.OnMoveRight();
         } else if (keycode == Input.Keys.W) {
-            return  this.OnMoveUp();
+            this.spl.PlayMoveSoundEffect();
+            return this.OnMoveUp();
         } else if (keycode == Input.Keys.S) {
+            this.spl.PlayMoveSoundEffect();
             return this.OnMoveDown();
         }
         return false;

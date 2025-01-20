@@ -1,17 +1,19 @@
 package io.github.SpaceJomber.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import io.github.SpaceJomber.Main;
 import io.github.SpaceJomber.entities.Bomb;
 import io.github.SpaceJomber.entities.BombFire;
 import io.github.SpaceJomber.entities.ENTITYID;
 import io.github.SpaceJomber.entities.Player;
+import io.github.SpaceJomber.listeners.SoundPlayerListener;
 import io.github.SpaceJomber.systems.FireCollisionSystem;
 import io.github.SpaceJomber.systems.InputSystem;
 import io.github.SpaceJomber.systems.RenderingSystem;
 
-public class GameScreen implements Screen {
+public class GameScreen implements Screen, SoundPlayerListener {
 
     protected Main game;
     protected RenderingSystem renderingSystem;
@@ -24,6 +26,8 @@ public class GameScreen implements Screen {
     protected final int startY;
 
     protected String playerName;
+
+//    protected Sound sound = Gdx.audio.newSound(Gdx.files.internal(".mp3"));
 
     public GameScreen(RenderingSystem renderingSystem,
                       Main game, final String shipColor,
@@ -175,7 +179,7 @@ public class GameScreen implements Screen {
         this.renderingSystem.AddRenderable(this.instanceControlledPlayer);
 
         // Setup input processor
-        InputSystem ins = new InputSystem(this.instanceControlledPlayer);
+        InputSystem ins = new InputSystem(this.instanceControlledPlayer, this);
         Gdx.input.setInputProcessor(ins);
 
         // Setup Systems
@@ -228,5 +232,10 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
 
+    }
+
+    @Override
+    public void PlayMoveSoundEffect() {
+//        sound.play(1.0f);
     }
 }

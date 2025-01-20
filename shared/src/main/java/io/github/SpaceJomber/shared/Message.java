@@ -45,7 +45,7 @@ public class Message {
                 break;
             }
             case "7": {
-                this.type = MessageType.MSG_USER_MOVES;
+                this.type = MessageType.MSG_USER_MAKES_ACTION;
                 break;
             }
             case "8": {
@@ -74,6 +74,10 @@ public class Message {
             }
             case "14": {
                 this.type = MessageType.MSG_SERVER_SENDS_PLAYER_MOVED;
+                break;
+            }
+            case "15": {
+                this.type = MessageType.MSG_SERVER_SENDS_PLAYER_PLANTS_BOMB;
                 break;
             }
             case "20": {

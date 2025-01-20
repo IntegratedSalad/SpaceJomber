@@ -64,9 +64,9 @@ public class GameSession implements Runnable, ClientHandlerListener {
     }
 
     @Override
-    public synchronized void onPlayerMove(final int finalX, final int finalY,
-                                          final int deltaX, final int deltaY,
-                                          final String playerName) {
+    public synchronized void onPlayerMoves(final int finalX, final int finalY,
+                                           final int deltaX, final int deltaY,
+                                           final String playerName) {
         // TODO: Broadcast message with payload
         // IF IN PAYLOAD THERE IS A "RECONCILIATION"/"STEPBACK" -> client with that playerName steps back
 
@@ -113,8 +113,18 @@ public class GameSession implements Runnable, ClientHandlerListener {
     }
 
     @Override
-    public synchronized void onPlayerSpawnBomb() {
+    public synchronized void onPlayerSpawnBomb(final int x, final int y, final String playerName) {
+        System.out.println("Player" + playerName + " spawns bomb at: " + x + ", " + y);
 
+        String payload = "";
+        payload += x;
+        payload += " ";
+        payload += y;
+        payload += " ";
+        payload += playerName;
+
+        final Message msg = new Message(MessageType.MSG_SERVER_SENDS_PLAYER_PLANTS_BOMB, payload);
+        this.Broadcast(msg);
     }
 
     @Override

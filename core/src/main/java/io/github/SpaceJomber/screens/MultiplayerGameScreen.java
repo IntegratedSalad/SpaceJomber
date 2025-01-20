@@ -2,7 +2,9 @@ package io.github.SpaceJomber.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import io.github.SpaceJomber.Main;
+import io.github.SpaceJomber.entities.Bomb;
 import io.github.SpaceJomber.entities.ENTITYID;
 import io.github.SpaceJomber.entities.Player;
 import io.github.SpaceJomber.listeners.BombPlacementListener;
@@ -31,7 +33,8 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
         this.multiplayerClient = multiplayerClient;
         this.multiplayerClient.SetMultiplayerGameListener(this);
         // Setup input processor
-        MessageInputSystem ins = new MessageInputSystem(this.instanceControlledPlayer, this.multiplayerClient);
+        MessageInputSystem ins = new MessageInputSystem(this.instanceControlledPlayer,
+            this.multiplayerClient, this);
         Gdx.input.setInputProcessor(ins);
         this.players = new ArrayList<>();
         this.players.add(this.instanceControlledPlayer);
@@ -191,7 +194,6 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
 
     @Override
     public void onPlayerReceiveNames(final String[] payload) {
-
         // TODO: Sync not on colors but ids
         Gdx.app.postRunnable(() -> {
             for (int i = 0; i < payload.length; i+=2) {
@@ -238,6 +240,41 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
                     }
                 }
             }
+        });
+    }
+
+    @Override
+    public void onPlayerPlantsBomb(String playerName, int posX, int posY) {
+        Gdx.app.postRunnable(() -> {
+            Player p = this.GetPlayerByName(playerName);
+            Sprite bombSprite = null;
+            final ENTITYID beid = p.GetBombID();
+            Gdx.app.debug("onPlayerPlantsbomb", "Beid: " + beid);
+            if (beid != null) {
+                switch (beid) {
+                    case BOMB_RED: {
+                        bombSprite = Bomb.redBombSprite;
+                        break;
+                    }
+                    case BOMB_BLACK: {
+                        bombSprite = Bomb.blackBombSprite;
+                        break;
+                    }
+                    case BOMB_BLUE: {
+                        bombSprite = Bomb.blueBombSprite;
+                        break;
+                    }
+                    case BOMB_GREEN: {
+                        bombSprite = Bomb.greenBombSprite;
+                        break;
+                    } default: {
+                        Gdx.app.debug("InputSystem, OnActionKey", "Bomb id null!");
+                        break;
+                    }
+                }
+            }
+            bombSprite = new Sprite(bombSprite);
+            p.PlantBomb(bombSprite, Bomb.GetBombNameFromID(beid), beid);
         });
     }
 }
