@@ -209,7 +209,6 @@ public class ClientHandler implements Runnable {
 
                                 this.playerLobby.GetPlayers().get(i).GetOutStream().println(rawMessage);
                             }
-
                             this.server.StartSession(this.playerLobby.GetPlayers(), this.playerLobby.GetLobbyHash());
 
                             // TODO: When starting session, assign to each player a unique ID.
@@ -237,6 +236,23 @@ public class ClientHandler implements Runnable {
 
                         Thread.sleep(200);
                         this.clientHandlerListener.onPlayerReady(this.playerName);
+                        break;
+                    }
+                    case MSG_USER_MOVES: {
+                        final String[] movesStr = messageIn.GetPayload().split(" ");
+                        if (!movesStr[0].equals("PLANT")) {
+                            final int deltaX = Integer.parseInt(movesStr[0]);
+                            final int deltaY = Integer.parseInt(movesStr[1]);
+                            System.out.println("Received MOVE: X: " + deltaX + " Y: " + deltaY);
+                            System.out.println("From: " + this.playerName);
+                            System.out.println("By: X:" + deltaX + " Y:" + deltaY);
+                            this.clientHandlerListener.onPlayerMove(deltaX + this.playerX,
+                                deltaY + this.playerY,
+                                deltaX, deltaY,
+                                this.playerName);
+                        } else {
+                            System.out.println("Client plants bomb!");
+                        }
                         break;
                     }
                     default: {

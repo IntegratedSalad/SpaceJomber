@@ -190,6 +190,17 @@ public class MultiplayerClient implements Runnable {
                             this.multiplayerGameListener.onPlayerReceiveNames(payload);
                             break;
                         }
+                        case MSG_SERVER_SENDS_PLAYER_MOVED: {
+                            Gdx.app.debug("MultiplayerClient", "Received MSG_SERVER_SENDS_PLAYER_MOVED");
+                            final String[] payload = messageIn.GetPayload().split(" ");
+                            final int x = Integer.parseInt(payload[0]);
+                            final int y = Integer.parseInt(payload[1]);
+                            final String name = payload[2];
+
+                            Gdx.app.debug("MultiplayerClient", name + " moves to X: " + x + " Y: " + y);
+                            this.multiplayerGameListener.onPlayerMove(name, x, y);
+                            break;
+                        }
                         default: {
                             Gdx.app.debug("MultiplayerClient", "Received unknown server response: " +
                                 rawServerResponse);

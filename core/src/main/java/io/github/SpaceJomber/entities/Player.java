@@ -35,7 +35,7 @@ public class Player implements Renderable {
         this.bombPlacementListener = bombPlacementListener;
     }
 
-    public void Move(final int x, final int y) {
+    public boolean Move(final int x, final int y) {
         // TODO: MapUtils.GetCellIdAtXY accepts TiledMap not layer
         final int cellId = MapUtils.GetCellIdAtXY(this.tmRef,
             this.x + x,
@@ -45,13 +45,14 @@ public class Player implements Renderable {
         // TODO: If there's bomb in the way.
         if (this.tmRef != null) {
             if (cellId != MapUtils.TILEID_EMPTY_SPACE) {
-                return;
+                return false;
             }
         }
         this.sprite.setX(this.sprite.getX() + x);
         this.sprite.setY(this.sprite.getY() + y);
         this.x += x;
         this.y += y;
+        return true;
     }
 
     // Only to set the player

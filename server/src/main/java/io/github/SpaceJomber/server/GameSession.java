@@ -1,8 +1,10 @@
 package io.github.SpaceJomber.server;
 
+import com.badlogic.gdx.Gdx;
 import io.github.SpaceJomber.shared.Message;
 import io.github.SpaceJomber.shared.MessageType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -14,10 +16,32 @@ import java.util.concurrent.TimeUnit;
 public class GameSession implements Runnable, ClientHandlerListener {
     private final List<ClientHandler> playersInSession;
     private final String sessionHash;
+    private final int MAP_HEIGHT = 11;
+    private final int MAP_WIDTH = 13;
+    private final int PLAYER_ID = 1;
+    private final int BOX_ID = 2;
+
+    // TODO?: Add map 2D array
+//    private ArrayList<ArrayList<String>> sessionMap;
 
     public GameSession(List<ClientHandler> playersInSession, String sessionHash) {
         this.playersInSession = playersInSession;
         this.sessionHash = sessionHash;
+//        this.sessionMap = new ArrayList<>();
+
+//        for (int i = 0; i < MAP_HEIGHT; i++) {
+//            this.sessionMap.add(new ArrayList<>());
+//            for (int j = 0; j < MAP_WIDTH; j++) {
+//                this.sessionMap.get(i).add("NULL");
+//            }
+//        }
+//
+//        this.sessionMap.get(0).set(0, 3);
+
+        // W: 13
+        // H: 11
+
+        // Players have their position set here.
         for (ClientHandler chOut : playersInSession) {
             chOut.SetListener(this); // create session for all (add listener)
         }
@@ -32,15 +56,55 @@ public class GameSession implements Runnable, ClientHandlerListener {
         }
     }
 
-    private void Broadcast(String message) {
+    private void Broadcast(Message message) {
+        final String rawOutput = message.ConstructStringFromMessage();
         for (ClientHandler player : playersInSession) {
-            player.sendMessage(message);
+            player.sendMessage(rawOutput);
         }
     }
 
     @Override
-    public synchronized void onPlayerMove() {
+    public synchronized void onPlayerMove(final int finalX, final int finalY,
+                                          final int deltaX, final int deltaY,
+                                          final String playerName) {
+        // TODO: Broadcast message with payload
+        // IF IN PAYLOAD THERE IS A "RECONCILIATION"/"STEPBACK" -> client with that playerName steps back
 
+        for (ClientHandler player : playersInSession) {
+            if (finalX == player.GetPlayerX() && finalY == player.GetPlayerY()) {
+                // Someone is there already.
+                // TODO: Reconcile
+
+                System.out.println("Player already at" + finalX + ", " + finalY);
+                return;
+            }
+        }
+        // TODO: message to every client stating that playerName moved
+        final String finalXString = String.valueOf(finalX);
+        final String finalYString = String.valueOf(finalY);
+        String payload = "";
+        payload += finalXString;
+        payload += " ";
+        payload += finalYString;
+        payload += " ";
+        payload += playerName;
+        final Message msg = new Message(MessageType.MSG_SERVER_SENDS_PLAYER_MOVED, payload);
+        this.Broadcast(msg);
+        System.out.println("Broadcast of " + playerName + " moved to " + finalXString + " " + finalYString);
+        ClientHandler p = FindClientByName(playerName);
+        if (p != null) {
+            p.SetPlayerX(finalX);
+            p.SetPlayerY(finalY);
+        }
+    }
+
+    private ClientHandler FindClientByName(String playerName) {
+        for (ClientHandler player : playersInSession) {
+            if (player.GetPlayerName().equals(playerName)) {
+                return player;
+            }
+        }
+        return null;
     }
 
     @Override

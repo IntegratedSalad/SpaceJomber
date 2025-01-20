@@ -3,6 +3,8 @@ package io.github.SpaceJomber.systems;
 import com.badlogic.gdx.Gdx;
 import io.github.SpaceJomber.entities.Player;
 import io.github.SpaceJomber.networking.MultiplayerClient;
+import io.github.SpaceJomber.shared.Message;
+import io.github.SpaceJomber.shared.MessageType;
 
 public class MessageInputSystem extends InputSystem {
 
@@ -13,27 +15,48 @@ public class MessageInputSystem extends InputSystem {
     }
 
     @Override
-    public void OnMoveUp() {
-        super.OnMoveUp();
+    public boolean OnMoveUp() {
+        if (!super.OnMoveUp()) return false;
         Gdx.app.log("MessageInputSystem, keyDown", "W...");
+        final Message message = new Message(MessageType.MSG_USER_MOVES, "0 1");
+        this.multiplayerClient.SendMessage(message);
+        return true;
     }
 
     @Override
-    public void OnMoveDown() {
-        super.OnMoveDown();
+    public boolean OnMoveDown() {
+        if (!super.OnMoveDown()) return false;
         Gdx.app.log("MessageInputSystem, keyDown", "S...");
+        final Message message = new Message(MessageType.MSG_USER_MOVES, "0 -1");
+        this.multiplayerClient.SendMessage(message);
+        return true;
     }
 
     @Override
-    public void OnMoveLeft() {
-        super.OnMoveLeft();
+    public boolean OnMoveLeft() {
+        if (!super.OnMoveLeft()) return false;
         Gdx.app.log("MessageInputSystem, keyDown", "A...");
+        final Message message = new Message(MessageType.MSG_USER_MOVES, "-1 0");
+        this.multiplayerClient.SendMessage(message);
+        return true;
     }
 
     @Override
-    public void OnMoveRight() {
-        super.OnMoveRight();
+    public boolean OnMoveRight() {
+        if (!super.OnMoveRight()) return false;
         Gdx.app.log("MessageInputSystem, keyDown", "D...");
+        final Message message = new Message(MessageType.MSG_USER_MOVES, "1 0");
+        this.multiplayerClient.SendMessage(message);
+        return true;
+    }
+
+    @Override
+    public boolean OnActionKey() {
+        if (!super.OnActionKey()) return false;
+        Gdx.app.log("MessageInputSystem, keyDown", "SPACE...");
+        final Message message = new Message(MessageType.MSG_USER_MOVES, "PLANT NULL");
+        this.multiplayerClient.SendMessage(message);
+        return true;
     }
 
     @Override

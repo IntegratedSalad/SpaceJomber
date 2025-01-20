@@ -30,6 +30,9 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
         super(renderingSystem, game, shipColor, startX, startY, playerName);
         this.multiplayerClient = multiplayerClient;
         this.multiplayerClient.SetMultiplayerGameListener(this);
+        // Setup input processor
+        MessageInputSystem ins = new MessageInputSystem(this.instanceControlledPlayer, this.multiplayerClient);
+        Gdx.input.setInputProcessor(ins);
         this.players = new ArrayList<>();
         this.players.add(this.instanceControlledPlayer);
         Gdx.app.log("MultiplayerGameScreen", "X: " + startX + " Y: " + startY);
@@ -120,14 +123,11 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
         this.instanceControlledPlayer = new Player(renderingSystem.GetSprite(this.shipColor),
             this.startX,
             this.startY,
-            this.shipColor.toUpperCase().split("SHIP")[0] + " Player", // TODO: acquire name entered
+            this.playerName,
             idToSet, // ALWAYS THINK ABOUT DEFAULT VALUES!!!
             this.renderingSystem);
         this.renderingSystem.AddRenderable(this.instanceControlledPlayer);
 
-        // Setup input processor
-        MessageInputSystem ins = new MessageInputSystem(this.instanceControlledPlayer, this.multiplayerClient);
-        Gdx.input.setInputProcessor(ins);
         this.fireCollisionSystem = new FireCollisionSystem(renderingSystem.GetRenderableFlameQueue());
         this.fireCollisionSystem.addPlayer(this.instanceControlledPlayer);
     }
@@ -170,6 +170,7 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
     @Override
     public synchronized void onPlayerMove(String name, int newPositionX, int newPositionY) {
         Gdx.app.postRunnable(() -> {
+            if (name.equals(this.playerName)) return;
             Player playerToMove = GetPlayerByName(name);
             if (playerToMove != null && playerToMove != this.instanceControlledPlayer) {
                 if (playerToMove.GetX() == playerToMove.GetY() && playerToMove.GetX() == -1) {
@@ -177,6 +178,9 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
                     Gdx.app.debug("MultiplayerGameScreen", "Player " + playerToMove.GetName() +
                         " teleported to position " + newPositionX + ", " + newPositionY);
                 } else { // move normally
+                    playerToMove.Teleport(newPositionX, newPositionY);
+                    Gdx.app.debug("MultiplayerGameScreen", "Player moved" + playerToMove.GetName() +
+                        " to position " + newPositionX + ", " + newPositionY);
                 }
             } else {
                 Gdx.app.debug("MultiplayerGameScreen", "Attempt to move player: " + name +

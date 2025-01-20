@@ -72,6 +72,10 @@ public class Message {
                 this.type = MessageType.MSG_SERVER_SENDS_PLAYER_NAMES;
                 break;
             }
+            case "14": {
+                this.type = MessageType.MSG_SERVER_SENDS_PLAYER_MOVED;
+                break;
+            }
             case "20": {
                 this.type = MessageType.MSG_TWOWAY_SEND_PLAYER_NAME;
                 break;

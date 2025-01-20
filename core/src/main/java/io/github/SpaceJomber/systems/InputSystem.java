@@ -16,27 +16,27 @@ public class InputSystem implements InputProcessor {
         this.controlledPlayer = controlledPlayer;
     }
 
-    public void OnMoveUp() {
-        this.controlledPlayer.Move(0, 1);
+    public boolean OnMoveUp() {
         Gdx.app.log("InputSystem, keyDown", "W...");
+        return this.controlledPlayer.Move(0, 1);
     }
 
-    public void OnMoveDown() {
-        this.controlledPlayer.Move(0, -1);
+    public boolean OnMoveDown() {
         Gdx.app.log("InputSystem, keyDown", "S...");
+        return this.controlledPlayer.Move(0, -1);
     }
 
-    public void OnMoveLeft() {
-        this.controlledPlayer.Move(-1, 0);
+    public boolean OnMoveLeft() {
         Gdx.app.log("InputSystem, keyDown", "A...");
+        return this.controlledPlayer.Move(-1, 0);
     }
 
-    public void OnMoveRight() {
-        this.controlledPlayer.Move(1, 0);
+    public boolean OnMoveRight() {
         Gdx.app.log("InputSystem, keyDown", "D...");
+        return this.controlledPlayer.Move(1, 0);
     }
 
-    public void OnActionKey() { // default: space
+    public boolean OnActionKey() { // default: space
         // TODO: Only one bomb at a time
         Sprite bombSprite = null;
         final ENTITYID beid = this.controlledPlayer.GetBombID();
@@ -54,11 +54,14 @@ public class InputSystem implements InputProcessor {
                 case BOMB_GREEN: {
                     bombSprite = Bomb.greenBombSprite;
                 } default: {
+                    Gdx.app.debug("InputSystem, OnActionKey", "Bomb id null!");
+                    return false;
                 }
             }
         }
         bombSprite = new Sprite(bombSprite);
         this.controlledPlayer.PlantBomb(bombSprite, Bomb.GetBombNameFromID(beid), beid);
+        return true;
     }
 
     @Override
@@ -66,20 +69,15 @@ public class InputSystem implements InputProcessor {
         if (keycode == Input.Keys.ESCAPE) {
             Gdx.app.exit();
         } else if (keycode == Input.Keys.SPACE) {
-            this.OnActionKey();
-            return true;
+            return this.OnActionKey();
         } else if (keycode == Input.Keys.A) {
-            this.OnMoveLeft();
-            return true;
+            return this.OnMoveLeft();
         } else if (keycode == Input.Keys.D) {
-            this.OnMoveRight();
-            return true;
+            return this.OnMoveRight();
         } else if (keycode == Input.Keys.W) {
-            this.OnMoveUp();
-            return true;
+            return  this.OnMoveUp();
         } else if (keycode == Input.Keys.S) {
-            this.OnMoveDown();
-            return true;
+            return this.OnMoveDown();
         }
         return false;
     }
