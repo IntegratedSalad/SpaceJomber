@@ -215,7 +215,7 @@ public class LobbyScreen implements Screen,
                     playerReadyButton.setText("Ready");
                     readyMessage.SetPayload("TRUE " + colorChangeTextButton.getText().toString());
                 } else {
-                    playerReadyButton.setText("Not Ready");
+                    playerReadyButton.setText("FALSE " + "NULL");
                 }
                 multiplayerClient.SendMessage(readyMessage);
                 return true;

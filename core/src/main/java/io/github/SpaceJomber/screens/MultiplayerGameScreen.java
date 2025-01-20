@@ -12,6 +12,7 @@ import io.github.SpaceJomber.shared.Message;
 import io.github.SpaceJomber.shared.MessageType;
 import io.github.SpaceJomber.systems.FireCollisionSystem;
 import io.github.SpaceJomber.systems.InputSystem;
+import io.github.SpaceJomber.systems.MessageInputSystem;
 import io.github.SpaceJomber.systems.RenderingSystem;
 
 import java.util.ArrayList;
@@ -125,7 +126,7 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
         this.renderingSystem.AddRenderable(this.instanceControlledPlayer);
 
         // Setup input processor
-        InputSystem ins = new InputSystem(this.instanceControlledPlayer);
+        MessageInputSystem ins = new MessageInputSystem(this.instanceControlledPlayer, this.multiplayerClient);
         Gdx.input.setInputProcessor(ins);
         this.fireCollisionSystem = new FireCollisionSystem(renderingSystem.GetRenderableFlameQueue());
         this.fireCollisionSystem.addPlayer(this.instanceControlledPlayer);

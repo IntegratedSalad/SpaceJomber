@@ -75,7 +75,7 @@ public class GameSession implements Runnable, ClientHandlerListener {
                     Message sendPosMsg = new Message(MessageType.MSG_TWOWAY_SENDS_POSITION, payload);
                     final String rawMessage = sendPosMsg.ConstructStringFromMessage();
 
-                    Thread.sleep(200);
+//                    Thread.sleep(200);
                     chOut.GetOutStream().println(rawMessage); // send to client
                 }
                 return;

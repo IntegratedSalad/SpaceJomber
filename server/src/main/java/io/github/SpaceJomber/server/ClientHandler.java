@@ -160,6 +160,7 @@ public class ClientHandler implements Runnable {
                             this.isReady = true;
                         } else {
                             this.isReady = false;
+                            continue;
                         }
                         this.playerColor = isPlayerReadyStr[1];
 
@@ -174,12 +175,7 @@ public class ClientHandler implements Runnable {
                             // All are ready, start session.
                             // This means that the last player clicked "Ready"
 
-                            // BUG -> ONLY THE PERSON THAT CLICKS "READY" LAST GETS THEIR
-                            // POSITION ASSIGNED
-
                             System.out.println("All are ready!");
-
-                            // BUG HOST DOESN'T RECEIVE THEIR POSITION
 
                             List<int[]> posList = new ArrayList<>();
                             posList.add(new int[]{1, 1});
