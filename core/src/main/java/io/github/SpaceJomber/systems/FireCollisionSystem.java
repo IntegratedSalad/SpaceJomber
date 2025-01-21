@@ -28,9 +28,15 @@ public class FireCollisionSystem {
 
                     // Check for collision
                     if (player.GetX() == fireElement.GetX() && player.GetY() == fireElement.GetY()) {
-                        player.Die(); // Handle player death
+
+                        final String killerName = fireElement.GetPlanterName();
+
+                        player.Die(killerName); // Handle player death
                         Gdx.app.log("FireCollisionSystem", "Player collided with fire at: " +
                             fireElement.GetX() + ", " + fireElement.GetY());
+
+                        Gdx.app.debug("checkCollisions", player.GetName() +
+                            " was killed by " + killerName + "!");
                     }
                 }
             }

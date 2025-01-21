@@ -12,6 +12,7 @@ public class Bomb implements Renderable {
 
     private Sprite sprite;
     private String name;
+    private final String planterName;
     private int x;
     private int y;
     private ENTITYID eid;
@@ -29,11 +30,11 @@ public class Bomb implements Renderable {
     public static Sprite redBombSprite;
     public static Sprite blackBombSprite;
 
-    // TODO: Information about player (final reference?)
-
-    public Bomb(Sprite sprite, String name, int x, int y, ENTITYID eid, BombPlacementListener bombPlacementListener) {
+    public Bomb(Sprite sprite, String name, String planterName,
+                int x, int y, ENTITYID eid, BombPlacementListener bombPlacementListener) {
         this.sprite = sprite;
         this.name = name; // to identify and remove from list
+        this.planterName = planterName;
         this.x = x;
         this.y = y;
         this.sprite.setX(this.x);
@@ -44,6 +45,10 @@ public class Bomb implements Renderable {
 
     public void SetMapRf(TiledMap tmRef) {
         this.tmRef = tmRef;
+    }
+
+    public String GetPlanterName() {
+        return this.planterName;
     }
 
     public void PlantBomb(final int delayS) {

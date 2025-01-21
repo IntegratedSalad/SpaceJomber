@@ -22,7 +22,12 @@ public class FireElement implements Renderable {
 
     private final int timeToExtinguish = 5;
 
-    public FireElement(String name, Sprite sprite, int x, int y, ENTITYID eid, TiledMap tmRef, FirePlacementListener firePlacementListener) {
+    private String planterName;
+
+    public FireElement(String name,
+                       Sprite sprite,
+                       int x, int y,
+                       ENTITYID eid, TiledMap tmRef, FirePlacementListener firePlacementListener) {
         this.name = name;
         this.sprite = new Sprite(sprite);
         this.x = x;
@@ -33,6 +38,14 @@ public class FireElement implements Renderable {
         this.tmRef = tmRef;
         this.firePlacementListener = firePlacementListener;
         this.scheduleTask(1);
+    }
+
+    public void SetPlanterName(final String planterName) {
+        this.planterName = planterName;
+    }
+
+    public String GetPlanterName() {
+        return this.planterName;
     }
 
     public void SetDestroysTile(final boolean b) {

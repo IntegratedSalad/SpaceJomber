@@ -201,12 +201,15 @@ public class GameScreen implements Screen, SoundPlayerListener {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        if (!this.instanceControlledPlayer.GetIsAlive()) {
+        if (this.instanceControlledPlayer != null && !this.instanceControlledPlayer.GetIsAlive()) {
             Gdx.app.log("render", "Player has died");
-            Gdx.app.exit();
+//            Gdx.app.exit();
+            this.instanceControlledPlayer = null;
+            Gdx.input.setInputProcessor(null); // await session termination by server, don't move and don't do anything
+        } else {
+            this.fireCollisionSystem.checkCollisions();
+            this.renderingSystem.renderAll();
         }
-        this.fireCollisionSystem.checkCollisions();
-        this.renderingSystem.renderAll();
     }
 
     @Override

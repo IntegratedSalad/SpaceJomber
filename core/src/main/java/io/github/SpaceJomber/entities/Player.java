@@ -91,6 +91,7 @@ public class Player implements Renderable {
         Gdx.app.log("Player, PlantBomb", "Bomb has been planted.");
         Bomb bomb = new Bomb(sprite,
             name,
+            this.name,
             this.x,
             this.y,
             beid,
@@ -131,9 +132,11 @@ public class Player implements Renderable {
         return this.isAlive;
     }
 
-    public void Die() {
+    public void Die(final String killerName) {
         this.isAlive = false;
-        Gdx.app.log("Player", "Player " + this.name + " died!");
+        Gdx.app.log("Player, Die", "Player " + this.name + " died!" + " killed by" + killerName + "!");
+
+        // TODO: Add listener returning killerName and score
     }
 
     @Override

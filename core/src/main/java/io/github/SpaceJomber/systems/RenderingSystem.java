@@ -74,6 +74,10 @@ public class RenderingSystem implements BombPlacementListener, FirePlacementList
         this.renderableList.add(renderable);
     }
 
+    public void RemoveRenderable(Renderable renderable) {
+        this.renderableList.remove(renderable);
+    }
+
     public void AddRenderableToQueue(Renderable renderable) {
         this.renderableQueue.add(renderable);
     }
@@ -303,9 +307,13 @@ public class RenderingSystem implements BombPlacementListener, FirePlacementList
     @Override
     public void onBombDetonate(int x, int y, Bomb bomb) {
         this.PopRenderableQueue();
-        BombFire bf = new BombFire(x, y, ENTITYID.BOMB_FIRE_MNG, this.map, this); // maybe move that to bomb
+        BombFire bf = new BombFire(x, y,
+            ENTITYID.BOMB_FIRE_MNG, this.map, this); // maybe move that to bomb
         List<FireElement> fel = bf.SpreadFire();
+
+        Gdx.app.debug("onBombDetonate", "Bomb created by: " + bomb.GetPlanterName() + " detonates");
         for (FireElement fireElement : fel) {
+            fireElement.SetPlanterName(bomb.GetPlanterName());
             if (fireElement.GetDestroysTile()) {
                 TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
                 cell.setTile(this.tileset.getTile(MapUtils.TILEID_EMPTY_SPACE));
