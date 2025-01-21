@@ -15,10 +15,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import io.github.SpaceJomber.entities.Bomb;
-import io.github.SpaceJomber.entities.BombFire;
-import io.github.SpaceJomber.entities.ENTITYID;
-import io.github.SpaceJomber.entities.FireElement;
+import io.github.SpaceJomber.entities.*;
 import io.github.SpaceJomber.listeners.BombPlacementListener;
 import io.github.SpaceJomber.listeners.FirePlacementListener;
 import io.github.SpaceJomber.utils.MapUtils;
@@ -74,8 +71,16 @@ public class RenderingSystem implements BombPlacementListener, FirePlacementList
         this.renderableList.add(renderable);
     }
 
-    public void RemoveRenderable(Renderable renderable) {
-        this.renderableList.remove(renderable);
+    public Renderable GetPlayerFromName(final String name) {
+        Renderable renderable = null;
+        for (Renderable r : renderableList) {
+            if (r instanceof Player) {
+                if (((Player) r).GetName().equals(name)) {
+                    renderable = r;
+                }
+            }
+        }
+        return renderable;
     }
 
     public void AddRenderableToQueue(Renderable renderable) {
@@ -92,6 +97,10 @@ public class RenderingSystem implements BombPlacementListener, FirePlacementList
 
     public void RemoveRenderable(ENTITYID eid) {
         this.renderableList.removeIf(r -> r.GetEntityID() == eid);
+    }
+
+    public void RemoveRenderable(Renderable renderable) {
+        this.renderableList.remove(renderable);
     }
 //
 //    public void RemoveRenderable(ENTITYID eid, final int num) {

@@ -187,6 +187,11 @@ public class GameScreen implements Screen, SoundPlayerListener {
         this.fireCollisionSystem.addPlayer(this.instanceControlledPlayer);
     }
 
+    public void OnPlayerDeath() {
+        Gdx.app.debug("GameScreen, OnPlayerDeath", "Bye bye!");
+        Gdx.app.exit();
+    }
+
     @Override
     public void show() {
         Gdx.app.log("GameScreen", "show() called");
@@ -204,12 +209,13 @@ public class GameScreen implements Screen, SoundPlayerListener {
         if (this.instanceControlledPlayer != null && !this.instanceControlledPlayer.GetIsAlive()) {
             Gdx.app.log("render", "Player has died");
 //            Gdx.app.exit();
-            this.instanceControlledPlayer = null;
-            Gdx.input.setInputProcessor(null); // await session termination by server, don't move and don't do anything
-        } else {
-            this.fireCollisionSystem.checkCollisions();
-            this.renderingSystem.renderAll();
+//            this.instanceControlledPlayer = null;
+//            Gdx.input.setInputProcessor(null); // await session termination by server, don't move and don't do anything
+            this.OnPlayerDeath();
         }
+        this.fireCollisionSystem.checkCollisions();
+        this.renderingSystem.renderAll();
+
     }
 
     @Override

@@ -89,6 +89,10 @@ public class Message {
                 this.type = MessageType.MSG_TWOWAY_SENDS_POSITION;
                 break;
             }
+            case "22": {
+                this.type = MessageType.MSG_TWOWAY_PLAYER_DIES; // Server gets killerName but doesn't broadcast one
+                break;
+            }
             default: {
                 throw new IllegalArgumentException("Unknown message type: " + strID);
             }

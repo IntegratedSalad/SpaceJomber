@@ -213,6 +213,11 @@ public class MultiplayerClient implements Runnable {
                             this.multiplayerGameListener.onPlayerPlantsBomb(name, x, y);
                             break;
                         }
+                        case MSG_TWOWAY_PLAYER_DIES: {
+                            final String playerName = messageIn.GetPayload();
+                            this.multiplayerGameListener.onPlayerDiesIncomingMessage(playerName);
+                            break;
+                        }
                         default: {
                             Gdx.app.debug("MultiplayerClient", "Received unknown server response: " +
                                 rawServerResponse);

@@ -24,10 +24,15 @@ public class ClientHandler implements Runnable {
     private String playerName;
     private int playerX = 0;
     private int playerY = 0;
+    private boolean isAlive = true;
 
     public ClientHandler(Socket socket, GameServer server) {
         this.socket = socket;
         this.server = server;
+    }
+
+    public boolean GetIsAlive() {
+        return isAlive;
     }
 
     public boolean isReady() {
@@ -254,6 +259,23 @@ public class ClientHandler implements Runnable {
                             this.clientHandlerListener.onPlayerSpawnBomb(this.playerX, this.playerY, this.playerName);
                         }
                         break;
+                    }
+                    case MSG_TWOWAY_PLAYER_DIES: {
+                        final String[] payload = messageIn.GetPayload().split(" ");
+                        final String playerDiedName = payload[0];
+                        final String killerName = payload[1];
+                        System.out.println("Server received MSG_TWOWAY_PLAYER_DIES: Died: " +
+                            playerDiedName + " Killer: " + killerName);
+
+                        // TODO: Broadcast
+
+                        // TODO: Session should do this, not an individual ClientHandler!
+
+                        messageOut = new Message(MessageType.MSG_TWOWAY_PLAYER_DIES, playerDiedName);
+                        this.server.Broadcast(this.playerLobby.GetPlayers(), messageOut);
+
+                        this.isAlive = false;
+                        this.clientHandlerListener.onPlayerDeath(playerDiedName, killerName);
                     }
                     default: {
                         System.out.println("Server received an unknown message: " + rawInput);

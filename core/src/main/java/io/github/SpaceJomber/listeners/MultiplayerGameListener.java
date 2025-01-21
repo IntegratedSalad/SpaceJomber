@@ -6,4 +6,5 @@ public interface MultiplayerGameListener {
     void onPlayerMove(final String playerName, final int newPositionX, final int newPositionY);
     void onPlayerReceiveNames(final String[] payload);
     void onPlayerPlantsBomb(final String playerName, final int posX, final int posY);
+    void onPlayerDiesIncomingMessage(final String playerName);
 }

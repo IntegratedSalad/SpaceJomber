@@ -12,10 +12,7 @@ import io.github.SpaceJomber.listeners.MultiplayerGameListener;
 import io.github.SpaceJomber.networking.MultiplayerClient;
 import io.github.SpaceJomber.shared.Message;
 import io.github.SpaceJomber.shared.MessageType;
-import io.github.SpaceJomber.systems.FireCollisionSystem;
-import io.github.SpaceJomber.systems.InputSystem;
-import io.github.SpaceJomber.systems.MessageInputSystem;
-import io.github.SpaceJomber.systems.RenderingSystem;
+import io.github.SpaceJomber.systems.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,6 +132,19 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
     }
 
     @Override
+    public void OnPlayerDeath() {
+        final String killerName = this.instanceControlledPlayer.GetKillerName();
+        final String playerName = this.instanceControlledPlayer.GetName();
+        String payload = "";
+        payload += playerName;
+        payload += " " + killerName;
+        final Message msg = new Message(MessageType.MSG_TWOWAY_PLAYER_DIES, payload);
+        this.multiplayerClient.SendMessage(msg);
+        this.instanceControlledPlayer = null;
+        Gdx.input.setInputProcessor(null);
+    }
+
+    @Override
     public void show() {
         super.show();
     }
@@ -168,6 +178,7 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
     public void dispose() {
 
     }
+
 
     @Override
     public synchronized void onPlayerMove(String name, int newPositionX, int newPositionY) {
@@ -277,6 +288,15 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
             }
             bombSprite = new Sprite(bombSprite);
             p.PlantBomb(bombSprite, Bomb.GetBombNameFromID(beid), beid);
+        });
+    }
+
+    @Override
+    public void onPlayerDiesIncomingMessage(String playerName) {
+        Gdx.app.postRunnable(() -> {
+            Renderable p = this.renderingSystem.GetPlayerFromName(playerName);
+            this.renderingSystem.RemoveRenderable(p);
+            Gdx.app.debug("onPlayerDiesIncomingMessage", "Deleted " + playerName);
         });
     }
 }

@@ -63,7 +63,7 @@ public class GameSession implements Runnable, ClientHandlerListener {
         // IF IN PAYLOAD THERE IS A "RECONCILIATION"/"STEPBACK" -> client with that playerName steps back
 
         for (ClientHandler player : playersInSession) {
-            if (finalX == player.GetPlayerX() && finalY == player.GetPlayerY()) {
+            if (finalX == player.GetPlayerX() && finalY == player.GetPlayerY() && player.GetIsAlive()) {
                 // Someone is there already.
                 // TODO: Reconcile
 
@@ -89,6 +89,11 @@ public class GameSession implements Runnable, ClientHandlerListener {
         }
     }
 
+    @Override
+    public void onPlayerDeath(String playerDiedName, String killerName) {
+        // TODO: add score
+    }
+
     private ClientHandler FindClientByName(String playerName) {
         for (ClientHandler player : playersInSession) {
             if (player.GetPlayerName().equals(playerName)) {
@@ -96,11 +101,6 @@ public class GameSession implements Runnable, ClientHandlerListener {
             }
         }
         return null;
-    }
-
-    @Override
-    public synchronized void onPlayerDeath() {
-
     }
 
     @Override

@@ -24,6 +24,8 @@ public class Player implements Renderable {
 
     private boolean isAlive = true;
 
+    private String killerName;
+
     public Player(Sprite sprite, int x, int y, String name, ENTITYID eid, BombPlacementListener bombPlacementListener) {
         this.sprite = sprite;
         this.x = x;
@@ -132,10 +134,14 @@ public class Player implements Renderable {
         return this.isAlive;
     }
 
+    public String GetKillerName() {
+        return this.killerName;
+    }
+
     public void Die(final String killerName) {
         this.isAlive = false;
         Gdx.app.log("Player, Die", "Player " + this.name + " died!" + " killed by" + killerName + "!");
-
+        this.killerName = killerName;
         // TODO: Add listener returning killerName and score
     }
 

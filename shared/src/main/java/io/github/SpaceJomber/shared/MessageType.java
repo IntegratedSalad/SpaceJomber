@@ -19,7 +19,8 @@ public enum MessageType {
     MSG_SERVER_SENDS_PLAYER_PLANTS_BOMB(15),
 
     MSG_TWOWAY_SEND_PLAYER_NAME(20), // only to use in lobby for synchronization
-    MSG_TWOWAY_SENDS_POSITION(21);
+    MSG_TWOWAY_SENDS_POSITION(21),
+    MSG_TWOWAY_PLAYER_DIES(22);
 
     private final int id;
     MessageType(int id) {
