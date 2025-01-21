@@ -17,6 +17,10 @@ public class GameSession implements Runnable, ClientHandlerListener {
     private final int PLAYER_ID = 1;
     private final int BOX_ID = 2;
 
+    private boolean isRunning = true;
+
+    private String winnerPlayerName;
+
     public GameSession(List<ClientHandler> playersInSession, String sessionHash) {
         this.playersInSession = playersInSession;
         this.sessionHash = sessionHash;
@@ -43,10 +47,7 @@ public class GameSession implements Runnable, ClientHandlerListener {
     @Override
     public void run() {
         System.out.println("Starting game session: " + sessionHash);
-//        broadcast("Game session " + sessionHash + " is starting!");
-        // Wait for game to end (optional synchronization here)
-        while (true) {
-        }
+        while (this.isRunning);
     }
 
     private void Broadcast(Message message) {
@@ -92,6 +93,27 @@ public class GameSession implements Runnable, ClientHandlerListener {
     @Override
     public void onPlayerDeath(String playerDiedName, String killerName) {
         // TODO: add score
+
+        // TODO: if playerDiedName == kilerName don't increase score
+
+        // TODO: Iterate through client handlers. If all !GetIsAlive() || only one is GetIsAlive()
+        //  -> send message game over
+
+        int playersAlive = 0;
+//        int maxPlayers = this.playersInSession.size();
+        for (ClientHandler player : this.playersInSession) {
+            if (player.GetIsAlive()) {
+                playersAlive++;
+            }
+        }
+        if (playersAlive <= 1) {
+            // If player destroys someone and himself it's ok, he gets the points
+            this.winnerPlayerName = killerName;
+
+            // Notice the server of the winner
+
+            this.isRunning = false;
+        }
     }
 
     private ClientHandler FindClientByName(String playerName) {

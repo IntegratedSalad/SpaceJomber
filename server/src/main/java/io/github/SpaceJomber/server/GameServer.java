@@ -39,6 +39,8 @@ public class GameServer {
 
         System.out.println("Starting session... num of players: " + players.size());
 
+        // Session should be a callable?
+
         this.sessionThreadPool.execute(newGs);
     }
 
