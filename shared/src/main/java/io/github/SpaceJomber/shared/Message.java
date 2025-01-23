@@ -81,6 +81,10 @@ public class Message {
                 this.type = MessageType.MSG_SERVER_SENDS_PLAYER_PLANTS_BOMB;
                 break;
             }
+            case "16": {
+                this.type = MessageType.MSG_SERVER_SESSION_END;
+                break;
+            }
             case "20": {
                 this.type = MessageType.MSG_TWOWAY_SEND_PLAYER_NAME;
                 break;

@@ -1,13 +1,11 @@
 package io.github.SpaceJomber.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import io.github.SpaceJomber.Main;
 import io.github.SpaceJomber.entities.Bomb;
 import io.github.SpaceJomber.entities.ENTITYID;
 import io.github.SpaceJomber.entities.Player;
-import io.github.SpaceJomber.listeners.BombPlacementListener;
 import io.github.SpaceJomber.listeners.MultiplayerGameListener;
 import io.github.SpaceJomber.networking.MultiplayerClient;
 import io.github.SpaceJomber.shared.Message;
@@ -299,4 +297,7 @@ public class MultiplayerGameScreen extends GameScreen implements MultiplayerGame
             Gdx.app.debug("onPlayerDiesIncomingMessage", "Deleted " + playerName);
         });
     }
+
+    @Override
+    public void onSessionEnd() {Gdx.app.postRunnable(() -> this.game.SetupMainMenu());}
 }

@@ -1,7 +1,9 @@
 package io.github.SpaceJomber.networking;
 
 import com.badlogic.gdx.Gdx;
+import io.github.SpaceJomber.Main;
 import io.github.SpaceJomber.listeners.MultiplayerGameListener;
+import io.github.SpaceJomber.screens.MultiplayerDecisionScreen;
 import io.github.SpaceJomber.screens.MultiplayerGameScreen;
 import io.github.SpaceJomber.shared.Message;
 import io.github.SpaceJomber.listeners.LobbyUIUpdateListener;
@@ -98,7 +100,7 @@ public class MultiplayerClient implements Runnable {
         this.out.close();
         this.in.close();
         this.socket.close();
-        this.messageHandlerExecutor.shutdownNow();
+        //this.messageHandlerExecutor.shutdownNow();
         this.isRunning = false;
     }
 
@@ -216,6 +218,13 @@ public class MultiplayerClient implements Runnable {
                         case MSG_TWOWAY_PLAYER_DIES: {
                             final String playerName = messageIn.GetPayload();
                             this.multiplayerGameListener.onPlayerDiesIncomingMessage(playerName);
+                            break;
+                        }
+                        case MSG_SERVER_SESSION_END: {
+                            Gdx.app.debug("MultiplayerClient","Game ended!, Winner: " +
+                                messageIn.GetPayload());
+                            this.multiplayerGameListener.onSessionEnd();
+                            this.Disconnect();
                             break;
                         }
                         default: {

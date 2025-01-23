@@ -12,6 +12,7 @@ jar {
 }
 
 dependencies {
+  implementation 'com.mysql:mysql-connector-j:9.2.0'
   implementation project(':core')
   implementation project(':shared')
 }

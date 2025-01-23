@@ -18,27 +18,12 @@ public class GameSession implements Runnable, ClientHandlerListener {
     private final int BOX_ID = 2;
 
     private boolean isRunning = true;
-
     private String winnerPlayerName;
 
     public GameSession(List<ClientHandler> playersInSession, String sessionHash) {
         this.playersInSession = playersInSession;
         this.sessionHash = sessionHash;
-//        this.sessionMap = new ArrayList<>();
 
-//        for (int i = 0; i < MAP_HEIGHT; i++) {
-//            this.sessionMap.add(new ArrayList<>());
-//            for (int j = 0; j < MAP_WIDTH; j++) {
-//                this.sessionMap.get(i).add("NULL");
-//            }
-//        }
-//
-//        this.sessionMap.get(0).set(0, 3);
-
-        // W: 13
-        // H: 11
-
-        // Players have their position set here.
         for (ClientHandler chOut : playersInSession) {
             chOut.SetListener(this); // create session for all (add listener)
         }
@@ -98,9 +83,7 @@ public class GameSession implements Runnable, ClientHandlerListener {
 
         // TODO: Iterate through client handlers. If all !GetIsAlive() || only one is GetIsAlive()
         //  -> send message game over
-
         int playersAlive = 0;
-//        int maxPlayers = this.playersInSession.size();
         for (ClientHandler player : this.playersInSession) {
             if (player.GetIsAlive()) {
                 playersAlive++;
@@ -109,10 +92,17 @@ public class GameSession implements Runnable, ClientHandlerListener {
         if (playersAlive <= 1) {
             // If player destroys someone and himself it's ok, he gets the points
             this.winnerPlayerName = killerName;
+            try {
+                Database database = new Database();
+                database.saveWinner(this.winnerPlayerName, 1);
+                database.close();
+            } finally {
+                final Message message = new Message(MessageType.MSG_SERVER_SESSION_END, this.winnerPlayerName);
+                this.Broadcast(message);
+                // Notice the server of the winner
+                this.isRunning = false;
 
-            // Notice the server of the winner
-
-            this.isRunning = false;
+            }
         }
     }
 
