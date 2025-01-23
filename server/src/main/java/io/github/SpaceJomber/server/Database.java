@@ -1,6 +1,7 @@
 package io.github.SpaceJomber.server;
 
 import java.sql.*;
+import java.util.HashMap;
 
 public class Database {
 
@@ -8,15 +9,15 @@ public class Database {
     private static final String login = "root";
     private static final String password = "haslo";
 
-    private Connection connection;
-    private Statement statement;
+    private final Connection connection;
+    private final Statement statement;
 
     public Database() {
         try {
             this.connection = DriverManager.getConnection(url, login, password);
             this.statement = this.connection.createStatement();
         } catch (SQLException e) {
-            throw new RuntimeException("Błąd podczas łączenia z bazą danych", e);
+            throw new RuntimeException("Blad podczas laczenia z bazą danych", e);
         }
     }
 
@@ -29,32 +30,50 @@ public class Database {
                 connection.close();
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Błąd podczas zamykania zasobów", e);
+            throw new RuntimeException("Blad podczas zamykania polaczenia", e);
         }
     }
 
-    public ResultSet executeQuery(String sql) {
+    public void saveWinner(String nickname) {
         try {
-            return statement.executeQuery(sql);
+            String query = "INSERT INTO score (nickname, wins) VALUES (" + "'" + nickname + "'"+ ", 1);";
+            this.statement.executeUpdate(query);
         } catch (SQLException e) {
-            throw new RuntimeException("Błąd podczas wykonywania zapytania: " + sql, e);
+            throw new RuntimeException(e);
         }
     }
 
-    public void executeUpdate(String sql) {
+    public HashMap<String, Integer> getBestPlayers() {
+        HashMap<String, Integer> map = new HashMap<>();
+        String query = "SELECT nickname, wins FROM score ORDER BY wins DESC LIMIT 5;";
         try {
-            statement.executeUpdate(sql);
+            ResultSet resultSet = this.statement.executeQuery(query);
+            while (resultSet.next()) {
+                String nickname = resultSet.getString("nickname");
+                int wins = resultSet.getInt("wins");
+                map.put(nickname, wins);
+            }
+            return map;
         } catch (SQLException e) {
-            throw new RuntimeException("Błąd podczas wykonywania aktualizacji: " + sql, e);
+            throw new RuntimeException(e);
         }
     }
 
-    public void saveWinner(String nickname, int wins) {
-        String query = "INSERT INTO score (nickname, wins) VALUES ('" + nickname + "', " + wins + ");";
+    public void updatePlayer(String nickname) {
+        int wins = 0;
+        String selectquery = "SELECT wins FROM score WHERE nickname = " + "'" + nickname + "'" + ";";
         try {
-            statement.executeUpdate(query);
+            ResultSet resultSet = this.statement.executeQuery(selectquery);
+            while (resultSet.next()) {
+                wins = resultSet.getInt("wins");
+            }
+            if (wins != 0) {
+                wins += 1;
+                String updatequery = "UPDATE score SET wins = " + wins +  " WHERE nickname = " + "'" + nickname + "'" + ";";
+                this.statement.executeUpdate(updatequery);
+            } else saveWinner(nickname);
         } catch (SQLException e) {
-            throw new RuntimeException("Błąd podczas zapisywania zwycięzcy", e);
+            throw new RuntimeException(e);
         }
     }
 }

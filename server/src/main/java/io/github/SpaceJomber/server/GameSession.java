@@ -94,14 +94,13 @@ public class GameSession implements Runnable, ClientHandlerListener {
             this.winnerPlayerName = killerName;
             try {
                 Database database = new Database();
-                database.saveWinner(this.winnerPlayerName, 1);
+                database.updatePlayer(this.winnerPlayerName);
                 database.close();
             } finally {
                 final Message message = new Message(MessageType.MSG_SERVER_SESSION_END, this.winnerPlayerName);
                 this.Broadcast(message);
                 // Notice the server of the winner
                 this.isRunning = false;
-
             }
         }
     }
