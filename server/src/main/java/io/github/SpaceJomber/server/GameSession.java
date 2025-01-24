@@ -77,12 +77,6 @@ public class GameSession implements Runnable, ClientHandlerListener {
 
     @Override
     public void onPlayerDeath(String playerDiedName, String killerName) {
-        // TODO: add score
-
-        // TODO: if playerDiedName == kilerName don't increase score
-
-        // TODO: Iterate through client handlers. If all !GetIsAlive() || only one is GetIsAlive()
-        //  -> send message game over
         int playersAlive = 0;
         for (ClientHandler player : this.playersInSession) {
             if (player.GetIsAlive()) {
@@ -90,12 +84,13 @@ public class GameSession implements Runnable, ClientHandlerListener {
             }
         }
         if (playersAlive <= 1) {
-            // If player destroys someone and himself it's ok, he gets the points
             this.winnerPlayerName = killerName;
             try {
-                Database database = new Database();
-                database.updatePlayer(this.winnerPlayerName);
-                database.close();
+                if (!playerDiedName.equals(this.winnerPlayerName)) { // if not player destroyed itself
+                    Database database = new Database();
+                    database.updatePlayer(this.winnerPlayerName);
+                    database.close();
+                }
             } finally {
                 final Message message = new Message(MessageType.MSG_SERVER_SESSION_END, this.winnerPlayerName);
                 this.Broadcast(message);
