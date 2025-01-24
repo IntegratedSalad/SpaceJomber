@@ -276,6 +276,7 @@ public class ClientHandler implements Runnable {
 
                         this.isAlive = false;
                         this.clientHandlerListener.onPlayerDeath(playerDiedName, killerName);
+                        break;
                     }
                     default: {
                         System.out.println("Server received an unknown message: " + rawInput);

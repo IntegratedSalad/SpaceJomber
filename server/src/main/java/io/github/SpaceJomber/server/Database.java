@@ -7,7 +7,7 @@ public class Database {
 
     private static final String url = "jdbc:mysql://localhost:3306/spacejomber";
     private static final String login = "root";
-    private static final String password = "haslo";
+    private static final String password = ""; // don't set any password please xD
 
     private final Connection connection;
     private final Statement statement;
